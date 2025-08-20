@@ -1,0 +1,162 @@
+import { create } from "zustand";
+import api from "@/lib/axios";
+import { 
+  ISupplier, 
+  SupplierCreateInput, 
+  SupplierUpdateInput
+} from "@/types";
+import { AxiosError } from "axios";
+
+interface SupplierStoreState {
+  // State
+  suppliers: ISupplier[];
+  supplier: ISupplier | null;
+  loading: boolean;
+  error: string | null;
+  isInitialized: boolean;
+
+  // Actions
+  fetchSuppliers: () => Promise<void>;
+  fetchSupplierById: (id: string) => Promise<void>;
+  createSupplier: (supplierData: SupplierCreateInput) => Promise<void>;
+  updateSupplier: (id: string, supplierData: SupplierUpdateInput) => Promise<void>;
+  deleteSupplier: (id: string) => Promise<void>;
+  clearError: () => void;
+  setLoading: (loading: boolean) => void;
+  reset: () => void;
+}
+
+export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
+  // Initial state
+  suppliers: [],
+  supplier: null,
+  loading: false,
+  error: null,
+  isInitialized: false,
+
+  // Actions
+  fetchSuppliers: async () => {
+    // Solo fetch si no está inicializado
+    if (get().isInitialized) return;
+    
+    set({ loading: true, error: null });
+    try {
+      const response = await api.get<ISupplier[]>('/suppliers');
+      
+      // El backend devuelve directamente el array de proveedores
+      set({ 
+        suppliers: response.data,
+        isInitialized: true,
+        loading: false 
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error("Error al obtener proveedores:", error);
+      set({ 
+        error: axiosError.response?.data?.message || "Error al obtener proveedores",
+        loading: false 
+      });
+    }
+  },
+
+  fetchSupplierById: async (id: string) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await api.get<ISupplier>(`/suppliers/${id}`);
+      
+      // El backend devuelve directamente el proveedor
+      set({ 
+        supplier: response.data,
+        loading: false 
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error("Error al obtener proveedor:", error);
+      set({ 
+        error: axiosError.response?.data?.message || "Error al obtener proveedor",
+        loading: false 
+      });
+    }
+  },
+
+  createSupplier: async (supplierData: SupplierCreateInput) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await api.post<ISupplier>('/suppliers', supplierData);
+      
+      // El backend devuelve directamente el proveedor creado
+      const currentSuppliers = get().suppliers;
+      set({ 
+        suppliers: [...currentSuppliers, response.data],
+        loading: false 
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error("Error al crear proveedor:", error);
+      set({ 
+        error: axiosError.response?.data?.message || "Error al crear proveedor",
+        loading: false 
+      });
+    }
+  },
+
+  updateSupplier: async (id: string, supplierData: SupplierUpdateInput) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await api.put<ISupplier>(`/suppliers/${id}`, supplierData);
+      
+      // El backend devuelve directamente el proveedor actualizado
+      const currentSuppliers = get().suppliers;
+      const updatedSuppliers = currentSuppliers.map(supplier => 
+        supplier._id === id ? response.data : supplier
+      );
+      
+      set({ 
+        suppliers: updatedSuppliers,
+        loading: false 
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error("Error al actualizar proveedor:", error);
+      set({ 
+        error: axiosError.response?.data?.message || "Error al actualizar proveedor",
+        loading: false 
+      });
+    }
+  },
+
+  deleteSupplier: async (id: string) => {
+    set({ loading: true, error: null });
+    try {
+      await api.delete(`/suppliers/${id}`);
+      
+      // El backend confirma la eliminación, remover del estado
+      const currentSuppliers = get().suppliers;
+      const filteredSuppliers = currentSuppliers.filter(supplier => supplier._id !== id);
+      
+      set({ 
+        suppliers: filteredSuppliers,
+        loading: false 
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error("Error al eliminar proveedor:", error);
+      set({ 
+        error: axiosError.response?.data?.message || "Error al eliminar proveedor",
+        loading: false 
+      });
+    }
+  },
+
+  clearError: () => set({ error: null }),
+  
+  setLoading: (loading: boolean) => set({ loading }),
+
+  reset: () => set({
+    suppliers: [],
+    supplier: null,
+    loading: false,
+    error: null,
+    isInitialized: false,
+  }),
+}));
