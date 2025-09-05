@@ -249,10 +249,6 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       const { clients } = clientStore.useClientStore.getState();
       const selectedClient = clients.find((c) => c._id === formData.client);
 
-      if (!selectedClient) {
-        throw new Error("Cliente no encontrado");
-      }
-
       // ✅ Obtener productos para nombres
       const productStore = await import("./useProduct");
       const { products } = productStore.useProductStore.getState();
@@ -268,10 +264,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
           _id: currentUser._id,
           name: currentUser.name || currentUser.email, // Usar name o email como fallback
         }, // ✅ Usuario que realiza la venta
-        client: {
-          _id: selectedClient._id,
-          name: selectedClient.name,
-        },
+        ...(selectedClient ? { client: { _id: selectedClient._id, name: selectedClient.name } } : {}),
         paymentMethod: formData.paymentMethod,
         deliveryType: formData.deliveryType,
         deliveryFee: formData.deliveryFee,

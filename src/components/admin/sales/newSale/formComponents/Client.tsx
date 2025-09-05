@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { useState, useEffect } from "react"; // ✅ Agregado useEffect
+import { useState, useEffect } from "react"; 
 import { cn } from "@/lib/utils";
 import { useSalesStore } from "@/store/useSales";
 import { useClientStore } from "@/store/useClient";
@@ -24,7 +24,7 @@ import { useSheetStore } from "@/store/useSheet";
 export const Client = () => {
   // ✅ Store hooks corregidos
   const { formData, updateFormData } = useSalesStore();
-  const { clients, fetchClients } = useClientStore(); // ✅ Agregado fetchClients
+  const { clients, fetchClients } = useClientStore();
   const { openSheet, closeSheet } = useSheetStore();
 
   // Estado para controlar el popover
@@ -37,6 +37,13 @@ export const Client = () => {
       fetchClients();
     }
   }, [clients.length, fetchClients]);
+
+  // ✅ Set default to 'Sin cliente' (empty) on mount
+  useEffect(() => {
+    if (!formData.client) {
+      updateFormData("client", "");
+    }
+  }, []);
 
   // ✅ Helper function para manejar selección de cliente
   const handleClientSelect = (clientId: string) => {
@@ -90,7 +97,7 @@ export const Client = () => {
               >
                 {selectedClient
                   ? `${selectedClient.name} - ${selectedClient.documentNumber}`
-                  : "Seleccionar cliente..."}
+                  : "Sin cliente"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
