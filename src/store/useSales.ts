@@ -413,7 +413,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
           error: "Venta no encontrada",
           isLoading: false,
         });
-      }
+      } 
     } catch (error: any) {
       console.error("❌ Error cargando venta para edición:", {
         error,

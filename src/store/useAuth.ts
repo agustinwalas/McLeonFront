@@ -50,12 +50,12 @@ const useAuth = create<AuthState>()(
       // ✅ Nueva función para inicializar auth al cargar la app
       initializeAuth: () => {
         console.log("🚀 Inicializando autenticación...");
-        
         const token = localStorage.getItem("token");
+        const expiry = localStorage.getItem("token_expiry");
         console.log("🔍 Token encontrado:", !!token);
-        
-        if (!token) {
-          console.log("❌ No hay token, manteniendo deslogueado");
+        if (!token || !expiry) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("token_expiry");
           set({
             isAuthenticated: false,
             user: null,
@@ -63,31 +63,22 @@ const useAuth = create<AuthState>()(
           });
           return;
         }
-
+        const now = Date.now();
+        const expiryTime = Number(expiry);
+        if (now >= expiryTime) {
+          console.warn("⚠️ Token expirado por horario personalizado");
+          localStorage.removeItem("token");
+          localStorage.removeItem("token_expiry");
+          set({
+            isAuthenticated: false,
+            user: null,
+            isAdmin: false,
+          });
+          return;
+        }
         try {
           const decoded = jwtDecode<DecodedToken>(token);
-          const now = Date.now();
-          const tokenExp = decoded.exp * 1000;
-          
-          console.log("🔍 Token válido:", {
-            exp: new Date(tokenExp),
-            now: new Date(now),
-            isExpired: tokenExp <= now,
-            minutesLeft: Math.round((tokenExp - now) / 1000 / 60)
-          });
-
-          if (tokenExp <= now) {
-            console.warn("⚠️ Token expirado al inicializar");
-            localStorage.removeItem("token");
-            set({
-              isAuthenticated: false,
-              user: null,
-              isAdmin: false,
-            });
-            return;
-          }
-
-          // ✅ Reconstruir usuario desde token
+          // Reconstruir usuario desde token
           const user: IUser = {
             _id: decoded.id,
             email: decoded.email,
@@ -95,18 +86,15 @@ const useAuth = create<AuthState>()(
             phone: "",
             isAdmin: decoded.isAdmin
           };
-
-          console.log("✅ Usuario reconstruido desde token:", user);
-
           set({
             user,
             isAuthenticated: true,
             isAdmin: decoded.isAdmin,
           });
-
         } catch (error) {
           console.error("❌ Error al decodificar token:", error);
           localStorage.removeItem("token");
+          localStorage.removeItem("token_expiry");
           set({
             isAuthenticated: false,
             user: null,
@@ -115,7 +103,7 @@ const useAuth = create<AuthState>()(
         }
       },
 
-      register: async (data: {
+  register: async (data: {
         email: string;
         password: string;
         name: string;
@@ -135,9 +123,12 @@ const useAuth = create<AuthState>()(
 
           console.log("✅ Usuario registrado:", user);
 
-          // ✅ Guardar token en register también
+          // ✅ Guardar token y expiración personalizada (hoy a las 23:59)
           if (res.data.token) {
             localStorage.setItem("token", res.data.token);
+            const now = new Date();
+            const expiry = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 0, 0).getTime();
+            localStorage.setItem("token_expiry", String(expiry));
           }
 
           set({
@@ -182,7 +173,10 @@ const useAuth = create<AuthState>()(
           }
 
           localStorage.setItem("token", res.data.token);
-          console.log("✅ Token guardado");
+          const now = new Date();
+          const expiry = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 0, 0).getTime();
+          localStorage.setItem("token_expiry", String(expiry));
+          console.log("✅ Token y expiración guardados");
 
           set({
             user,
@@ -203,6 +197,7 @@ const useAuth = create<AuthState>()(
       logout: () => {
         console.log("🚪 Logout ejecutado");
         localStorage.removeItem("token");
+        localStorage.removeItem("token_expiry");
         set({
           isAuthenticated: false,
           user: null,

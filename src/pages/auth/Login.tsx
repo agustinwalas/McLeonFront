@@ -42,7 +42,7 @@ export default function Login() {
           <LoginForm onSuccess={handleLoginSuccess} />
         </div>
         
-        <div className="text-center">
+        {/* <div className="text-center">
           <p className="text-sm text-gray-600">
             ¿No tienes cuenta?{' '}
             <button
@@ -52,7 +52,7 @@ export default function Login() {
               Crear cuenta
             </button>
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
