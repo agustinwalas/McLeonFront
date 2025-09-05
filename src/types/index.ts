@@ -9,7 +9,6 @@ export type {
 export type {
   IClient,
   ClientCreateInput,
-  ClientUpdateInput
 } from './client';
 
 // Export enums separately for value access
@@ -20,7 +19,7 @@ export type {
   IProduct,
   ProductCreateInput,
   ProductUpdateInput,
-  IProductPopulated
+  IProductPopulated,
 } from './product';
 
 // Supplier types

@@ -1,7 +1,7 @@
 // src/layouts/AdminLayout.tsx
 
-import { AppSidebar } from "@/components/admin/layout/SideBar";
 import { ResponsiveNavigation } from "@/components/admin/layout/ResponsiveNavigation";
+import { AppSidebar } from "@/components/admin/layout/SideBar";
 import { GlobalSheet } from "@/components/ui/GlobalSheet";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet } from "react-router-dom";

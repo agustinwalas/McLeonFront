@@ -7,6 +7,29 @@ interface ProductImageCardProps {
 }
 
 export function ProductImageCard({ product }: ProductImageCardProps) {
+  // ✅ Función para obtener el nombre de la categoría
+  const getCategoryName = () => {
+    if (!product.category) {
+      return "Sin categoría";
+    }
+
+    // Si es solo un string (ID sin poblar)
+    if (typeof product.category === "string") {
+      return "Sin categoría";
+    }
+
+    // Si es un objeto pero sin nombre
+    return product.category.name || "Sin categoría";
+  };
+
+  // ✅ Función para determinar el variant del badge
+  const getCategoryVariant = () => {
+    if (!product.category || typeof product.category === "string" || !product.category.name) {
+      return "outline"; // Badge gris para "Sin categoría"
+    }
+    return "secondary"; // Badge normal para categorías válidas
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -28,7 +51,7 @@ export function ProductImageCard({ product }: ProductImageCardProps) {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="font-medium">Categoría:</span>
-            <Badge variant="secondary">{product.category.name}</Badge>
+            <Badge variant={getCategoryVariant()}>{getCategoryName()}</Badge>
           </div>
 
           <div>
@@ -42,9 +65,7 @@ export function ProductImageCard({ product }: ProductImageCardProps) {
 
           {product.updatedAt && (
             <div>
-              <h3 className="font-medium text-gray-900">
-                Última Actualización
-              </h3>
+              <h3 className="font-medium text-gray-900">Última Actualización</h3>
               <p className="text-gray-600">
                 {new Date(product.updatedAt).toLocaleDateString("es-AR")}
               </p>

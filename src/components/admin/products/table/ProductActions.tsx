@@ -7,6 +7,7 @@ import { useProductStore } from "@/store/useProduct.ts";
 import { EditProductForm } from "../forms/EditProductForm";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const ProductActions = ({ product }: { product: IProductPopulated }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -27,6 +28,7 @@ export const ProductActions = ({ product }: { product: IProductPopulated }) => {
       setIsDeleting(true);
       try {
         await deleteProduct(product._id);
+        toast.success("Producto eliminado correctamente"); 
         closeDialog();
       } catch (error) {
         console.error("Error al eliminar producto:", error);

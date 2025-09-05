@@ -32,7 +32,11 @@ export default function ProductDetail() {
       
       // El backend ya está enviando los proveedores populados
       if (product.associatedSuppliers && product.associatedSuppliers.length > 0) {
-        setProductSuppliers(product.associatedSuppliers);
+        const mappedSuppliers = product.associatedSuppliers.map(supplier => ({
+          ...supplier,
+          suppliedProducts: (supplier as any).suppliedProducts || []
+        }));
+        setProductSuppliers(mappedSuppliers);
       } else {
         setProductSuppliers([]);
       }

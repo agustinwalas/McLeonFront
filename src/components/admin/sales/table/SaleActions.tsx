@@ -69,7 +69,7 @@ export function SaleActions({ sale }: SaleActionsProps) {
         asChild
         className="h-8 w-8 p-0"
       >
-        <Link to={`/admin/ventas/${sale._id}/editar`}>
+        <Link to={`/admin/ventas/editar/${sale._id}`}>
           <Edit className="h-4 w-4" />
         </Link>
       </Button>

@@ -1,95 +1,104 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useNewSale } from "@/store/useNewSale";
+import { useSalesStore } from "@/store/useSales"; // ✅ Store unificado
 import { Client } from "./formComponents/Client";
 import { PaymentAndShipping } from "./formComponents/PaymentAndShipping";
 import { Products } from "./formComponents/Products";
 import { Summary } from "./formComponents/Summary";
 import { Notes } from "./formComponents/Notes";
+import { Loader2 } from "lucide-react";
 
 export const NewSaleForm = () => {
-  // New Sale Store
+  const navigate = useNavigate();
+
+  // ✅ Usar store unificado
   const {
     selectedProducts,
     isSubmitting,
-    isLoading,
-    submitSale,
-    initialize,
+    error,
+    createSale,
+    initializeForm,
     resetForm,
-    formData, // ✅ Agregado para acceder a los datos del formulario
-  } = useNewSale();
+    formData,
+  } = useSalesStore();
 
-  // Initialize store on mount
+  // Initialize form on mount
   useEffect(() => {
-    initialize();
+    console.log("🔧 Inicializando NewSaleForm");
+    initializeForm();
+    
     return () => {
-      resetForm(); 
+      resetForm();
     };
-  }, [initialize, resetForm]);
+  }, [initializeForm, resetForm]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // ✅ Console.log del objeto que se envía al backend
     console.log("📦 Datos enviados al backend:", {
       formData,
       selectedProducts,
       timestamp: new Date().toISOString()
     });
+
+    const success = await createSale();
     
-    // ✅ Console.log más detallado del objeto final
-    const saleData = {
-      ...formData,
-      products: selectedProducts
-    };
-    
-    console.log("🚀 Objeto final de venta:", saleData);
-    console.log("🏷️ JSON stringify:", JSON.stringify(saleData, null, 2));
-    
-    await submitSale();
+    if (success) {
+      console.log("✅ Venta creada exitosamente");
+      navigate("/admin/ventas");
+    }
   };
 
   const handleCancel = () => {
-    window.location.href = "/admin/ventas";
+    navigate("/admin/ventas");
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-lg">Cargando...</div>
-      </div>
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Client />
-        <PaymentAndShipping />
-      </div>
+    <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+          <div className="text-red-800 font-medium">Error</div>
+          <div className="text-red-600 text-sm">{error}</div>
+        </div>
+      )}
 
-      <Products />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Client />
+          <PaymentAndShipping />
+        </div>
 
-      <Summary />
+        <Products />
 
-      <Notes />
+        <Summary />
 
-      {/* Botones */}
-      <div className="flex gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleCancel}
-        >
-          Cancelar
-        </Button>
-        <Button
-          type="submit"
-          disabled={isSubmitting || selectedProducts.length === 0}
-        >
-          {isSubmitting ? "Creando..." : "Crear Venta"}
-        </Button>
-      </div>
-    </form>
+        <Notes />
+
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting || selectedProducts.length === 0}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creando...
+              </>
+            ) : (
+              "Crear Venta"
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };

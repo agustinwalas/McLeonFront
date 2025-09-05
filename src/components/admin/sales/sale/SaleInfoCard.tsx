@@ -37,7 +37,92 @@ const getDeliveryTypeLabel = (type: DeliveryType) => {
   }
 };
 
+// ✅ Helper para formatear el tipo de documento
+const getDocumentTypeLabel = (docType: string) => {
+  switch (docType) {
+    case "CUIT":
+      return "CUIT";
+    case "DNI":
+      return "DNI";
+    case "CUIL":
+      return "CUIL";
+    case "CDI":
+      return "CDI";
+    case "LE":
+      return "LE";
+    case "LC":
+      return "LC";
+    case "PASSPORT":
+      return "Pasaporte";
+    case "CONSUMIDOR_FINAL":
+      return "Consumidor Final";
+    default:
+      return docType || "Documento";
+  }
+};
+
 export function SaleInfoCard({ sale }: SaleInfoCardProps) {
+  console.log("Sale data:", sale);
+  console.log("Client data:", sale.client);
+  
+  // ✅ Función helper para manejar el cliente
+  const getClientInfo = () => {
+    const client = sale.client;
+
+    // ✅ Cliente eliminado o no existe
+    if (!client) {
+      return {
+        name: "Sin Cliente",
+        documentType: "-",
+        documentNumber: "-",
+        fullDocument: "-",
+        isDeleted: true,
+      };
+    }
+
+    // ✅ Cliente existe pero puede tener campos vacíos
+    const docType = client.documentType || "";
+    const docNumber = client.documentNumber || "";
+    
+    // ✅ Formatear documento completo
+    const fullDocument = docType && docNumber 
+      ? `${getDocumentTypeLabel(docType)}: ${docNumber}`
+      : docNumber || "Sin Documento";
+
+    return {
+      name: client.name || "Sin nombre",
+      documentType: getDocumentTypeLabel(docType),
+      documentNumber: docNumber || "Sin Documento",
+      fullDocument,
+      isDeleted: false,
+    };
+  };
+
+  // ✅ Función helper para manejar el usuario/vendedor
+  const getUserInfo = () => {
+    const user = sale.user;
+
+    // ✅ Usuario eliminado o no existe
+    if (!user) {
+      return {
+        name: "Usuario eliminado",
+        isDeleted: true,
+      };
+    }
+
+    // ✅ Usuario existe
+    return {
+      name: user.name || user.email || "Sin nombre",
+      isDeleted: false,
+    };
+  };
+
+  const clientInfo = getClientInfo();
+  const userInfo = getUserInfo();
+
+  // ✅ Debug adicional
+  console.log("Client info processed:", clientInfo);
+
   return (
     <Card>
       <CardHeader>
@@ -45,72 +130,63 @@ export function SaleInfoCard({ sale }: SaleInfoCardProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {/* ✅ Cliente con manejo de eliminado */}
           <div>
             <h3 className="font-medium text-gray-900">Cliente</h3>
-            <p className="text-gray-600">{sale.client.name}</p>
+            <p
+              className={`text-gray-600 ${clientInfo.isDeleted ? "italic" : ""}`}
+            >
+              {clientInfo.name}
+            </p>
           </div>
 
+          {/* ✅ Documento del cliente completo con tipo */}
           <div>
-            <h3 className="font-medium text-gray-900">CUIT del Cliente</h3>
-            <p className="text-gray-600">{sale.client.cuit}</p>
+            <h3 className="font-medium text-gray-900">Documento del Cliente</h3>
+            <p
+              className={`text-gray-600 ${clientInfo.isDeleted ? "italic" : ""}`}
+            >
+              {clientInfo.fullDocument}
+            </p>
           </div>
 
           <div>
             <h3 className="font-medium text-gray-900">Método de Pago</h3>
-            <p className="text-gray-600">{getPaymentMethodLabel(sale.paymentMethod)}</p>
+            <p className="text-gray-600">
+              {getPaymentMethodLabel(sale.paymentMethod)}
+            </p>
           </div>
 
           <div>
             <h3 className="font-medium text-gray-900">Tipo de Entrega</h3>
-            <p className="text-gray-600">{getDeliveryTypeLabel(sale.deliveryType)}</p>
+            <p className="text-gray-600">
+              {getDeliveryTypeLabel(sale.deliveryType)}
+            </p>
           </div>
 
-          {sale.deliveryType === DeliveryType.DELIVERY && sale.deliveryAddress && (
-            <div>
-              <h3 className="font-medium text-gray-900">Dirección de Entrega</h3>
-              <div className="text-gray-600">
-                <p>{sale.deliveryAddress.street} {sale.deliveryAddress.number}</p>
-                <p>{sale.deliveryAddress.city}, {sale.deliveryAddress.province}</p>
-                <p>{sale.deliveryAddress.postalCode}</p>
-                {sale.deliveryAddress.additionalInfo && (
-                  <p>{sale.deliveryAddress.additionalInfo}</p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {sale.deliveryFee && sale.deliveryFee > 0 && (
-            <div>
-              <h3 className="font-medium text-gray-900">Costo de Envío</h3>
-              <p className="text-gray-600">${sale.deliveryFee.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</p>
-            </div>
-          )}
-
+          {/* ✅ Vendedor con manejo de eliminado */}
           <div>
             <h3 className="font-medium text-gray-900">Vendedor</h3>
-            <p className="text-gray-600">{sale.user.name}</p>
-          </div>
-
-          <div>
-            <h3 className="font-medium text-gray-900">Email del Vendedor</h3>
-            <p className="text-gray-600">{sale.user.email}</p>
+            <p
+              className={`text-gray-600 ${userInfo.isDeleted ? "italic" : ""}`}
+            >
+              {userInfo.name}
+            </p>
           </div>
 
           <div>
             <h3 className="font-medium text-gray-900">Fecha de Venta</h3>
             <p className="text-gray-600">
-              {new Date(sale.saleDate).toLocaleDateString("es-AR")} - {new Date(sale.saleDate).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+              {sale.createdAt
+                ? `${new Date(sale.createdAt).toLocaleDateString("es-AR")} - ${new Date(
+                    sale.createdAt
+                  ).toLocaleTimeString("es-AR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}`
+                : "Fecha no disponible"}
             </p>
           </div>
-
-          {sale.deliveryDate && (
-            <div>
-              <h3 className="font-medium text-gray-900">Fecha de Entrega Programada</h3>
-              <p className="text-gray-600">
-                {new Date(sale.deliveryDate).toLocaleDateString("es-AR")}
-              </p>
-            </div>
-          )}
 
           {sale.notes && (
             <div>

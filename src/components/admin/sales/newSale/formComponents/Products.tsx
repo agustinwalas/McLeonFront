@@ -6,23 +6,31 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Plus, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { PriceType } from "@/types/sale";
-import { useNewSale } from "@/store/useNewSale";
+import { useSalesStore } from "@/store/useSales"; // ✅ Store unificado
 import { useProductStore } from "@/store/useProduct";
+import { getUnitOfMeasureShort } from "@/utils/unitOfMeasure";
 
 export const Products = () => {
-  // Store hooks
+  // ✅ Store hooks corregidos
   const {
     selectedProducts,
     addProduct,
     removeProduct,
     updateProduct,
-  } = useNewSale();
+  } = useSalesStore();
   
-  const { products } = useProductStore();
+  const { products, fetchProducts } = useProductStore(); // ✅ Agregado fetchProducts
 
   // Estado para controlar los popover abiertos
   const [openPopovers, setOpenPopovers] = useState<boolean[]>([]);
+
+  // ✅ Fetch de productos al montar el componente
+  useEffect(() => {
+    if (products.length === 0) {
+      console.log("🔍 Cargando productos...");
+      fetchProducts();
+    }
+  }, [products.length, fetchProducts]);
 
   // ✅ Helper function para eliminar ceros a la izquierda
   const removeLeadingZeros = (value: string): string => {
@@ -35,25 +43,79 @@ export const Products = () => {
     const cleanValue = removeLeadingZeros(value);
     const numValue = parseInt(cleanValue) || 0;
     const finalValue = Math.max(0, numValue);
+    
+    // Actualizar cantidad y recalcular subtotal
     updateProduct(index, "quantity", finalValue);
+    recalculateSubtotal(index, finalValue);
   };
 
-  // ✅ Helper function para manejar cambios de descuento (sin límite máximo)
+  // ✅ Helper function para manejar cambios de descuento
   const handleDiscountChange = (index: number, value: string) => {
     const cleanValue = removeLeadingZeros(value);
     const numValue = parseInt(cleanValue);
     let finalValue = 0;
     
     if (!isNaN(numValue)) {
-      finalValue = Math.max(numValue, 0); // Solo evitar negativos, sin límite superior
+      finalValue = Math.max(numValue, 0);
     }
     
+    // Actualizar descuento y recalcular subtotal
     updateProduct(index, "discountPercentage", finalValue);
+    recalculateSubtotalWithDiscount(index, finalValue);
+  };
+
+  // ✅ Helper function para manejar cambio de tipo de precio
+  const handlePriceTypeChange = (index: number, priceType: "MAYORISTA" | "MINORISTA") => {
+    updateProduct(index, "priceType", priceType);
+    
+    // Recalcular precio unitario y subtotal
+    const item = selectedProducts[index];
+    const product = products.find(p => p._id === item.product);
+    if (product) {
+      const newUnitPrice = priceType === "MAYORISTA" 
+        ? product.wholesalePrice 
+        : product.retailPrice;
+      
+      updateProduct(index, "unitPrice", newUnitPrice);
+      recalculateSubtotalFull(index, item.quantity, newUnitPrice, item.discountPercentage);
+    }
+  };
+
+  // ✅ Helper function para recalcular subtotal cuando cambia cantidad
+  const recalculateSubtotal = (index: number, newQuantity: number) => {
+    const item = selectedProducts[index];
+    const subtotal = newQuantity * item.unitPrice * (item.discountPercentage / 100);
+    updateProduct(index, "subtotal", subtotal);
+  };
+
+  // ✅ Helper function para recalcular subtotal cuando cambia descuento
+  const recalculateSubtotalWithDiscount = (index: number, newDiscount: number) => {
+    const item = selectedProducts[index];
+    const subtotal = item.quantity * item.unitPrice * (newDiscount / 100);
+    updateProduct(index, "subtotal", subtotal);
+  };
+
+  // ✅ Helper function para recalcular subtotal completo
+  const recalculateSubtotalFull = (index: number, quantity: number, unitPrice: number, discountPercentage: number) => {
+    const subtotal = quantity * unitPrice * (discountPercentage / 100);
+    updateProduct(index, "subtotal", subtotal);
   };
 
   // ✅ Helper function para manejar selección de producto
   const handleProductSelect = (index: number, productId: string) => {
+    const product = products.find(p => p._id === productId);
+    if (!product) return;
+
+    const item = selectedProducts[index];
+    const unitPrice = item.priceType === "MAYORISTA" 
+      ? product.wholesalePrice 
+      : product.retailPrice;
+
+    // Actualizar producto, precio unitario y recalcular subtotal
     updateProduct(index, "product", productId);
+    updateProduct(index, "unitPrice", unitPrice);
+    recalculateSubtotalFull(index, item.quantity, unitPrice, item.discountPercentage);
+
     // Cerrar el popover
     const newOpenPopovers = [...openPopovers];
     newOpenPopovers[index] = false;
@@ -72,9 +134,22 @@ export const Products = () => {
     const product = products.find(p => p._id === item.product);
     if (!product) return 0;
     
-    return item.priceType === PriceType.WHOLESALE 
+    return item.priceType === "MAYORISTA" 
       ? product.wholesalePrice 
       : product.retailPrice;
+  };
+
+  // ✅ Helper function para agregar producto
+  const handleAddProduct = () => {
+    const newProduct = {
+      product: "",
+      quantity: 1,
+      priceType: "MINORISTA" ,
+      unitPrice: 0,
+      discountPercentage: 100,
+      subtotal: 0,
+    };
+    addProduct(newProduct);
   };
 
   // ✅ Inicializar array de popovers cuando se agregan productos
@@ -95,17 +170,18 @@ export const Products = () => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Productos</CardTitle>
-        <Button type="button" onClick={addProduct} size="sm">
+        <CardTitle>🛍️ Productos</CardTitle>
+        <Button type="button" onClick={handleAddProduct} size="sm">
           <Plus className="h-4 w-4 mr-2" />
           Agregar Producto
         </Button>
       </CardHeader>
       <CardContent>
         {selectedProducts.length === 0 ? (
-          <p className="text-muted-foreground text-center py-4">
-            No hay productos agregados
-          </p>
+          <div className="text-center py-8 text-gray-500">
+            <p>No hay productos agregados</p>
+            <p className="text-sm">Agrega productos para continuar con la venta</p>
+          </div>
         ) : (
           <div className="space-y-4">
             {selectedProducts.map((item, index) => {
@@ -115,7 +191,7 @@ export const Products = () => {
               return (
                 <div
                   key={index}
-                  className="grid gap-4 p-4 border rounded items-end"
+                  className="grid gap-4 p-4 border rounded items-end overflow-x-auto"
                   style={{
                     gridTemplateColumns: "1fr auto auto auto auto auto",
                     gridTemplateAreas: `
@@ -163,7 +239,7 @@ export const Products = () => {
                                     )}
                                   />
                                   <div className="flex flex-col">
-                                    <span className="font-medium">{product.name}</span>
+                                    <span className="font-medium">{product.name} - <span className="lowercase">{product.unitOfMeasure}</span></span>
                                     <span className="text-sm text-muted-foreground">
                                       Minorista: ${product.retailPrice} | Mayorista: ${product.wholesalePrice}
                                     </span>
@@ -182,17 +258,17 @@ export const Products = () => {
                     <label className="text-sm font-medium mb-2 block">Tipo</label>
                     <select
                       value={item.priceType}
-                      onChange={(e) => updateProduct(index, "priceType", e.target.value as PriceType)}
+                      onChange={(e) => handlePriceTypeChange(index, e.target.value as "MAYORISTA" | "MINORISTA")}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      <option value={PriceType.RETAIL}>Minorista</option>
-                      <option value={PriceType.WHOLESALE}>Mayorista</option>
+                      <option value="MINORISTA">Minorista</option>
+                      <option value="MAYORISTA">Mayorista</option>
                     </select>
                   </div>
 
                   {/* Cantidad - Ancho fijo */}
                   <div style={{ gridArea: "cantidad", width: "80px" }}>
-                    <label className="text-sm font-medium mb-2 block">Cantidad</label>
+                    <label className="text-sm font-medium mb-2 block">Cant.  {selectedProduct ? getUnitOfMeasureShort(selectedProduct.unitOfMeasure) : ''} </label>
                     <Input
                       type="number"
                       min="0"
@@ -214,7 +290,7 @@ export const Products = () => {
                     />
                   </div>
 
-                  {/* Precio Unitario - Ancho fijo */}
+                  {/* Precio Unitario  */}
                   <div style={{ gridArea: "precio", width: "110px" }}>
                     <label className="text-sm font-medium mb-2 block">Precio Unit.</label>
                     <Input
@@ -225,7 +301,7 @@ export const Products = () => {
                     />
                   </div>
 
-                  {/* Descuento - Ancho fijo */}
+                  {/* Descuento */}
                   <div style={{ gridArea: "descuento", width: "90px" }}>
                     <label className="text-sm font-medium mb-2 block">Desc. (%)</label>
                     <Input
@@ -235,7 +311,7 @@ export const Products = () => {
                       onChange={(e) => handleDiscountChange(index, e.target.value)}
                       onBlur={(e) => {
                         if (e.target.value === '') {
-                          updateProduct(index, "discountPercentage", 0);
+                          updateProduct(index, "discountPercentage", 100);
                         }
                       }}
                       onInput={(e) => {
@@ -257,7 +333,7 @@ export const Products = () => {
                       variant="destructive"
                       size="sm"
                       onClick={() => removeProduct(index)}
-                      className="h-10 w-10 p-0"
+                      className="h-10 w-10 p-0 cursor-pointer bg-black"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

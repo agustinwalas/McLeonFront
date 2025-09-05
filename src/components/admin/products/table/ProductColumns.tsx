@@ -1,6 +1,8 @@
 import { IProductPopulated } from "@/types";
+import { UnitOfMeasure } from "@/types/product";
 import { ColumnDef } from "@tanstack/react-table";
 import { ProductActions } from "./ProductActions";
+import { getUnitOfMeasureShort } from "@/utils/unitOfMeasure";
 
 export const productColumns: ColumnDef<IProductPopulated>[] = [
   {
@@ -22,11 +24,40 @@ export const productColumns: ColumnDef<IProductPopulated>[] = [
   {
     accessorKey: "category",
     header: "Categoría",
-    cell: ({ row }) => (
-      <span>
-        {typeof row.original.category === 'object' ? row.original.category.name : row.original.category}
-      </span>
-    ),
+    cell: ({ row }) => {
+      const category = row.original.category;
+      
+      // ✅ Si no hay categoría
+      if (!category) {
+        return <span className="text-gray-500 italic">Sin categoría</span>;
+      }
+      
+      // ✅ Si category es string (ID sin poblar)
+      if (typeof category === 'string') {
+        return <span className="text-gray-500 italic">Sin categoría</span>;
+      }
+      
+      // ✅ Manejar estructura anidada extraña donde _id contiene el objeto real
+      if (category._id && typeof category._id === 'object' && (category._id as any).name) {
+        return (
+          <span>
+            {(category._id as any).name}
+          </span>
+        );
+      }
+      
+      // ✅ Estructura normal de categoría
+      if (category.name && category.name !== "Categoría no encontrada") {
+        return (
+          <span>
+            {category.name}
+          </span>
+        );
+      }
+      
+      // ✅ Fallback para cualquier otro caso
+      return <span className="text-gray-500 italic">Sin categoría</span>;
+    },
   },
   {
     accessorKey: "wholesalePrice",
@@ -52,15 +83,18 @@ export const productColumns: ColumnDef<IProductPopulated>[] = [
     cell: ({ row }) => {
       const stock = row.original.currentStock;
       const minStock = row.original.minimumStock;
+      const unit = row.original.unitOfMeasure || UnitOfMeasure.UNIDAD; 
       const isLowStock = stock <= minStock;
 
       return (
-        <span>
-          {stock}
+        <div>
+          <span>
+            {stock} {getUnitOfMeasureShort(unit)} {/* ✅ Mostrar stock con unidad abreviada */}
+          </span>
           {isLowStock && (
-            <span> (¡Bajo!)</span>
+            <span className="text-red-500 text-sm block"> ¡Bajo!</span>
           )}
-        </span>
+        </div>
       );
     },
   },

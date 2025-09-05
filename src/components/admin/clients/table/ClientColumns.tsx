@@ -9,9 +9,9 @@ export const clientColumns: ColumnDef<IClient>[] = [
     cell: ({ row }) => <span>{row.original.name}</span>,
   },
   {
-    accessorKey: "cuit",
-    header: "CUIT",
-    cell: ({ row }) => <span>{row.original.cuit}</span>,
+    accessorKey: "DocumentNumber",
+    header: "Documento",
+    cell: ({ row }) => <span>{row.original.documentNumber}</span>,
   },
   {
     accessorKey: "taxCondition",
@@ -20,15 +20,6 @@ export const clientColumns: ColumnDef<IClient>[] = [
       <div>
         {row.original.taxCondition}
       </div>
-    ),
-  },
-  {
-    accessorKey: "address",
-    header: "Dirección",
-    cell: ({ row }) => (
-      <span>
-        {row.original.address}
-      </span>
     ),
   },
   {

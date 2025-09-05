@@ -5,7 +5,6 @@ import {
   Truck,
   Users,
   FileText,
-  SettingsIcon,
 } from "lucide-react";
 
 import {
@@ -54,11 +53,6 @@ const items = [
     title: "AFIP",
     url: "/admin/afip",
     icon: FileText,
-  },
-  {
-    title: "Configuración",
-    url: "/admin/configuracion",
-    icon: SettingsIcon,
   },
 ];
 

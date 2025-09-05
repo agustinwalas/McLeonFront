@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IProductPopulated, ISupplier } from "@/types";
+import { UnitOfMeasure } from "@/types/product";
+import { getUnitOfMeasureShort } from "@/utils/unitOfMeasure";
 
 interface ProductDetailsCardProps {
   product: IProductPopulated;
@@ -7,6 +9,11 @@ interface ProductDetailsCardProps {
 }
 
 export function ProductDetailsCard({ product, suppliers = [] }: ProductDetailsCardProps) {
+  // ✅ Función para obtener la unidad de medida con fallback
+  const getUnit = () => {
+    return product.unitOfMeasure || UnitOfMeasure.UNIDAD;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -44,18 +51,22 @@ export function ProductDetailsCard({ product, suppliers = [] }: ProductDetailsCa
 
           <div>
             <h3 className="font-medium text-gray-900">Stock Actual</h3>
-            <p className="text-gray-600">{product.currentStock} unidades</p>
+            <p className="text-gray-600">
+              {product.currentStock} {getUnitOfMeasureShort(getUnit())}
+            </p>
           </div>
 
           <div>
             <h3 className="font-medium text-gray-900">Stock Mínimo</h3>
-            <p className="text-gray-600">{product.minimumStock} unidades</p>
+            <p className="text-gray-600">
+              {product.minimumStock} {getUnitOfMeasureShort(getUnit())}
+            </p>
           </div>
 
           {product.currentStock <= product.minimumStock && (
             <div>
               <h3 className="font-medium text-gray-900">Estado del Stock</h3>
-              <p className="text-gray-600">Stock bajo - Producto por debajo del mínimo</p>
+              <p className="text-red-600 font-medium">⚠️ Stock bajo - Producto por debajo del mínimo</p>
             </div>
           )}
         </div>

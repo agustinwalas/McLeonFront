@@ -7,6 +7,8 @@ import {
 } from "@/types";
 import { AxiosError } from "axios";
 
+type AssociatedSupplier = ISupplier | string;
+
 interface SupplierStoreState {
   // State
   suppliers: ISupplier[];
@@ -24,6 +26,8 @@ interface SupplierStoreState {
   clearError: () => void;
   setLoading: (loading: boolean) => void;
   reset: () => void;
+  // ✅ Función utility con tipo específico
+  extractSupplierIds: (associatedSuppliers: AssociatedSupplier[]) => string[];
 }
 
 export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
@@ -152,6 +156,33 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
   
   setLoading: (loading: boolean) => set({ loading }),
 
+  // ✅ Función con tipos específicos
+  extractSupplierIds: (associatedSuppliers: AssociatedSupplier[]): string[] => {
+    if (!associatedSuppliers || !Array.isArray(associatedSuppliers)) {
+      console.log("⚠️ No hay proveedores asociados o no es array");
+      return [];
+    }
+
+    const ids = associatedSuppliers
+      .map((supplier: AssociatedSupplier): string | null => {
+        // ✅ Si es un objeto ISupplier con _id
+        if (typeof supplier === 'object' && supplier !== null && '_id' in supplier) {
+          return supplier._id;
+        }
+        // ✅ Si ya es un string (ID)
+        if (typeof supplier === 'string') {
+          return supplier;
+        }
+        // ✅ Casos inválidos
+        console.warn("⚠️ Proveedor asociado inválido:", supplier);
+        return null;
+      })
+      .filter((id): id is string => id !== null); // ✅ Type guard para filtrar nulls
+
+    console.log("✅ IDs extraídos de proveedores:", ids);
+    return ids;
+  },
+
   reset: () => set({
     suppliers: [],
     supplier: null,
@@ -160,3 +191,6 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
     isInitialized: false,
   }),
 }));
+
+// ✅ Exportar el tipo para uso en otros archivos
+export type { AssociatedSupplier };

@@ -1,4 +1,5 @@
 // src/types/sale.ts
+import { IAfipInvoice, IAfipData } from './afip';
 
 export enum PaymentMethod {
   CASH = "EFECTIVO",
@@ -17,7 +18,7 @@ export enum PriceType {
 
 export enum DeliveryType {
   PICKUP = "RETIRO_LOCAL",
-  DELIVERY = "ENVIO"
+  DELIVERY = "DELIVERY"
 }
 
 export interface ISaleProduct {
@@ -38,34 +39,6 @@ export interface IDeliveryAddress {
   additionalInfo?: string;
 }
 
-export interface IAfipInvoice {
-  invoiceType?: string; // Tipo de comprobante (Factura A, B, C, etc.)
-  invoiceNumber?: string;
-  cae?: string; // Código de Autorización Electrónico
-  caeExpirationDate?: Date;
-  invoiceDate?: Date;
-  isElectronic: boolean;
-}
-
-// ✅ Nueva interface para datos AFIP (compatible con backend)
-export interface IAfipData {
-  cuit: string;
-  puntoVenta: number;
-  tipoComprobante: number;
-  numeroComprobante?: number;
-  cae?: string;
-  vencimientoCae?: string;
-  fechaEmision?: string;
-  concepto: number;
-  documentoTipo: number;
-  documentoNumero: string;
-  importeTotal: number;
-  importeNeto: number;
-  importeIva: number;
-  estado?: 'PENDIENTE' | 'AUTORIZADA' | 'RECHAZADA';
-  observaciones?: string;
-}
-
 export interface ISale {
   _id?: string;
   saleNumber: string; // Número interno de venta
@@ -80,7 +53,7 @@ export interface ISale {
   deliveryAddress?: IDeliveryAddress;
   deliveryFee?: number;
   afipInvoice?: IAfipInvoice;
-  afipData?: IAfipData; // ✅ Solo agregué este campo
+  afipData?: IAfipData;
   notes?: string;
   saleDate: Date;
   deliveryDate?: Date;
@@ -109,7 +82,8 @@ export interface ISalePopulated extends Omit<ISale, 'user' | 'client' | 'product
   client: {
     _id: string;
     name: string;
-    cuit: string;
+    documentType: string;
+    documentNumber: string;
     taxCondition: string;
     address: string;
   };

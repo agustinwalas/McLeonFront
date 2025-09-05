@@ -1,50 +1,24 @@
-// components/admin/sales/sale/AfipSection.tsx
-import { useState } from "react";
+// components/admin/sales/sale/Af
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, CheckCircle, XCircle, Clock } from "lucide-react";
 import { ISalePopulated } from "@/types/sale";
-import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 interface AfipSectionProps {
   sale: ISalePopulated;
   onAfipGenerated: () => void;
 }
 
-export function AfipSection({ sale, onAfipGenerated }: AfipSectionProps) {
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const generateAfipInvoice = async () => {
-    setIsGenerating(true);
-    
-    try {
-      const response = await fetch(`/api/sales/${sale._id}/afip/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success('Comprobante AFIP generado correctamente');
-        onAfipGenerated();
-      } else {
-        toast.error(data.message || 'Error generando comprobante');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error conectando con AFIP');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+export function AfipSection({ sale }: AfipSectionProps) {
+  const navigate = useNavigate();
 
   const getStatusIcon = (estado: string) => {
     switch (estado) {
-      case 'AUTORIZADA':
+      case "AUTORIZADA":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'RECHAZADA':
+      case "RECHAZADA":
         return <XCircle className="h-4 w-4 text-red-500" />;
       default:
         return <Clock className="h-4 w-4 text-yellow-500" />;
@@ -53,10 +27,14 @@ export function AfipSection({ sale, onAfipGenerated }: AfipSectionProps) {
 
   const getInvoiceTypeName = (tipo: number) => {
     switch (tipo) {
-      case 1: return 'Factura A';
-      case 6: return 'Factura B';
-      case 11: return 'Factura C';
-      default: return `Tipo ${tipo}`;
+      case 1:
+        return "Factura A";
+      case 6:
+        return "Factura B";
+      case 11:
+        return "Factura C";
+      default:
+        return `Tipo ${tipo}`;
     }
   };
 
@@ -73,8 +51,14 @@ export function AfipSection({ sale, onAfipGenerated }: AfipSectionProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-medium">Estado:</span>
-              <Badge variant={sale.afipData.estado === 'AUTORIZADA' ? 'default' : 'destructive'}>
-                {getStatusIcon(sale.afipData.estado || 'PENDIENTE')}
+              <Badge
+                variant={
+                  sale.afipData.estado === "AUTORIZADA"
+                    ? "default"
+                    : "destructive"
+                }
+              >
+                {getStatusIcon(sale.afipData.estado || "PENDIENTE")}
                 {sale.afipData.estado}
               </Badge>
             </div>
@@ -82,13 +66,15 @@ export function AfipSection({ sale, onAfipGenerated }: AfipSectionProps) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-gray-600">Tipo:</p>
-                <p className="font-semibold">{getInvoiceTypeName(sale.afipData.tipoComprobante)}</p>
+                <p className="font-semibold">
+                  {getInvoiceTypeName(sale.afipData.tipoComprobante)}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Número:</p>
                 <p className="font-semibold">
-                  {String(sale.afipData.puntoVenta).padStart(4, '0')}-
-                  {String(sale.afipData.numeroComprobante).padStart(8, '0')}
+                  {String(sale.afipData.puntoVenta).padStart(4, "0")}-
+                  {String(sale.afipData.numeroComprobante).padStart(8, "0")}
                 </p>
               </div>
               <div>
@@ -111,12 +97,13 @@ export function AfipSection({ sale, onAfipGenerated }: AfipSectionProps) {
         ) : (
           <div className="text-center space-y-4">
             <p className="text-gray-600">No se ha generado comprobante AFIP</p>
-            <Button 
-              onClick={generateAfipInvoice}
-              disabled={isGenerating}
-              className="w-full"
+            <Button
+              className="btn btn-primary"
+              onClick={() =>
+                navigate(`/admin/ventas/nuevo-comprobante/${sale._id}`)
+              }
             >
-              {isGenerating ? 'Generando...' : 'Generar Comprobante AFIP'}
+              Generar Comprobante AFIP
             </Button>
           </div>
         )}
