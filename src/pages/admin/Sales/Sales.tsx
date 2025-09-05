@@ -35,7 +35,7 @@ export const Sales = () => {
     <>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-semibold">Ventas</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap gap-y-2">
           {/* ✅ Componente DateFilter */}
           <DateFilter
             selectedDate={selectedDate}
