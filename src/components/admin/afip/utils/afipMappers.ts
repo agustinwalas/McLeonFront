@@ -65,12 +65,28 @@ export const calculateIvaFromSale = (sale: ISalePopulated): IvaData[] => {
   return ivaItems;
 };
 
+// ✅ Función para mapear taxCondition a código AFIP
+const mapTaxConditionToAfipCode = (taxCondition: string): number => {
+  switch (taxCondition?.toLowerCase()) {
+    case 'responsable inscripto':
+      return 1;
+    case 'exento':
+      return 4;
+    case 'consumidor final':
+      return 5;
+    case 'responsable monotributo':
+      return 6;
+    default:
+      return 5; // Consumidor Final por defecto
+  }
+};
+
 // ✅ Función para popular datos desde la venta
 export const populateFromSale = (sale: ISalePopulated): Partial<VoucherFormData> => {
   console.log("🔄 Populando formulario con venta:", sale.saleNumber);
 
   const client = sale.client;
-  const cbteTipo = getComprobanteType(client.afipCondicionIva || 5);
+  const cbteTipo = getComprobanteType(mapTaxConditionToAfipCode(client.taxCondition));
   const docTipo = getDocTipo(client.documentType || 'DNI');
   const ivaData = calculateIvaFromSale(sale);
 
@@ -86,7 +102,7 @@ export const populateFromSale = (sale: ISalePopulated): Partial<VoucherFormData>
 
     // Receptor desde el cliente
     docTipo: docTipo,
-    docNro: client.documentNumber || client.cuit || "0",
+    docNro: client.documentNumber || "0",
     nombreReceptor: client.name,
 
     // Fecha actual

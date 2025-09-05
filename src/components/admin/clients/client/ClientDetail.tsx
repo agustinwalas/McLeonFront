@@ -20,7 +20,7 @@ export default function ClientDetail() {
   
   const { 
     sales, 
-    loading: salesLoading, 
+    isLoading: salesLoading, 
     fetchSales 
   } = useSalesStore();
 

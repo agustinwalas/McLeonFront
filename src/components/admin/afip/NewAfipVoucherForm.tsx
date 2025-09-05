@@ -132,7 +132,7 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
               <p><strong>Cliente:</strong> {sale.client.name}</p>
               <p><strong>Total:</strong> ${sale.totalAmount}</p>
               <p><strong>Condición IVA:</strong> {sale.client.taxCondition}</p>
-              <p><strong>Cuit:</strong>{sale.client.cuit}</p>
+              <p><strong>Documento:</strong>{sale.client.documentNumber}</p>
             </div>
           </div>
         )}

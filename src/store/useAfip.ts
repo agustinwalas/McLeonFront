@@ -38,7 +38,7 @@ interface AfipStoreState {
   reset: () => void;
 }
 
-export const useAfipStore = create<AfipStoreState>((set, get) => ({
+export const useAfipStore = create<AfipStoreState>((set) => ({
   // Initial
   loading: false,
   error: null,

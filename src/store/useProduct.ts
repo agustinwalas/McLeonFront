@@ -108,15 +108,35 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
       // El backend devuelve el producto con category como ID
       // Necesitamos poblarlo localmente
       const { useCategoryStore } = await import('./useCategory');
+      const { useSupplierStore } = await import('./useSupplier');
       const categoryStore = useCategoryStore.getState();
+      const supplierStore = useSupplierStore.getState();
       
       // Asegurarse de que las categorías estén cargadas
       if (!categoryStore.isInitialized) {
         await categoryStore.fetchCategories();
       }
       
+      // Asegurarse de que los proveedores estén cargados
+      if (!supplierStore.isInitialized) {
+        await supplierStore.fetchSuppliers();
+      }
+      
       const categories = useCategoryStore.getState().categories;
+      const suppliers = useSupplierStore.getState().suppliers;
       const category = categories.find(cat => cat._id === response.data.category);
+      
+      // Poblar los proveedores asociados
+      const populatedSuppliers = (response.data.associatedSuppliers as string[]).map(supplierId => {
+        const supplier = suppliers.find(sup => sup._id === supplierId);
+        return supplier || {
+          _id: supplierId,
+          name: 'Proveedor no encontrado',
+          phone: '',
+          email: '',
+          location: ''
+        };
+      });
       
       const populatedProduct: IProductPopulated = {
         ...response.data,
@@ -124,7 +144,8 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
           _id: response.data.category as string,
           name: 'Categoría no encontrada',
           active: true
-        }
+        },
+        associatedSuppliers: populatedSuppliers
       };
       
       const currentProducts = get().products;
@@ -150,15 +171,35 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
       // El backend devuelve el producto con category como ID
       // Necesitamos poblarlo localmente
       const { useCategoryStore } = await import('./useCategory');
+      const { useSupplierStore } = await import('./useSupplier');
       const categoryStore = useCategoryStore.getState();
+      const supplierStore = useSupplierStore.getState();
       
       // Asegurarse de que las categorías estén cargadas
       if (!categoryStore.isInitialized) {
         await categoryStore.fetchCategories();
       }
       
+      // Asegurarse de que los proveedores estén cargados
+      if (!supplierStore.isInitialized) {
+        await supplierStore.fetchSuppliers();
+      }
+      
       const categories = useCategoryStore.getState().categories;
+      const suppliers = useSupplierStore.getState().suppliers;
       const category = categories.find(cat => cat._id === response.data.category);
+      
+      // Poblar los proveedores asociados
+      const populatedSuppliers = (response.data.associatedSuppliers as string[]).map(supplierId => {
+        const supplier = suppliers.find(sup => sup._id === supplierId);
+        return supplier || {
+          _id: supplierId,
+          name: 'Proveedor no encontrado',
+          phone: '',
+          email: '',
+          location: ''
+        };
+      });
       
       const populatedProduct: IProductPopulated = {
         ...response.data,
@@ -166,7 +207,8 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
           _id: response.data.category as string,
           name: 'Categoría no encontrada',
           active: true
-        }
+        },
+        associatedSuppliers: populatedSuppliers
       };
       
       const currentProducts = get().products;
