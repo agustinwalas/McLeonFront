@@ -33,9 +33,9 @@ export const Sales = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
         <h1 className="text-xl font-semibold">Ventas</h1>
-        <div className="flex gap-2 flex-wrap gap-y-2">
+        <div className="flex flex-wrap gap-2">
           {/* ✅ Componente DateFilter */}
           <DateFilter
             selectedDate={selectedDate}

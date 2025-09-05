@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 export const EditSaleHeader = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
   return (
     <div className="flex items-center justify-between gap-4 mb-6">
-      <h1 className="text-xl font-semibold">Editar Venta</h1>
-       <Button onClick={() => navigate("/admin/ventas")}>
-        Volver a Ventas
-      </Button>
+      <Link to={`/admin/ventas/editar/${id}`}>
+        <h1 className="text-xl font-semibold">Editar Venta</h1>
+      </Link>
+
+      <Button onClick={() => navigate("/admin/ventas")}>Volver a Ventas</Button>
     </div>
   );
 };
-
