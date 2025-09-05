@@ -97,7 +97,7 @@ export function SaleHeader({ sale }: SaleHeaderProps) {
           Eliminar Venta
         </Button>
         <Button>
-          <Link to={`/admin/ventas/${sale._id}`}>Editar Venta</Link>
+          <Link to={`/admin/ventas/editar/${sale._id}`}>Editar Venta</Link>
         </Button>
         <Button>
           <Link to="/admin/ventas">Volver a ventas</Link>
