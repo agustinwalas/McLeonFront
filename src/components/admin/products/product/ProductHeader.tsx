@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { IProductPopulated } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -12,25 +11,27 @@ interface ProductHeaderProps {
 export function ProductHeader({ product }: ProductHeaderProps) {
   const { openSheet } = useSheetStore();
   return (
-    <div className="flex gap-2 flex-wrap justify-end">
+    <div className="flex gap-2 flex-wrap justify-between">
       <div>
         <h1 className="text-3xl font-bold">{product.name}</h1>
         <p className="text-gray-500">Código: {product.productCode}</p>
       </div>
-      <Button
-        onClick={() =>
-          openSheet(
-            "Editar Producto",
-            "Modifica los datos del producto",
-            <EditProductForm product={product} onSuccess={() => {}} />
-          )
-        }
-      >
-        Editar Producto
-      </Button>
-      <Button asChild variant="outline">
-        <Link to="/admin/productos">Volver a productos</Link>
-      </Button>
+      <div className="flex flex-wrap justify-end">
+        <Button
+          onClick={() =>
+            openSheet(
+              "Editar Producto",
+              "Modifica los datos del producto",
+              <EditProductForm product={product} onSuccess={() => {}} />
+            )
+          }
+        >
+          Editar Producto
+        </Button>
+        <Button asChild variant="outline">
+          <Link to="/admin/productos">Volver a productos</Link>
+        </Button>
+      </div>
     </div>
   );
 }
