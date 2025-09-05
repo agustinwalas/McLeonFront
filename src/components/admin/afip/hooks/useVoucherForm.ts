@@ -13,8 +13,8 @@ interface UseVoucherFormProps {
 
 export function useVoucherForm({ sale, defaults }: UseVoucherFormProps) {
   // ✅ Combinar defaults con datos de la venta
-  const getInitialValues = (): Partial<VoucherFormData> => {
-    let initialValues: Partial<VoucherFormData> = {
+  const getInitialValues = (): VoucherFormData => {
+    let initialValues: VoucherFormData = {
       emisorCuit: "",
       ptoVta: 1,
       cbteTipo: 6,
@@ -48,7 +48,7 @@ export function useVoucherForm({ sale, defaults }: UseVoucherFormProps) {
   };
 
   const form = useForm<VoucherFormData>({
-    resolver: zodResolver(voucherSchema),
+    resolver: zodResolver(voucherSchema) as any,
     defaultValues: getInitialValues(),
   });
 
