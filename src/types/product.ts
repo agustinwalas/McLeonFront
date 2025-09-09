@@ -12,6 +12,7 @@ export interface IProduct {
   associatedSuppliers: string[];
   image?: string;
   category: string;
+  purchaseCost: number;
   wholesalePrice: number;
   retailPrice: number;
   currentStock: number;
@@ -40,6 +41,7 @@ export interface ProductCreateInput {
   productCode: string;
   name: string;
   category?: string;
+  purchaseCost: number;
   wholesalePrice: number;
   retailPrice: number;
   currentStock: number;
@@ -53,6 +55,7 @@ export interface ProductUpdateInput {
   productCode?: string;
   name?: string;
   category?: string;
+  purchaseCost?: number;
   wholesalePrice?: number;
   retailPrice?: number;
   currentStock?: number;

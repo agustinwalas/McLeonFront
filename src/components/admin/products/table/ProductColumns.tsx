@@ -60,6 +60,15 @@ export const productColumns: ColumnDef<IProductPopulated>[] = [
     },
   },
   {
+    accessorKey: "purchaseCost",
+    header: "Precio Costo",
+    cell: ({ row }) => (
+      <span>
+        ${row.original.purchaseCost.toFixed(2)}
+      </span>
+    ),
+  },
+  {
     accessorKey: "wholesalePrice",
     header: "Precio Mayorista",
     cell: ({ row }) => (

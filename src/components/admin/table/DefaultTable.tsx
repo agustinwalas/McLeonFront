@@ -19,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import TableSearchBar from "./TableSearchBar";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
 
 type AdminTableProps<TData> = {
   columns: ColumnDef<TData, unknown>[];
@@ -50,14 +52,65 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
     globalFilterFn: "includesString",
   });
 
+  // Agrego estilos para ocultar columnas con la clase no-print al imprimir
+  const printStyle = `
+    <style>
+      @media print {
+        .no-print { display: none !important; }
+      }
+    </style>
+  `;
+
+  // Función para imprimir solo la tabla visible
+  const handlePrint = () => {
+    const printContent = document.getElementById("print-table");
+    if (!printContent) return;
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.write(`
+      <html>
+        <head>
+          <title>Imprimir tabla</title>
+          <style>
+            body { font-family: sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #ccc; padding: 8px; }
+            th { background: #f3f3f3; }
+          </style>
+          ${printStyle}
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
+    win.close();
+  };
+
   return (
     <div className="w-full">
-      <TableSearchBar
-        globalFilter={globalFilter}
-        setGlobalFilter={setGlobalFilter}
-      />
-
-      <div className="rounded-md border border-gray-200 overflow-hidden shadow-sm mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <TableSearchBar
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={handlePrint}
+          title="Imprimir tabla"
+          className="ml-2"
+        >
+          <Printer size={18} />
+        </Button>
+      </div>
+      <div
+        className="rounded-md border border-gray-200 overflow-hidden shadow-sm mt-4"
+        id="print-table"
+      >
         <Table>
           <TableHeader className="bg-gray-100">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -65,7 +118,9 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-left px-4 py-2 text-sm font-medium text-gray-700"
+                    className={`text-left px-4 py-2 text-sm font-medium text-gray-700${
+                      header.column.id === "actions" ? " no-print" : ""
+                    }`}
                   >
                     {header.isPlaceholder
                       ? null
@@ -88,7 +143,9 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="px-4 py-2 text-sm text-gray-800"
+                      className={`px-4 py-2 text-sm text-gray-800${
+                        cell.column.id === "actions" ? " no-print" : ""
+                      }`}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

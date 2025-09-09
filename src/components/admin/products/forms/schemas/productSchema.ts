@@ -5,6 +5,9 @@ export const productFormSchema = z.object({
   productCode: z.string().min(1, { message: "El código es obligatorio." }),
   name: z.string().min(1, { message: "El nombre es obligatorio." }),
   category: z.string(),
+  purchaseCost: z.coerce
+    .number()
+    .min(0, { message: "El precio de costo debe ser un número positivo." }),
   wholesalePrice: z.coerce
     .number()
     .min(0, { message: "El precio mayorista debe ser un número positivo." }),

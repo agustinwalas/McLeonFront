@@ -13,15 +13,21 @@ export const Sales = () => {
   // ✅ Usar el store para hacer los fetches
   const { fetchSales, fetchSalesByDate } = useSalesStore();
 
+  useEffect(() => {
+    // Al cargar la página, usar la fecha de hoy por defecto
+    const today = new Date();
+    const dateString = format(today, 'yyyy-MM-dd');
+    setSelectedDate(today);
+    fetchSalesByDate(dateString);
+  }, []);
+
   // ✅ useEffect que se ejecuta cuando cambia selectedDate
   useEffect(() => {
     if (selectedDate) {
-      // ✅ Si hay fecha seleccionada, buscar ventas de ese día
       const dateString = format(selectedDate, 'yyyy-MM-dd');
       console.log("Cargando ventas del día:", dateString);
       fetchSalesByDate(dateString);
     } else {
-      // ✅ Si no hay fecha, traer todas las ventas
       console.log("Cargando todas las ventas");
       fetchSales();
     }
