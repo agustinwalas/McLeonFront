@@ -1,34 +1,23 @@
 // src/components/admin/sales/table/SaleActions.tsx
-import { useState } from "react";
 import { Eye, Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ISalePopulated } from "@/types/sale";
 import useSalesStore from "@/store/useSales";
 import { useDialogStore } from "@/store/useDialog";
-import { toast } from "sonner";
 
 interface SaleActionsProps {
   sale: ISalePopulated;
 }
 
 export function SaleActions({ sale }: SaleActionsProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
   const { deleteSale } = useSalesStore();
   const { openDialog, closeDialog } = useDialogStore();
 
   const handleDelete = () => {
     const confirmDelete = async () => {
-      setIsDeleting(true);
-      try {
-        await deleteSale(sale._id!);
-        toast.success("Venta eliminada correctamente");
-        closeDialog();
-      } catch {
-        toast.error("Error al eliminar la venta");
-      } finally {
-        setIsDeleting(false);
-      }
+      deleteSale(sale._id!);
+      closeDialog();
     };
 
     openDialog({
@@ -42,9 +31,8 @@ export function SaleActions({ sale }: SaleActionsProps) {
           <Button 
             variant="destructive" 
             onClick={confirmDelete}
-            disabled={isDeleting}
           >
-            {isDeleting ? "Eliminando..." : "Eliminar"}
+            Eliminar
           </Button>
         </div>
       ),
@@ -78,7 +66,6 @@ export function SaleActions({ sale }: SaleActionsProps) {
         size="sm"
         onClick={handleDelete}
         className="h-8 w-8 p-0"
-        disabled={isDeleting}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

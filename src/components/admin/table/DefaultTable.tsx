@@ -92,7 +92,7 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 no-print">
         <TableSearchBar
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
@@ -102,7 +102,7 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
           variant="outline"
           onClick={handlePrint}
           title="Imprimir tabla"
-          className="ml-2"
+          className="ml-2 no-print"
         >
           <Printer size={18} />
         </Button>

@@ -29,7 +29,6 @@ export const EditSaleForm = () => {
   // Load sale for editing on mount
   useEffect(() => {
     if (id) {
-      console.log("🔍 Cargando venta para editar:", id);
       loadSaleForEdit(id);
     }
 

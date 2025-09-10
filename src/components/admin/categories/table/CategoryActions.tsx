@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useSheetStore } from "@/store/useSheet";
 import { ICategory } from "@/types";
 import { useDialogStore } from "@/store/useDialog";
@@ -8,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
 export const CategoryActions = ({ category }: { category: ICategory }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const { openSheet, closeSheet } = useSheetStore();
   const { deleteCategory } = useCategoryStore();
   const { openDialog, closeDialog } = useDialogStore();
@@ -23,15 +21,8 @@ export const CategoryActions = ({ category }: { category: ICategory }) => {
 
   const handleDelete = () => {
     const confirmDelete = async () => {
-      setIsDeleting(true);
-      try {
-        await deleteCategory(category._id);
-        closeDialog();
-      } catch (error) {
-        console.error("Error al eliminar categoría:", error);
-      } finally {
-        setIsDeleting(false);
-      }
+      deleteCategory(category._id);
+      closeDialog();
     };
 
     openDialog({
@@ -42,12 +33,8 @@ export const CategoryActions = ({ category }: { category: ICategory }) => {
           <Button variant="outline" onClick={closeDialog}>
             Cancelar
           </Button>
-          <Button 
-            variant="destructive" 
-            onClick={confirmDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Eliminando..." : "Eliminar"}
+          <Button variant="destructive" onClick={confirmDelete}>
+            Eliminar
           </Button>
         </div>
       ),
@@ -69,7 +56,6 @@ export const CategoryActions = ({ category }: { category: ICategory }) => {
         size="sm"
         onClick={handleDelete}
         className="h-8 w-8 p-0"
-        disabled={isDeleting}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

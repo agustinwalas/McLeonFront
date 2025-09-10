@@ -8,6 +8,7 @@ import {
   QueryParams 
 } from "@/types";
 import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 interface ProductStoreState {
   // State
@@ -153,11 +154,35 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
         products: [...currentProducts, populatedProduct],
         loading: false 
       });
+
+      // ✅ Mostrar toast de éxito
+      toast.success("Producto creado exitosamente");
     } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string }>;
+      const axiosError = error as AxiosError<{ message?: string; error?: any }>;
       console.error("Error al crear producto:", error);
+      
+      let errorMessage = "Error al crear producto";
+      
+      // ✅ Extraer mensaje específico del error
+      if (axiosError.response?.data) {
+        const errorData = axiosError.response.data;
+        
+        // Manejar error de código duplicado
+        if (errorData.error?.code === 11000) {
+          const duplicateKey = errorData.error.keyValue;
+          if (duplicateKey?.productCode) {
+            errorMessage = `Ya existe un producto con el código "${duplicateKey.productCode}"`;
+          }
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      }
+
+      // ✅ Mostrar toast de error
+      toast.error(errorMessage);
+      
       set({ 
-        error: axiosError.response?.data?.message || "Error al crear producto",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -220,11 +245,35 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
         products: updatedProducts,
         loading: false 
       });
+
+      // ✅ Mostrar toast de éxito
+      toast.success("Producto actualizado exitosamente");
     } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string }>;
+      const axiosError = error as AxiosError<{ message?: string; error?: any }>;
       console.error("Error al actualizar producto:", error);
+      
+      let errorMessage = "Error al actualizar producto";
+      
+      // ✅ Extraer mensaje específico del error
+      if (axiosError.response?.data) {
+        const errorData = axiosError.response.data;
+        
+        // Manejar error de código duplicado
+        if (errorData.error?.code === 11000) {
+          const duplicateKey = errorData.error.keyValue;
+          if (duplicateKey?.productCode) {
+            errorMessage = `Ya existe un producto con el código "${duplicateKey.productCode}"`;
+          }
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      }
+
+      // ✅ Mostrar toast de error
+      toast.error(errorMessage);
+      
       set({ 
-        error: axiosError.response?.data?.message || "Error al actualizar producto",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -243,11 +292,20 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
         products: filteredProducts,
         loading: false 
       });
+
+      // ✅ Mostrar toast de éxito
+      toast.success("Producto eliminado exitosamente");
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al eliminar producto:", error);
+      
+      const errorMessage = axiosError.response?.data?.message || "Error al eliminar producto";
+      
+      // ✅ Mostrar toast de error
+      toast.error(errorMessage);
+      
       set({ 
-        error: axiosError.response?.data?.message || "Error al eliminar producto",
+        error: errorMessage,
         loading: false 
       });
     }

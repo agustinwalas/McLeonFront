@@ -6,6 +6,7 @@ import {
   SupplierUpdateInput
 } from "@/types";
 import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 type AssociatedSupplier = ISupplier | string;
 
@@ -56,8 +57,10 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al obtener proveedores:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al obtener proveedores";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al obtener proveedores",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -94,11 +97,15 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
         suppliers: [...currentSuppliers, response.data],
         loading: false 
       });
+      
+      toast.success(`Proveedor "${response.data.name}" creado exitosamente`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al crear proveedor:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al crear proveedor";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al crear proveedor",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -119,11 +126,15 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
         suppliers: updatedSuppliers,
         loading: false 
       });
+      
+      toast.success(`Proveedor "${response.data.name}" actualizado exitosamente`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al actualizar proveedor:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al actualizar proveedor";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al actualizar proveedor",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -132,6 +143,10 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
   deleteSupplier: async (id: string) => {
     set({ loading: true, error: null });
     try {
+      // Obtener el nombre del proveedor antes de eliminarlo para el toast
+      const supplierToDelete = get().suppliers.find(supplier => supplier._id === id);
+      const supplierName = supplierToDelete?.name || "Proveedor";
+      
       await api.delete(`/suppliers/${id}`);
       
       // El backend confirma la eliminación, remover del estado
@@ -142,11 +157,15 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
         suppliers: filteredSuppliers,
         loading: false 
       });
+      
+      toast.success(`Proveedor "${supplierName}" eliminado exitosamente`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al eliminar proveedor:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al eliminar proveedor";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al eliminar proveedor",
+        error: errorMessage,
         loading: false 
       });
     }

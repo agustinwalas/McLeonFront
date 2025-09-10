@@ -6,6 +6,7 @@ import {
   CategoryUpdateInput
 } from "@/types";
 import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 interface CategoryStoreState {
   // State
@@ -52,8 +53,10 @@ export const useCategoryStore = create<CategoryStoreState>((set, get) => ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al obtener categorías:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al obtener categorías";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al obtener categorías",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -90,11 +93,15 @@ export const useCategoryStore = create<CategoryStoreState>((set, get) => ({
         categories: [...currentCategories, response.data],
         loading: false 
       });
+      
+      toast.success(`Categoría "${response.data.name}" creada exitosamente`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al crear categoría:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al crear categoría";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al crear categoría",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -115,11 +122,15 @@ export const useCategoryStore = create<CategoryStoreState>((set, get) => ({
         categories: updatedCategories,
         loading: false 
       });
+      
+      toast.success(`Categoría "${response.data.name}" actualizada exitosamente`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al actualizar categoría:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al actualizar categoría";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al actualizar categoría",
+        error: errorMessage,
         loading: false 
       });
     }
@@ -128,6 +139,10 @@ export const useCategoryStore = create<CategoryStoreState>((set, get) => ({
   deleteCategory: async (id: string) => {
     set({ loading: true, error: null });
     try {
+      // Obtener el nombre de la categoría antes de eliminarla para el toast
+      const categoryToDelete = get().categories.find(category => category._id === id);
+      const categoryName = categoryToDelete?.name || "Categoría";
+      
       await api.delete(`/categories/${id}`);
       
       // El backend confirma la eliminación, remover del estado
@@ -138,11 +153,15 @@ export const useCategoryStore = create<CategoryStoreState>((set, get) => ({
         categories: filteredCategories,
         loading: false 
       });
+      
+      toast.success(`Categoría "${categoryName}" eliminada exitosamente`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       console.error("Error al eliminar categoría:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al eliminar categoría";
+      toast.error(errorMessage);
       set({ 
-        error: axiosError.response?.data?.message || "Error al eliminar categoría",
+        error: errorMessage,
         loading: false 
       });
     }

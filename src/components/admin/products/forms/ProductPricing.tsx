@@ -36,15 +36,18 @@ export function ProductPricing({ form }: ProductPricingProps) {
 
   // Actualiza los precios cuando cambian purchaseCost o los márgenes
   const purchaseCost = form.watch("purchaseCost");
-  const IVA = 1.21;
-  const calcWholesale = Math.ceil(purchaseCost * wholesaleMargin * IVA);
-  const calcRetail = Math.ceil(purchaseCost * retailMargin * IVA);
 
   // Solo autocompleta si no fue editado manualmente
   useEffect(() => {
-    if (!wholesaleManual) form.setValue("wholesalePrice", calcWholesale);
-    if (!retailManual) form.setValue("retailPrice", calcRetail);
-  }, [purchaseCost, wholesaleMargin, retailMargin]);
+    if (purchaseCost) {
+      const IVA = 1.21;
+      const calcWholesale = Math.round((purchaseCost * wholesaleMargin * IVA) * 100) / 100;
+      const calcRetail = Math.round((purchaseCost * retailMargin * IVA) * 100) / 100;
+      
+      if (!wholesaleManual) form.setValue("wholesalePrice", calcWholesale);
+      if (!retailManual) form.setValue("retailPrice", calcRetail);
+    }
+  }, [purchaseCost, wholesaleMargin, retailMargin, wholesaleManual, retailManual, form]);
 
   return (
     <>

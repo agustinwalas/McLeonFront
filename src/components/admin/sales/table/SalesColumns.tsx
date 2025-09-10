@@ -76,9 +76,26 @@ export const salesColumns: ColumnDef<ISalePopulated>[] = [
   {
     accessorKey: "createdAt",
     header: "Fecha de Venta",
+    accessorFn: (row) => {
+      const dateValue = row.createdAt;
+      if (!dateValue) return "";
+      
+      const date = new Date(dateValue);
+      
+      // Retornar fecha y hora en formato legible para búsqueda
+      const dateStr = date.toLocaleDateString("es-AR");
+      const timeStr = date.toLocaleTimeString("es-AR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      
+      return `${dateStr} ${timeStr}`;
+    },
     cell: ({ row }) => {
-      const dateValue = row.getValue("createdAt");
-      const date = new Date(dateValue as string);
+      const dateValue = row.original.createdAt;
+      if (!dateValue) return <div>-</div>;
+      
+      const date = new Date(dateValue);
 
       return (
         <div>

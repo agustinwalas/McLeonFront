@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSheetStore } from "@/store/useSheet";
 import { ISupplier } from "@/types";
@@ -9,7 +8,6 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { EditSupplierForm } from "../forms/EditSupplierForm";
 
 export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const { openSheet, closeSheet } = useSheetStore();
   const { deleteSupplier } = useSupplierStore();
   const { openDialog, closeDialog } = useDialogStore();
@@ -24,15 +22,8 @@ export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
 
   const handleDelete = () => {
     const confirmDelete = async () => {
-      setIsDeleting(true);
-      try {
-        await deleteSupplier(supplier._id);
-        closeDialog();
-      } catch (error) {
-        console.error("Error al eliminar proveedor:", error);
-      } finally {
-        setIsDeleting(false);
-      }
+      await deleteSupplier(supplier._id);
+      closeDialog();
     };
 
     openDialog({
@@ -43,12 +34,8 @@ export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
           <Button variant="outline" onClick={closeDialog}>
             Cancelar
           </Button>
-          <Button 
-            variant="destructive" 
-            onClick={confirmDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Eliminando..." : "Eliminar"}
+          <Button variant="destructive" onClick={confirmDelete}>
+            Eliminar
           </Button>
         </div>
       ),
@@ -57,12 +44,7 @@ export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
 
   return (
     <div className="flex items-center space-x-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        asChild
-        className="h-8 w-8 p-0"
-      >
+      <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0">
         <Link to={`/admin/proveedores/${supplier._id}`}>
           <Eye className="h-4 w-4" />
         </Link>
@@ -80,7 +62,6 @@ export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
         size="sm"
         onClick={handleDelete}
         className="h-8 w-8 p-0"
-        disabled={isDeleting}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

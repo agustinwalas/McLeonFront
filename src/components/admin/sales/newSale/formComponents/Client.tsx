@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { useState, useEffect } from "react"; 
 import { cn } from "@/lib/utils";
 import { useSalesStore } from "@/store/useSales";
@@ -51,6 +51,11 @@ export const Client = () => {
     setOpen(false);
   };
 
+  // ✅ Helper function para resetear cliente
+  const handleClearClient = () => {
+    updateFormData("client", "");
+  };
+
   // Obtener cliente seleccionado
   const selectedClient = clients.find(
     (client) => client._id === formData.client
@@ -73,7 +78,18 @@ export const Client = () => {
       <CardContent>
         <div>
           <div className="flex items-center justify-between mb-0">
-            <label className="text-sm font-medium mb-2 block">Cliente</label>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium mb-2 block">Cliente</label>
+              {selectedClient && (
+                <button
+                  onClick={handleClearClient}
+                  className="mb-2 p-1 hover:bg-gray-200 rounded transition-colors duration-200"
+                  title="Quitar cliente seleccionado"
+                >
+                  <X className="h-3 w-3 text-gray-500 hover:text-red-500" />
+                </button>
+              )}
+            </div>
             <div
               className="text-xs font-medium mb-2 block cursor-pointer duration-200 hover:text-blue-600 text-blue-500"
               onClick={() =>

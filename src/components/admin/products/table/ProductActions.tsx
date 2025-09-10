@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSheetStore } from "@/store/useSheet";
 import { IProductPopulated } from "@/types";
@@ -7,10 +6,8 @@ import { useProductStore } from "@/store/useProduct.ts";
 import { EditProductForm } from "../forms/EditProductForm";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
 export const ProductActions = ({ product }: { product: IProductPopulated }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const { openSheet, closeSheet } = useSheetStore();
   const { deleteProduct } = useProductStore();
   const { openDialog, closeDialog } = useDialogStore();
@@ -25,16 +22,8 @@ export const ProductActions = ({ product }: { product: IProductPopulated }) => {
 
   const handleDelete = () => {
     const confirmDelete = async () => {
-      setIsDeleting(true);
-      try {
-        await deleteProduct(product._id);
-        toast.success("Producto eliminado correctamente"); 
-        closeDialog();
-      } catch (error) {
-        console.error("Error al eliminar producto:", error);
-      } finally {
-        setIsDeleting(false);
-      }
+      deleteProduct(product._id);
+      closeDialog();
     };
 
     openDialog({
@@ -48,9 +37,8 @@ export const ProductActions = ({ product }: { product: IProductPopulated }) => {
           <Button 
             variant="destructive" 
             onClick={confirmDelete}
-            disabled={isDeleting}
           >
-            {isDeleting ? "Eliminando..." : "Eliminar"}
+            Eliminar
           </Button>
         </div>
       ),
@@ -82,7 +70,6 @@ export const ProductActions = ({ product }: { product: IProductPopulated }) => {
         size="sm"
         onClick={handleDelete}
         className="h-8 w-8 p-0"
-        disabled={isDeleting}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

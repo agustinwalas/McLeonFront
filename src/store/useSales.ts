@@ -2,7 +2,8 @@
 import { create } from "zustand";
 import { ISalePopulated } from "@/types/sale";
 import api from "@/lib/axios";
-import useAuth from "./useAuth"; 
+import useAuth from "./useAuth";
+import { toast } from "sonner"; 
 
 interface SalesState {
   // Data
@@ -83,39 +84,43 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       set({ sales: response.data, isLoading: false });
     } catch (error: any) {
       console.error("❌ Error obteniendo ventas:", error);
-      set({ error: error.message, isLoading: false });
+      const errorMessage = error.response?.data?.message || error.message || "Error al obtener ventas";
+      toast.error(errorMessage);
+      set({ error: errorMessage, isLoading: false });
     }
   },
 
   fetchSalesByDate: async (date: string) => {
   set({ isLoading: true, error: null });
   try {
-    console.log("🔍 Obteniendo ventas del día:", date);
     const response = await api.get(`/sales/date/${date}`);
     
-    // ✅ Extraer solo el array de ventas, sin importar la estructura de respuesta
     const salesData = response.data.sales || response.data || [];
     
-    console.log("✅ Ventas del día obtenidas:", salesData.length);
     set({ sales: salesData, isLoading: false });
     
   } catch (error: any) {
     console.error("❌ Error obteniendo ventas por fecha:", error);
-    set({ error: error.message, isLoading: false });
+    const errorMessage = error.response?.data?.message || error.message || "Error al obtener ventas por fecha";
+    toast.error(errorMessage);
+    set({ error: errorMessage, isLoading: false });
   }
 },
 
   getSaleById: async (id: string) => {
+    set({ isLoading: true, error: null });
     try {
       console.log("🔍 Obteniendo venta por ID:", id);
       const response = await api.get(`/sales/${id}`);
       console.log("✅ Venta obtenida:", response.data.saleNumber);
       const sale = response.data;
-      set({ currentSale: sale });
+      set({ currentSale: sale, isLoading: false });
       return response.data;
     } catch (error: any) {
       console.error("❌ Error obteniendo venta:", error);
-      set({ error: error.message });
+      const errorMessage = error.response?.data?.message || error.message || "Error al obtener venta";
+      toast.error(errorMessage);
+      set({ error: errorMessage, isLoading: false, currentSale: null });
       return null;
     }
   },
@@ -131,10 +136,13 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       }));
 
       console.log("✅ Venta eliminada exitosamente");
+      toast.success("Venta eliminada exitosamente");
       return true;
     } catch (error: any) {
       console.error("❌ Error eliminando venta:", error);
-      set({ error: error.message });
+      const errorMessage = error.response?.data?.message || error.message || "Error al eliminar venta";
+      toast.error(errorMessage);
+      set({ error: errorMessage });
       return false;
     }
   },
@@ -303,6 +311,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       }));
 
       console.log("✅ Venta creada exitosamente:", newSale.saleNumber);
+      toast.success(`Venta ${newSale.saleNumber} creada exitosamente`);
       return true;
     } catch (error: any) {
       console.error("❌ Error creando venta:", error);
@@ -311,11 +320,12 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         response: error.response?.data,
         status: error.response?.status,
       });
+      
+      const errorMessage = error.response?.data?.message || error.message || "Error creando venta";
+      toast.error(errorMessage);
+      
       set({
-        error:
-          error.response?.data?.message ||
-          error.message ||
-          "Error creando venta",
+        error: errorMessage,
         isSubmitting: false,
       });
       return false;
@@ -503,6 +513,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       }));
 
       console.log("✅ Venta actualizada exitosamente:", updatedSale.saleNumber);
+      toast.success(`Venta ${updatedSale.saleNumber} actualizada exitosamente`);
       return true;
     } catch (error: any) {
       console.error("❌ Error actualizando venta:", error);
@@ -511,11 +522,12 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         response: error.response?.data,
         status: error.response?.status,
       });
+      
+      const errorMessage = error.response?.data?.message || error.message || "Error actualizando venta";
+      toast.error(errorMessage);
+      
       set({
-        error:
-          error.response?.data?.message ||
-          error.message ||
-          "Error actualizando venta",
+        error: errorMessage,
         isSubmitting: false,
       });
       return false;

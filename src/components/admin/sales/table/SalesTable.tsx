@@ -10,7 +10,6 @@ function SalesTable() {
   
   const { sales, isLoading, error } = useSalesStore();
 
-  // ✅ Corregido: isLoading en lugar de loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">

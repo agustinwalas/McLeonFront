@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { IClient, ClientCreateInput } from "@/types/client";
 import axios from "@/lib/axios";
+import { toast } from "sonner";
 
 interface ClientStore {
   clients: IClient[];
@@ -8,7 +9,7 @@ interface ClientStore {
   loading: boolean;
   error: string | null;
   isInitialized: boolean;
-  
+
   // Actions
   fetchClients: () => Promise<void>;
   fetchClient: (id: string) => Promise<IClient | null>; // ✅ Nueva función
@@ -21,149 +22,173 @@ interface ClientStore {
 
 export const useClientStore = create<ClientStore>((set, get) => ({
   clients: [],
-  currentClient: null, 
+  currentClient: null,
   loading: false,
   error: null,
   isInitialized: false,
-  
+
   fetchClients: async () => {
     set({ loading: true, error: null });
     try {
       const response = await axios.get("/clients");
       console.log("✅ Clientes cargados:", response.data.length);
-      set({ 
-        clients: response.data, 
-        loading: false, 
+      set({
+        clients: response.data,
+        loading: false,
         isInitialized: true,
-        error: null 
+        error: null,
       });
     } catch (error: unknown) {
       console.error("❌ Error fetching clients:", error);
-      const errorMessage = error instanceof Error ? error.message : "Error al cargar clientes";
-      set({ 
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al cargar clientes";
+      toast.error(errorMessage);
+      set({
         error: errorMessage,
-        loading: false 
+        loading: false,
       });
     }
   },
-  
+
   // ✅ Nueva función para obtener cliente por ID
   fetchClient: async (id: string) => {
     set({ loading: true, error: null });
     try {
       console.log("🔍 Buscando cliente:", id);
-      
+
       // Primero intentar encontrar en la lista local
-      const existingClient = get().clients.find(client => client._id === id);
+      const existingClient = get().clients.find((client) => client._id === id);
       if (existingClient) {
         console.log("✅ Cliente encontrado en cache:", existingClient.name);
-        set({ 
-          currentClient: existingClient, 
-          loading: false 
+        set({
+          currentClient: existingClient,
+          loading: false,
         });
         return existingClient;
       }
-      
+
       // Si no está en cache, hacer request al backend
       console.log("🌐 Obteniendo cliente del servidor...");
       const response = await axios.get(`/clients/${id}`);
       const client = response.data;
-      
+
       console.log("✅ Cliente obtenido del servidor:", client.name);
-      
-      set({ 
+
+      set({
         currentClient: client,
         loading: false,
-        error: null
+        error: null,
       });
-      
+
       return client;
     } catch (error: unknown) {
       console.error("❌ Error fetching client:", error);
-      const errorMessage = error instanceof Error ? error.message : "Error al cargar cliente";
-      set({ 
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al cargar cliente";
+      toast.error(errorMessage);
+      set({
         error: errorMessage,
         loading: false,
-        currentClient: null
+        currentClient: null,
       });
       return null;
     }
   },
-  
+
   createClient: async (clientData: ClientCreateInput) => {
     set({ loading: true, error: null });
     try {
       console.log("🚀 Creando cliente:", clientData);
       const response = await axios.post("/clients", clientData);
       const newClient = response.data;
-      
+
       console.log("✅ Cliente creado:", newClient);
-      
-      set(state => ({ 
+
+      set((state) => ({
         clients: [newClient, ...state.clients], // ✅ Agregar al inicio
         loading: false,
-        error: null
+        error: null,
       }));
-      
-      return newClient; // ✅ Devolver el cliente creado
-    } catch (error: unknown) {
+
+      toast.success(`Cliente "${newClient.name}" creado exitosamente`);
+      return newClient;
+    } catch (error: any) {
       console.error("❌ Error creating client:", error);
-      const errorMessage = error instanceof Error ? error.message : "Error al crear cliente";
-      set({ 
+      const errorMessage =
+        error.response?.data?.error?.message ||
+        error.message ||
+        "Error al crear cliente";
+
+      toast.error(errorMessage);
+      set({
         error: errorMessage,
-        loading: false 
+        loading: false,
       });
       throw error;
     }
   },
-  
+
   updateClient: async (id: string, clientData: IClient) => {
     set({ loading: true, error: null });
     try {
       const response = await axios.put(`/clients/${id}`, clientData);
       const updatedClient = response.data;
-      
-      set(state => ({ 
-        clients: state.clients.map(client => 
+
+      set((state) => ({
+        clients: state.clients.map((client) =>
           client._id === id ? updatedClient : client
         ),
-        currentClient: state.currentClient?._id === id ? updatedClient : state.currentClient,
+        currentClient:
+          state.currentClient?._id === id ? updatedClient : state.currentClient,
         loading: false,
-        error: null
+        error: null,
       }));
+
+      toast.success(`Cliente "${updatedClient.name}" actualizado exitosamente`);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Error al actualizar cliente";
-      set({ 
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al actualizar cliente";
+      toast.error(errorMessage);
+      set({
         error: errorMessage,
-        loading: false 
+        loading: false,
       });
       throw error;
     }
   },
-  
+
   deleteClient: async (id: string) => {
     set({ loading: true, error: null });
     try {
+      // Obtener el nombre del cliente antes de eliminarlo para el toast
+      const clientToDelete = get().clients.find((client) => client._id === id);
+      const clientName = clientToDelete?.name || "Cliente";
+
       await axios.delete(`/clients/${id}`);
-      
-      set(state => ({ 
-        clients: state.clients.filter(client => client._id !== id),
-        currentClient: state.currentClient?._id === id ? null : state.currentClient,
+
+      set((state) => ({
+        clients: state.clients.filter((client) => client._id !== id),
+        currentClient:
+          state.currentClient?._id === id ? null : state.currentClient,
         loading: false,
-        error: null
+        error: null,
       }));
+
+      toast.success(`Cliente "${clientName}" eliminado exitosamente`);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Error al eliminar cliente";
-      set({ 
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al eliminar cliente";
+      toast.error(errorMessage);
+      set({
         error: errorMessage,
-        loading: false 
+        loading: false,
       });
       throw error;
     }
   },
-  
+
   clearError: () => set({ error: null }),
-  
+
   // ✅ Limpiar cliente actual
-  clearCurrentClient: () => set({ currentClient: null })
+  clearCurrentClient: () => set({ currentClient: null }),
 }));
