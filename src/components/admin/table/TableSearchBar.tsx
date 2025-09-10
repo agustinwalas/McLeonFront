@@ -11,7 +11,7 @@ const TableSearchBar: React.FC<TableSearchBarProps> = ({ globalFilter, setGlobal
     <div className="relative w-full">
       <Input
         className="peer pe-9 ps-9"
-        placeholder="Search..."
+        placeholder="Buscar..."
         type="search"
         value={globalFilter}
         onChange={(e) => setGlobalFilter(e.target.value)}

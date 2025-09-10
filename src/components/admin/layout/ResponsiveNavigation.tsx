@@ -86,7 +86,7 @@ export function ResponsiveNavigation() {
             {/* Logo */}
             <div className="flex items-center">
               <img
-                src="/LogoEjemplo.png"
+                src="/logo_stampi_left_transparent.png"
                 alt="Logo"
                 className="h-8 w-auto"
               />
@@ -103,11 +103,10 @@ export function ResponsiveNavigation() {
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-3">
                     <img
-                      src="/LogoEjemplo.png"
+                      src="/logo_stampi_left_transparent.png"
                       alt="Logo"
-                      className="h-8 w-auto"
+                      className="h-15 w-auto"
                     />
-                    <span>Repostería</span>
                   </SheetTitle>
                 </SheetHeader>
                 
@@ -141,7 +140,7 @@ export function ResponsiveNavigation() {
 
                   {/* Footer */}
                   <div className="absolute bottom-4 left-4 right-4 text-xs text-gray-500 text-center">
-                    <span>Repostería {year()} - All rights reserved.</span>
+                    <span>Stampi {year()} - All rights reserved.</span>
                   </div>
                 </div>
               </SheetContent>

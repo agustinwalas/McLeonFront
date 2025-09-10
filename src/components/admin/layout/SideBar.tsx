@@ -70,12 +70,15 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar className="border-none shadow-none outline-none">
+    <Sidebar 
+      className="border-none shadow-none outline-none"
+      style={{ backgroundColor: '#f7f2eb' }}
+    >
       <SidebarContent>
         <SidebarGroup className="basis-full">
-          <SidebarGroupContent className="mt-4 mb-9 flex gap-4 items-center w-40">
+          <SidebarGroupContent className="mt-4 mb-9 flex gap-4 items-center w-50">
             <img
-              src="/LogoEjemplo.png"
+              src="/logo_stampi_left_transparent.png"
               alt="Logo"
             />
           </SidebarGroupContent>
@@ -109,7 +112,7 @@ export function AppSidebar() {
             </div>
           </SidebarGroupLabel>
           <SidebarGroupLabel>
-            <span>Repostería {year()} - All rights reserved.</span>
+            <span>Stampi {year()} - All rights reserved.</span>
           </SidebarGroupLabel>
         </SidebarGroup>
       </SidebarContent>

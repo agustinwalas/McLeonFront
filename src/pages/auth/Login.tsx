@@ -23,11 +23,11 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <div className="mx-auto h-20 w-20 flex items-center justify-center">
+          <div className="mx-auto h-30 w-30 flex items-center justify-center">
             <img
               className="h-full w-auto"
-              src="/LogoEjemplo.png"
-              alt="Repostería"
+              src="/logo_stampi_right_transparent.png"
+              alt="Stampi"
             />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

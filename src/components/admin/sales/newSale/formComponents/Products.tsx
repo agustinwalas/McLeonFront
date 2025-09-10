@@ -172,7 +172,7 @@ export const Products = () => {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>🛍️ Productos</CardTitle>
         <Button type="button" onClick={handleAddProduct} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus />
           Agregar Producto
         </Button>
       </CardHeader>
