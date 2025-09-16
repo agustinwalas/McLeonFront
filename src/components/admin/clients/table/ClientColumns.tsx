@@ -1,11 +1,18 @@
 import { IClient } from "@/types/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ClientActions } from "./ClientActions";
+import { SortButton } from "../../table/SortButton";
 
 export const clientColumns: ColumnDef<IClient>[] = [
   {
     accessorKey: "name",
-    header: "Nombre",
+    header: ({ column }) => (
+      <SortButton
+        label="Nombre"
+        isSorted={column.getIsSorted()}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      />
+    ),
     cell: ({ row }) => <span>{row.original.name}</span>,
   },
   {
@@ -15,7 +22,13 @@ export const clientColumns: ColumnDef<IClient>[] = [
   },
   {
     accessorKey: "taxCondition",
-    header: "Condición Fiscal",
+    header: ({ column }) => (
+      <SortButton
+        label="Condición Fiscal"
+        isSorted={column.getIsSorted()}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      />
+    ),
     cell: ({ row }) => (
       <div>
         {row.original.taxCondition}

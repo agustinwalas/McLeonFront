@@ -3,16 +3,29 @@ import { UnitOfMeasure } from "@/types/product";
 import { ColumnDef } from "@tanstack/react-table";
 import { ProductActions } from "./ProductActions";
 import { getUnitOfMeasureShort } from "@/utils/unitOfMeasure";
+import { SortButton } from "../../table/SortButton";
 
 export const productColumns: ColumnDef<IProductPopulated>[] = [
   {
     accessorKey: "productCode",
-    header: "Código",
+    header: ({ column }) => (
+      <SortButton
+        label="Código"
+        isSorted={column.getIsSorted()}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      />
+    ),
     cell: ({ row }) => <span>{row.original.productCode}</span>,
   },
   {
     accessorKey: "name",
-    header: "Nombre",
+    header: ({ column }) => (
+      <SortButton
+        label="Nombre"
+        isSorted={column.getIsSorted()}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      />
+    ),
     cell: ({ row }) => <div>{row.original.name}</div>,
   },
   {

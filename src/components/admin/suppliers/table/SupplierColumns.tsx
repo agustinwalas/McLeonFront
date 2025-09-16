@@ -1,11 +1,18 @@
 import { ISupplier, IProductPopulated } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { SupplierActions } from "./SupplierActions";
+import { SortButton } from "../../table/SortButton";
 
 export const createSupplierColumns = (products: IProductPopulated[]): ColumnDef<ISupplier>[] => [
   {
     accessorKey: "name",
-    header: "Nombre",
+    header: ({ column }) => (
+      <SortButton
+        label="Nombre"
+        isSorted={column.getIsSorted()}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      />
+    ),
     cell: ({ row }) => (
       <div>
         {row.original.name}

@@ -5,19 +5,19 @@ import { toast } from "sonner";
 
 interface ClientStore {
   clients: IClient[];
-  currentClient: IClient | null; // ✅ Cliente actual para detalles
+  currentClient: IClient | null; 
   loading: boolean;
   error: string | null;
   isInitialized: boolean;
 
   // Actions
   fetchClients: () => Promise<void>;
-  fetchClient: (id: string) => Promise<IClient | null>; // ✅ Nueva función
-  createClient: (clientData: ClientCreateInput) => Promise<IClient>; // ✅ Devolver cliente creado
+  fetchClient: (id: string) => Promise<IClient | null>; 
+  createClient: (clientData: ClientCreateInput) => Promise<IClient>; 
   updateClient: (id: string, client: IClient) => Promise<void>;
   deleteClient: (id: string) => Promise<void>;
   clearError: () => void;
-  clearCurrentClient: () => void; // ✅ Limpiar cliente actual
+  clearCurrentClient: () => void; 
 }
 
 export const useClientStore = create<ClientStore>((set, get) => ({
