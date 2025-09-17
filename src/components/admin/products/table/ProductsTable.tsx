@@ -1,8 +1,11 @@
 
 import { DefaultTable } from "../../table/DefaultTable";
 import { useEffect } from "react";
-import { productColumns } from "./ProductColumns";
+import { useProductColumns } from "./ProductColumns";
+import { useState, useMemo } from "react";
 import { useProductStore } from "@/store/useProduct";
+import { useCategoryStore } from "@/store/useCategory";
+
 
 export const ProductsTable = () => {
   const { 
@@ -13,12 +16,50 @@ export const ProductsTable = () => {
     fetchProducts,
     clearError 
   } = useProductStore();
+  const { 
+    fetchCategories,
+    isInitialized: categoriesInitialized 
+  } = useCategoryStore();
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const columns = useProductColumns(categoryFilter, setCategoryFilter);
+  const filteredProducts = useMemo(() => {
+    if (!categoryFilter) return products;
+    return products.filter((p) => {
+      const cat = p.category;
+      if (!cat) return categoryFilter === "null";
+      if (typeof cat === "string") return false;
+      
+      // Handle different _id types
+      let idToCompare: string | null = null;
+      if (cat._id) {
+        if (typeof cat._id === "string") {
+          idToCompare = cat._id;
+        } else if (typeof cat._id === "object") {
+          if ((cat._id as any)._id) {
+            idToCompare = (cat._id as any)._id;
+          } else if ((cat._id as any).toString) {
+            idToCompare = (cat._id as any).toString();
+          }
+        }
+      }
+      
+      if (idToCompare) return idToCompare === categoryFilter;
+      if (cat._id === undefined && cat.name) return cat.name === categoryFilter;
+      return false;
+    });
+  }, [products, categoryFilter]);
 
   useEffect(() => {
     if (!isInitialized) {
       fetchProducts();
     }
   }, [isInitialized, fetchProducts]);
+
+  useEffect(() => {
+    if (!categoriesInitialized) {
+      fetchCategories();
+    }
+  }, [categoriesInitialized, fetchCategories]);
 
   // Manejo de estados
   if (loading) {
@@ -47,7 +88,7 @@ export const ProductsTable = () => {
 
   return (
     <>
-      <DefaultTable data={products} columns={productColumns} />
+      <DefaultTable data={filteredProducts} columns={columns} />
     </>
   );
 };

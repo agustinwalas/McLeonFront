@@ -4,8 +4,13 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ProductActions } from "./ProductActions";
 import { getUnitOfMeasureShort } from "@/utils/unitOfMeasure";
 import { SortButton } from "../../table/SortButton";
+import { CategoryFilterButton } from "../../table/CategoryFilterButton";
+import { useCategoryStore } from "@/store/useCategory";
 
-export const productColumns: ColumnDef<IProductPopulated>[] = [
+
+export const useProductColumns = (categoryFilter: string | null, setCategoryFilter: (id: string | null) => void): ColumnDef<IProductPopulated>[] => {
+  const { categories } = useCategoryStore();
+  return [
   {
     accessorKey: "productCode",
     header: ({ column }) => (
@@ -30,34 +35,33 @@ export const productColumns: ColumnDef<IProductPopulated>[] = [
   },
   {
     accessorKey: "category",
-    header: "Categoría",
+    header: () => (
+      <CategoryFilterButton
+        categories={categories}
+        value={categoryFilter}
+        onChange={setCategoryFilter}
+      />
+    ),
     accessorFn: (row) => {
       const category = row.category;
-
       if (!category) return "Sin categoría";
       if (typeof category === "string") return "Sin categoría";
-      
       if (category._id && typeof category._id === "object" && (category._id as any).name) {
         return (category._id as any).name;
       }
-
       if (category.name && category.name !== "Categoría no encontrada") {
         return category.name;
       }
-
       return "Sin categoría";
     },
     cell: ({ row }) => {
       const category = row.original.category;
-
       if (!category) {
         return <span className="text-gray-500 italic">Sin categoría</span>;
       }
-
       if (typeof category === "string") {
         return <span className="text-gray-500 italic">Sin categoría</span>;
       }
-
       if (
         category._id &&
         typeof category._id === "object" &&
@@ -65,11 +69,9 @@ export const productColumns: ColumnDef<IProductPopulated>[] = [
       ) {
         return <span>{(category._id as any).name}</span>;
       }
-
       if (category.name && category.name !== "Categoría no encontrada") {
         return <span>{category.name}</span>;
       }
-
       return <span className="text-gray-500 italic">Sin categoría</span>;
     },
   },
@@ -115,4 +117,5 @@ export const productColumns: ColumnDef<IProductPopulated>[] = [
     header: "Acciones",
     cell: ({ row }) => <ProductActions product={row.original} />,
   },
-];
+  ];
+};
