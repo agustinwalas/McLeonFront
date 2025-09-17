@@ -56,7 +56,7 @@ export const CategoryFilterButton: React.FC<CategoryFilterButtonProps> = ({ cate
       <button
         ref={buttonRef}
         type="button"
-        className={`flex items-center gap-1 group select-none cursor-pointer px-2 py-1 rounded no-print ${
+        className={`flex items-center gap-1 group select-none cursor-pointer rounded no-print ${
           value ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'hover:bg-gray-100'
         }`}
         onClick={handleToggle}
