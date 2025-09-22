@@ -39,6 +39,12 @@ export function ProductDetailsCard({ product, suppliers = [] }: ProductDetailsCa
             )}
           </div>
 
+          
+          <div>
+            <h3 className="font-medium text-gray-900">Precio Costo</h3>
+            <p className="text-gray-600">${product.purchaseCost.toFixed(2)}</p>
+          </div>
+
           <div>
             <h3 className="font-medium text-gray-900">Precio Mayorista</h3>
             <p className="text-gray-600">${product.wholesalePrice.toFixed(2)}</p>

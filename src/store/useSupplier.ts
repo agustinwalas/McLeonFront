@@ -3,7 +3,8 @@ import api from "@/lib/axios";
 import { 
   ISupplier, 
   SupplierCreateInput, 
-  SupplierUpdateInput
+  SupplierUpdateInput,
+  UpdatePricesResponse
 } from "@/types";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ interface SupplierStoreState {
   createSupplier: (supplierData: SupplierCreateInput) => Promise<void>;
   updateSupplier: (id: string, supplierData: SupplierUpdateInput) => Promise<void>;
   deleteSupplier: (id: string) => Promise<void>;
+  updateSupplierProductsPrices: (supplierId: string, percentage: number) => Promise<UpdatePricesResponse>;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
   reset: () => void;
@@ -168,6 +170,27 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
         error: errorMessage,
         loading: false 
       });
+    }
+  },
+
+  updateSupplierProductsPrices: async (supplierId: string, percentage: number) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await api.put(`/suppliers/${supplierId}/update-prices`, { 
+        percentage 
+      });
+      
+      set({ loading: false });
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error("Error al actualizar precios:", error);
+      const errorMessage = axiosError.response?.data?.message || "Error al actualizar precios";
+      set({ 
+        error: errorMessage,
+        loading: false 
+      });
+      throw error;
     }
   },
 

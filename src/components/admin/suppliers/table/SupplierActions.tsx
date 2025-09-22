@@ -4,8 +4,9 @@ import { ISupplier } from "@/types";
 import { useDialogStore } from "@/store/useDialog";
 import { useSupplierStore } from "@/store/useSupplier";
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2, TrendingUp } from "lucide-react";
 import { EditSupplierForm } from "../forms/EditSupplierForm";
+import { UpdateSupplierPrices } from "../forms/UpdateSupplierPrices";
 
 export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
   const { openSheet, closeSheet } = useSheetStore();
@@ -17,6 +18,14 @@ export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
       "Editar proveedor",
       "Completá los campos para editar tu proveedor",
       <EditSupplierForm supplier={supplier} onSuccess={closeSheet} />
+    );
+  };
+
+  const handleUpdatePrices = () => {
+    openSheet(
+      "Actualizar precios",
+      `Ajustá los precios de todos los productos de ${supplier.name}`,
+      <UpdateSupplierPrices supplier={supplier} onSuccess={closeSheet} />
     );
   };
 
@@ -56,6 +65,15 @@ export const SupplierActions = ({ supplier }: { supplier: ISupplier }) => {
         className="h-8 w-8 p-0"
       >
         <Pencil className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleUpdatePrices}
+        className="h-8 w-8 p-0"
+        title="Actualizar precios"
+      >
+        <TrendingUp className="h-4 w-4" />
       </Button>
       <Button
         variant="ghost"

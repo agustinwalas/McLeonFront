@@ -27,7 +27,8 @@ export type {
   ISupplier,
   SupplierCreateInput,
   SupplierUpdateInput,
-  ISupplierPopulated
+  ISupplierPopulated,
+  UpdatePricesResponse
 } from './supplier';
 
 // User types

@@ -70,7 +70,7 @@ export const CategoryFilterButton: React.FC<CategoryFilterButtonProps> = ({ cate
           </>
         ) : (
           <>
-            Categoría
+            Cat.
             <ChevronDown size={16} className="ml-1" />
           </>
         )}

@@ -143,9 +143,10 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={`px-4 py-2 text-sm text-gray-800${
+                      className={`px-4 py-2 text-sm text-gray-800 max-w-[200px] break-words${
                         cell.column.id === "actions" ? " no-print" : ""
                       }`}
+                      style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

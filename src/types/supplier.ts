@@ -35,3 +35,22 @@ export interface ISupplierPopulated extends Omit<ISupplier, 'suppliedProducts'> 
     productCode: string;
   }[];
 }
+
+// Response for price update
+export interface UpdatePricesResponse {
+  message: string;
+  supplier: string;
+  productsUpdated: number;
+  priceChange: string;
+  percentage: number;
+  updatedProducts: {
+    id: string;
+    name: string;
+    productCode: string;
+    newPrices: {
+      purchaseCost: number;
+      wholesalePrice: number;
+      retailPrice: number;
+    };
+  }[];
+}

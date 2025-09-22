@@ -77,17 +77,17 @@ export const useProductColumns = (categoryFilter: string | null, setCategoryFilt
   },
   {
     accessorKey: "purchaseCost",
-    header: "Precio Costo",
+    header: "Costo",
     cell: ({ row }) => <span>${row.original.purchaseCost.toFixed(2)}</span>,
   },
   {
     accessorKey: "wholesalePrice",
-    header: "Precio Mayorista",
+    header: "Mayorista",
     cell: ({ row }) => <span>${row.original.wholesalePrice.toFixed(2)}</span>,
   },
   {
     accessorKey: "retailPrice",
-    header: "Precio Minorista",
+    header: "Minorista",
     cell: ({ row }) => <span>${row.original.retailPrice.toFixed(2)}</span>,
   },
   {
