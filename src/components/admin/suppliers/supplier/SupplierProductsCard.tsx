@@ -8,36 +8,47 @@ import { UpdateSupplierPrices } from "../forms/UpdateSupplierPrices";
 interface SupplierProductsCardProps {
   supplierProducts: IProductPopulated[];
   supplier: ISupplier;
+  onPricesUpdated?: () => void;
 }
 
 // ✅ Función para obtener el nombre de la categoría de forma segura
 const getCategoryName = (category: any): string => {
   if (!category) return "Sin categoría";
-  
+
   // Si es string (ID sin poblar)
   if (typeof category === "string") return "Sin categoría";
-  
+
   // Estructura anidada extraña
   if (category._id && typeof category._id === "object" && category._id.name) {
     return category._id.name;
   }
-  
+
   // Estructura normal
   if (category.name && category.name !== "Categoría no encontrada") {
     return category.name;
   }
-  
+
   return "Sin categoría";
 };
 
-export const SupplierProductsCard = ({ supplierProducts, supplier }: SupplierProductsCardProps) => {
+export const SupplierProductsCard = ({
+  supplierProducts,
+  supplier,
+  onPricesUpdated,
+}: SupplierProductsCardProps) => {
   const { openSheet, closeSheet } = useSheetStore();
 
   const handleUpdatePrices = () => {
+    const handleSuccess = () => {
+      closeSheet();
+      // Llamar la función para refrescar los datos
+      onPricesUpdated?.();
+    };
+
     openSheet(
       "Actualizar precios",
       `Ajustá los precios de todos los productos de ${supplier.name}`,
-      <UpdateSupplierPrices supplier={supplier} onSuccess={closeSheet} />
+      <UpdateSupplierPrices supplier={supplier} onSuccess={handleSuccess} />
     );
   };
 
@@ -47,9 +58,7 @@ export const SupplierProductsCard = ({ supplierProducts, supplier }: SupplierPro
         <div className="flex items-center justify-between">
           <CardTitle>Productos Suministrados</CardTitle>
           {supplierProducts.length > 0 && (
-            <Button onClick={handleUpdatePrices}>
-              Actualizar precios
-            </Button>
+            <Button onClick={handleUpdatePrices}>Actualizar precios</Button>
           )}
         </div>
       </CardHeader>
@@ -69,21 +78,38 @@ export const SupplierProductsCard = ({ supplierProducts, supplier }: SupplierPro
                 <div className="mt-2 space-y-1 text-sm text-gray-600">
                   <p>
                     <span className="font-medium">Categoría:</span>
-                    <span className={
-                      getCategoryName(product.category) === "Sin categoría"
-                        ? "italic text-gray-400"
-                        : ""
-                    }>
+                    <span
+                      className={
+                        getCategoryName(product.category) === "Sin categoría"
+                          ? "italic text-gray-400"
+                          : ""
+                      }
+                    >
                       {" " + getCategoryName(product.category)}
                     </span>
                   </p>
                   <p>
                     <span className="font-medium">Stock:</span>{" "}
-                    {product.currentStock} {product.unitOfMeasure?.toLowerCase() || 'unidades'}
+                    {product.currentStock}{" "}
+                    {product.unitOfMeasure?.toLowerCase() || "unidades"}
                   </p>
                   <p>
-                    <span className="font-medium">Precio Minorista:</span> $
-                    {product.retailPrice.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                    <span className="font-medium">Precio Costo:</span> $
+                    {product.purchaseCost.toLocaleString("es-AR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </p>
+                  <p>
+                    <span className="font-medium"> Minorista:</span> $
+                    {product.retailPrice.toLocaleString("es-AR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </p>
+                  <p>
+                    <span className="font-medium"> Mayorista:</span> $
+                    {product.wholesalePrice.toLocaleString("es-AR", {
+                      minimumFractionDigits: 2,
+                    })}
                   </p>
                 </div>
               </Link>

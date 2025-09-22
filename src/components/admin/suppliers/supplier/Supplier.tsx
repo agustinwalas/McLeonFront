@@ -52,6 +52,14 @@ export default function SupplierDetail() {
     }
   };
 
+  const handlePricesUpdated = () => {
+    // Refrescar tanto los productos como el supplier
+    fetchProducts();
+    if (id) {
+      fetchSupplierById(id);
+    }
+  };
+
   // Loading state
   if (supplierLoading) {
     return <SupplierSkeleton />;
@@ -89,6 +97,7 @@ export default function SupplierDetail() {
       <SupplierProductsCard 
         supplierProducts={supplierProducts} 
         supplier={supplier}
+        onPricesUpdated={handlePricesUpdated}
       />
     </div>
   );
