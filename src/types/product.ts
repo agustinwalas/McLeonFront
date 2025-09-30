@@ -10,7 +10,7 @@ export interface IProduct {
   productCode: string;
   name: string;
   associatedSuppliers: string[];
-  image?: string;
+  images?: string[];
   category: string;
   purchaseCost: number;
   wholesalePrice: number;
@@ -18,6 +18,8 @@ export interface IProduct {
   currentStock: number;
   minimumStock: number;
   unitOfMeasure: UnitOfMeasure; 
+  activeInShopify: boolean; 
+  description?: string; 
   createdAt?: string;
   updatedAt?: string;
 }
@@ -35,32 +37,43 @@ export interface IProductPopulated extends Omit<IProduct, 'category' | 'associat
     email: string;
     location: string;
   }>;
+  collections?: Array<{
+    _id: string;
+    collectionName: string;
+    description?: string;
+  }>;
 }
 
 export interface ProductCreateInput {
   productCode: string;
   name: string;
+  description?: string;
   category?: string;
   purchaseCost: number;
   wholesalePrice: number;
   retailPrice: number;
+  activeInShopify: boolean;
   currentStock: number;
   minimumStock: number;
-  image?: string;
+  images: string[];
   associatedSuppliers: string[];
+  collections?: string[];
   unitOfMeasure: UnitOfMeasure; 
 }
 
 export interface ProductUpdateInput {
   productCode?: string;
   name?: string;
+  description?: string;
   category?: string;
   purchaseCost?: number;
   wholesalePrice?: number;
   retailPrice?: number;
   currentStock?: number;
   minimumStock?: number;
-  image?: string;
+  activeInShopify?: boolean;
+  images?: string[];
   associatedSuppliers?: string[];
+  collections?: string[];
   unitOfMeasure?: UnitOfMeasure; // ✅ Agregado (opcional en updates)
 }

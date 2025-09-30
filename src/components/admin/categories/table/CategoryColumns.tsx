@@ -5,8 +5,13 @@ import { CategoryActions } from "./CategoryActions";
 export const categoryColumns: ColumnDef<ICategory>[] = [
   {
     accessorKey: "name",
-    header: "Nombre",
+    header: "Nombre Corto",
     cell: ({ row }) => <span>{row.original.name}</span>,
+  },
+  {
+    accessorKey: "fullName",
+    header: "Nombre Completo",
+    cell: ({ row }) => <span>{row.original.fullName}</span>,
   },
   {
     accessorKey: "active",

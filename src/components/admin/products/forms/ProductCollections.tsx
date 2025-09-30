@@ -1,59 +1,70 @@
+// src/components/admin/products/forms/ProductCollections.tsx
+import { useState, useEffect } from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ISupplier } from "@/types";
 import { UseFormReturn } from "react-hook-form";
 import { ProductFormData } from "./schemas/productSchema";
 import { Check, ChevronDown, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useShopifyCollectionStore } from "@/store/useShopifyCollection";
 
-interface ProductSuppliersProps {
+interface ProductCollectionsProps {
   form: UseFormReturn<ProductFormData>;
-  suppliers: ISupplier[];
 }
 
-export function ProductSuppliers({ form, suppliers }: ProductSuppliersProps) {
+export function ProductCollections({ form }: ProductCollectionsProps) {
   const [open, setOpen] = useState(false);
+  const { collections, fetchCollections, loading: collectionsLoading } = useShopifyCollectionStore();
 
-  // Normaliza siempre a array de IDs para el field
-  const getSupplierIds = (value: any[] = []) =>
-    value.map((s) => (typeof s === "string" ? s : s._id));
-
-  // Resetear el dropdown cuando cambian los suppliers seleccionados (cambio de producto)
-  const associatedSupplierIds = getSupplierIds(form.watch("associatedSuppliers"));
   useEffect(() => {
-    setOpen(false);
-    // Además, si el valor cambia y viene como objetos, lo normalizamos a IDs
-    if (
-      Array.isArray(form.getValues("associatedSuppliers")) &&
-      form.getValues("associatedSuppliers")?.some((s) => typeof s === "object")
-    ) {
-      form.setValue(
-        "associatedSuppliers",
-        getSupplierIds(form.getValues("associatedSuppliers")),
-        { shouldValidate: false, shouldDirty: false }
-      );
-    }
-  }, [JSON.stringify(associatedSupplierIds)]);
+    fetchCollections();
+  }, [fetchCollections]);
 
-  
+  const selectedCollections = (field: any) => {
+    return collections.filter(collection => 
+      (field.value || []).includes(collection._id)
+    );
+  };
+
+  const handleSelect = (collectionId: string, field: any) => {
+    const currentCollections = field.value || [];
+    if (currentCollections.includes(collectionId)) {
+      // Remover collection
+      field.onChange(currentCollections.filter((id: string) => id !== collectionId));
+    } else {
+      // Agregar collection
+      field.onChange([...currentCollections, collectionId]);
+    }
+  };
+
+  const handleRemove = (collectionId: string, field: any, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const currentCollections = field.value || [];
+    field.onChange(currentCollections.filter((id: string) => id !== collectionId));
+  };
+
+  if (collectionsLoading) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <span className="text-sm text-gray-500">Cargando colecciones...</span>
+      </div>
+    );
+  }
+
   return (
     <FormField
       control={form.control}
-      name="associatedSuppliers"
+      name="collections"
       render={({ field }) => {
-        // Forzar que field.value siempre sea array de strings
-        const normalizedValue = getSupplierIds(field.value || []);
-        // Si hay diferencia, actualiza el value
-        if (
-          Array.isArray(field.value) &&
-          field.value.some((s) => typeof s !== "string")
-        ) {
-          field.onChange(normalizedValue);
+        // Normalizar: si hay objetos, convertir a array de IDs
+        if (Array.isArray(field.value) && field.value.some(v => typeof v === "object" && v !== null)) {
+          const ids = field.value.map((c: any) => typeof c === "string" ? c : c._id);
+          field.onChange(ids);
         }
         return (
-          <FormItem>
-            <FormLabel>Proveedores Asociados</FormLabel>
+          <FormItem className="md:col-span-2">
+            <FormLabel>Colecciones de Shopify</FormLabel>
             <FormControl>
               <div className="space-y-2">
                 <div className="relative">
@@ -67,21 +78,21 @@ export function ProductSuppliers({ form, suppliers }: ProductSuppliersProps) {
                     }}
                   >
                     <div className="flex flex-wrap gap-1 flex-1" onClick={(e) => e.stopPropagation()}>
-                      {suppliers.filter(supplier => normalizedValue.includes(supplier._id)).length === 0 ? (
-                        <span className="text-gray-500">Seleccionar proveedores...</span>
+                      {selectedCollections(field).length === 0 ? (
+                        <span className="text-gray-500">Seleccionar collections...</span>
                       ) : (
-                        suppliers.filter(supplier => normalizedValue.includes(supplier._id)).map(supplier => (
+                        selectedCollections(field).map(collection => (
                           <Badge 
-                            key={supplier._id} 
+                            key={collection._id} 
                             variant="secondary" 
                             className="text-xs"
                           >
-                            {supplier.name}
+                            {collection.collectionName}
                             <span
                               className="ml-1 h-3 w-3 cursor-pointer hover:text-red-500 flex items-center"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                field.onChange(normalizedValue.filter((id: string) => id !== supplier._id));
+                                handleRemove(collection._id, field, e);
                               }}
                             >
                               <X />
@@ -99,7 +110,7 @@ export function ProductSuppliers({ form, suppliers }: ProductSuppliersProps) {
                       <div className="p-2">
                         <input
                           type="text"
-                          placeholder="Buscar proveedor..."
+                          placeholder="Buscar collection..."
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           onChange={() => {
                             // TODO: Implementar filtro si es necesario
@@ -107,23 +118,19 @@ export function ProductSuppliers({ form, suppliers }: ProductSuppliersProps) {
                         />
                       </div>
                       <div className="max-h-48 overflow-auto">
-                        {suppliers.length === 0 ? (
+                        {collections.length === 0 ? (
                           <div className="px-4 py-2 text-sm text-gray-500">
-                            No se encontraron proveedores.
+                            No se encontraron collections.
                           </div>
                         ) : (
-                          suppliers.map((supplier) => {
-                            const isSelected = normalizedValue.includes(supplier._id);
+                          collections.map((collection) => {
+                            const isSelected = (field.value || []).includes(collection._id);
                             return (
                               <div
-                                key={supplier._id}
+                                key={collection._id}
                                 className="flex items-center px-4 py-2 text-sm cursor-pointer hover:bg-gray-100"
                                 onClick={() => {
-                                  if (isSelected) {
-                                    field.onChange(normalizedValue.filter((id: string) => id !== supplier._id));
-                                  } else {
-                                    field.onChange([...normalizedValue, supplier._id]);
-                                  }
+                                  handleSelect(collection._id, field);
                                 }}
                               >
                                 <Check
@@ -131,7 +138,14 @@ export function ProductSuppliers({ form, suppliers }: ProductSuppliersProps) {
                                     isSelected ? "opacity-100" : "opacity-0"
                                   }`}
                                 />
-                                {supplier.name}
+                                <div className="flex-1">
+                                  <div className="font-medium">{collection.collectionName}</div>
+                                  <div className="text-xs text-gray-500">
+                                    {collection.collectionType === 'category-based' ? 'Basada en categoría' : 
+                                     collection.collectionType === 'manual' ? 'Manual' : 
+                                     collection.collectionType === 'featured' ? 'Destacados' : 'Temporada'}
+                                  </div>
+                                </div>
                               </div>
                             );
                           })
@@ -141,9 +155,9 @@ export function ProductSuppliers({ form, suppliers }: ProductSuppliersProps) {
                   )}
                 </div>
                 
-                {/* Contador de seleccionados */}
+                {/* Contador de seleccionadas */}
                 <div className="text-xs text-gray-500">
-                  ✅ Seleccionados: {normalizedValue.length} proveedor(es)
+                  ✅ Seleccionadas: {(field.value || []).length} collection(s)
                 </div>
 
                 {/* Click fuera para cerrar */}

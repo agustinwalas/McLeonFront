@@ -2,23 +2,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 
 import { useEffect } from "react";
 import { ProductCreateInput } from "@/types";
-import { UnitOfMeasure } from "@/types/product"; // ✅ Import agregado
+import { UnitOfMeasure } from "@/types/product";
 import { productFormSchema, ProductFormData } from "./schemas/productSchema";
 import { ProductPricing } from "./ProductPricing";
 import { ProductBasicInfo } from "./ProductBasicInfo";
 import { ProductStock } from "./ProductStock";
 import { ProductSuppliers } from "./ProductSuppliers";
-import { ProductImage } from "./ProductImage";
+import { ProductImages } from "./ProductImages";
 import { useProductStore } from "@/store/useProduct";
 import { useCategoryStore } from "@/store/useCategory";
 import { useSupplierStore } from "@/store/useSupplier";
+import { ProductShopify } from "./ProductShopify";
+import { ProductCollections } from "./ProductCollections";
 
 interface FormProps {
   onSuccess?: () => void;
@@ -39,15 +39,18 @@ export function NewProductForm({ onSuccess }: FormProps) {
     defaultValues: {
       productCode: "",
       name: "",
-      category: "", 
+      description: "",
+      category: "",
       wholesalePrice: 0,
-      purchaseCost: 0, 
+      purchaseCost: 0,
       retailPrice: 0,
       currentStock: 0,
       minimumStock: 0,
-      unitOfMeasure: UnitOfMeasure.UNIDAD, // ✅ Agregado con valor por defecto
-      image: "",
+      activeInShopify: false,
+      unitOfMeasure: UnitOfMeasure.UNIDAD,
+      images: [],
       associatedSuppliers: [],
+      collections: [],
     },
   });
 
@@ -59,15 +62,18 @@ export function NewProductForm({ onSuccess }: FormProps) {
       const productData: ProductCreateInput = {
         productCode: values.productCode,
         name: values.name,
+        description: values.description,
         category: values.category || undefined,
         purchaseCost: values.purchaseCost,
         wholesalePrice: values.wholesalePrice,
         retailPrice: values.retailPrice,
         currentStock: values.currentStock,
         minimumStock: values.minimumStock,
-        unitOfMeasure: values.unitOfMeasure, // ✅ Agregado
-        image: values.image || undefined,
+        unitOfMeasure: values.unitOfMeasure,
+        activeInShopify: values.activeInShopify,
+        images: values.images || [],
         associatedSuppliers: values.associatedSuppliers || [],
+        collections: values.collections || [],
       };
 
       await createProduct(productData);
@@ -78,15 +84,18 @@ export function NewProductForm({ onSuccess }: FormProps) {
       form.reset({
         productCode: "",
         name: "",
+        description: "",
         category: "",
         wholesalePrice: 0,
         purchaseCost: 0,
         retailPrice: 0,
         currentStock: 0,
         minimumStock: 0,
+        activeInShopify: false,
         unitOfMeasure: UnitOfMeasure.UNIDAD, // ✅ Reset con valor por defecto
-        image: "",
+        images: [],
         associatedSuppliers: [],
+        collections: [],
       });
 
       if (onSuccess) {
@@ -100,25 +109,26 @@ export function NewProductForm({ onSuccess }: FormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Datos básicos */}
+        <ProductBasicInfo form={form} categories={categories} />
 
-  {/* Datos básicos */}
-  <ProductBasicInfo form={form} categories={categories} />
+        {/* Precios */}
+        <ProductPricing form={form} />
 
-     
-  {/* Precios */}
-  <ProductPricing form={form} />
+        {/* Stock */}
+        <ProductStock form={form} />
 
-
-  {/* Stock */}
-  <ProductStock form={form} />
-
-
-  {/* Proveedores */}
-  <ProductSuppliers form={form} suppliers={suppliers} />
+        {/* Proveedores */}
+        <ProductSuppliers form={form} suppliers={suppliers} />
 
 
-  {/* Imagen */}
-  <ProductImage form={form} />
+        {/* Componente de Collections */}
+        <ProductCollections form={form} />
+
+        <ProductShopify form={form} />
+
+        {/* Imágenes */}
+        <ProductImages form={form} />
 
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? (

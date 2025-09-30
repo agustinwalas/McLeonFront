@@ -1,10 +1,13 @@
 import {
   LogOutIcon,
   ShoppingCart,
+  ShoppingBasket,
   Package,
   Truck,
   Users,
   FileText,
+  FolderOpen,
+  ChartBarStacked,
 } from "lucide-react";
 
 import {
@@ -33,11 +36,25 @@ const items = [
     title: "Ventas",
     url: "/admin/ventas",
     icon: ShoppingCart,
+  },  {
+    title: "Ventas Shopify",
+    url: "/admin/ventas-shopify",
+    icon: ShoppingBasket,
   },
   {
     title: "Productos",
     url: "/admin/productos",
     icon: Package,
+  },
+  {
+    title: "Categorías",
+    url: "/admin/categorias",
+    icon: FolderOpen,
+  },
+  {
+    title: "Colecciones",
+    url: "/admin/shopify-collections",
+    icon: ChartBarStacked,
   },
   {
     title: "Proveedores",

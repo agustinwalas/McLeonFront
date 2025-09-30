@@ -1,9 +1,16 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { ProductFormData } from "./schemas/productSchema";
 import { UnitOfMeasure } from "@/types/product";
 import { ICategory } from "@/types";
+import { SimpleRichTextEditor } from "./SimpleRichTextEditor";
 
 interface ProductBasicInfoProps {
   form: UseFormReturn<ProductFormData>;
@@ -34,6 +41,22 @@ export function ProductBasicInfo({ form, categories }: ProductBasicInfoProps) {
             <FormLabel>Nombre del Producto</FormLabel>
             <FormControl>
               <Input placeholder="Ej: Torta de Chocolate" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem className="md:col-span-2">
+            <FormControl>
+              <SimpleRichTextEditor
+                value={field.value || ""}
+                onChange={field.onChange}
+                placeholder="Descripción detallada del producto..."
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -72,7 +95,9 @@ export function ProductBasicInfo({ form, categories }: ProductBasicInfoProps) {
             <FormControl>
               <select
                 value={field.value}
-                onChange={(e) => field.onChange(e.target.value as UnitOfMeasure)}
+                onChange={(e) =>
+                  field.onChange(e.target.value as UnitOfMeasure)
+                }
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value={UnitOfMeasure.UNIDAD}>Unidad</option>
@@ -84,6 +109,7 @@ export function ProductBasicInfo({ form, categories }: ProductBasicInfoProps) {
           </FormItem>
         )}
       />
+      
     </div>
   );
 }

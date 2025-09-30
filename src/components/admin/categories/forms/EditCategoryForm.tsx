@@ -31,6 +31,7 @@ export function EditCategoryForm({ category, onSuccess }: FormProps) {
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
       name: category.name,
+      fullName: category.fullName,
       active: category.active,
     },
   });
@@ -40,6 +41,7 @@ export function EditCategoryForm({ category, onSuccess }: FormProps) {
     if (category) {
       form.reset({
         name: category.name,
+        fullName: category.fullName,
         active: category.active,
       });
     }
@@ -49,6 +51,7 @@ export function EditCategoryForm({ category, onSuccess }: FormProps) {
     try {
       const categoryData: CategoryUpdateInput = {
         name: values.name,
+        fullName: values.fullName,
         active: values.active,
       };
 
@@ -72,9 +75,24 @@ export function EditCategoryForm({ category, onSuccess }: FormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre de la Categoría</FormLabel>
+              <FormLabel>Nombre de la Categoría (Corto)</FormLabel>
               <FormControl>
                 <Input placeholder="Ej: Tortas, Galletas, Postres" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Nombre Completo */}
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nombre Completo</FormLabel>
+              <FormControl>
+                <Input placeholder="Ej: Tortas de Cumpleaños, Galletas Artesanales, Postres Gourmet" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
