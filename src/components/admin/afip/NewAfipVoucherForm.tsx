@@ -180,7 +180,7 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
           <VoucherDetails control={form.control} setValue={form.setValue} />
 
           {/* Productos e IVA */}
-          <VoucherProducts control={form.control} onRecalc={recalc} />
+          <VoucherProducts control={form.control} onRecalc={recalc} setValue={form.setValue} />
 
           {/* Totales */}
           <VoucherTotals control={form.control}/>

@@ -7,9 +7,24 @@ import { Plus, Trash2, Package } from "lucide-react";
 interface VoucherProductsProps {
   control: Control<any>;
   onRecalc: () => void;
+  setValue?: any; // Usar any para evitar conflictos de tipos con react-hook-form
 }
 
-export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
+export function VoucherProducts({ control, onRecalc, setValue }: VoucherProductsProps) {
+  // ✅ Constante de IVA (21%)
+  const IVA_RATE = 0.21;
+
+  // ✅ Función para calcular IVA a partir de la base
+  // Ejemplo: Base $1000 -> IVA $210
+  const calculateIvaFromBase = (base: number): number => {
+    return Math.round(base * IVA_RATE * 100) / 100;
+  };
+
+  // ✅ Función para calcular base a partir del IVA
+  // Ejemplo: IVA $210 -> Base $1000
+  const calculateBaseFromIva = (iva: number): number => {
+    return Math.round((iva / IVA_RATE) * 100) / 100;
+  };
   const { fields, append, remove } = useFieldArray({ 
     control, 
     name: "iva" 
@@ -103,7 +118,15 @@ export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
                           placeholder="0.00"
                           value={field.value}
                           onChange={(e) => {
-                            field.onChange(Number(e.target.value));
+                            const baseValue = Number(e.target.value);
+                            field.onChange(baseValue);
+                            
+                            // ✅ Calcular automáticamente el IVA
+                            const calculatedIva = calculateIvaFromBase(baseValue);
+                            if (setValue) {
+                              setValue(`iva.${index}.Importe`, calculatedIva);
+                            }
+                            
                             onRecalc();
                           }}
                           className="text-sm w-24"
@@ -130,7 +153,15 @@ export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
                           placeholder="0.00"
                           value={field.value}
                           onChange={(e) => {
-                            field.onChange(Number(e.target.value));
+                            const ivaValue = Number(e.target.value);
+                            field.onChange(ivaValue);
+                            
+                            // ✅ Calcular automáticamente la Base
+                            const calculatedBase = calculateBaseFromIva(ivaValue);
+                            if (setValue) {
+                              setValue(`iva.${index}.BaseImp`, calculatedBase);
+                            }
+                            
                             onRecalc();
                           }}
                           className="text-sm w-24"
