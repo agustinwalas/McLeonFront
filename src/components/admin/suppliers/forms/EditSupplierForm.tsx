@@ -3,7 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupplierStore } from "@/store/useSupplier";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { supplierEditSchema, SupplierEditData } from "./schemas/supplierSchema";
 import { ISupplier } from "@/types";
 
@@ -12,9 +19,12 @@ interface EditSupplierFormProps {
   onSuccess: () => void;
 }
 
-export const EditSupplierForm = ({ supplier, onSuccess }: EditSupplierFormProps) => {
+export const EditSupplierForm = ({
+  supplier,
+  onSuccess,
+}: EditSupplierFormProps) => {
   const { updateSupplier, loading } = useSupplierStore();
-  
+
   const form = useForm<SupplierEditData>({
     resolver: zodResolver(supplierEditSchema),
     defaultValues: {
@@ -22,6 +32,7 @@ export const EditSupplierForm = ({ supplier, onSuccess }: EditSupplierFormProps)
       phone: supplier.phone,
       email: supplier.email,
       location: supplier.location || "",
+      razonSocial: supplier.razonSocial || "",
     },
   });
 
@@ -32,6 +43,7 @@ export const EditSupplierForm = ({ supplier, onSuccess }: EditSupplierFormProps)
         phone: data.phone,
         email: data.email,
         location: data.location || "",
+        razonSocial: data.razonSocial || "",
       });
       onSuccess();
     } catch (error) {
@@ -50,6 +62,20 @@ export const EditSupplierForm = ({ supplier, onSuccess }: EditSupplierFormProps)
               <FormLabel>Nombre del proveedor</FormLabel>
               <FormControl>
                 <Input placeholder="Nombre del proveedor" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="razonSocial"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Razón Social</FormLabel>
+              <FormControl>
+                <Input placeholder="Razón Social" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -77,7 +103,11 @@ export const EditSupplierForm = ({ supplier, onSuccess }: EditSupplierFormProps)
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="Email del proveedor" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Email del proveedor"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,10 +129,7 @@ export const EditSupplierForm = ({ supplier, onSuccess }: EditSupplierFormProps)
         />
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button
-            type="submit"
-            disabled={loading}
-          >
+          <Button type="submit" disabled={loading}>
             {loading ? "Actualizando..." : "Actualizar proveedor"}
           </Button>
         </div>

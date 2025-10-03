@@ -39,7 +39,14 @@ export type {
   SupplierCreateInput,
   SupplierUpdateInput,
   ISupplierPopulated,
-  UpdatePricesResponse
+  UpdatePricesResponse,
+  // Supplier Invoice types
+  ISupplierInvoice,
+  SupplierInvoiceCreateInput,
+  SupplierInvoiceUpdateInput,
+  SupplierInvoiceStats,
+  SupplierInvoiceFilters,
+  SupplierInvoiceListResponse
 } from './supplier';
 
 // User types

@@ -22,6 +22,7 @@ import SupplierDetail from "@/components/admin/suppliers/supplier/Supplier";
 import { VoucherCreator } from "@/pages/admin/Afip/VoucherCreator";
 import EditSale from "@/pages/admin/Sales/EditSale";
 import ShopifySalesPage from "@/pages/admin/ShopifySales/shopify-sales";
+import { SuppliersInvoices } from "@/pages/admin/Suppliers invoices/SuppliersInvoices";
 
 
 
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
       { path: "ventas/nuevo-comprobante/:id", element: <VoucherCreator /> },
       { path: "proveedores", element: <Suppliers /> },
       { path: "proveedores/:id", element: <SupplierDetail /> },
+      { path: "facturas-proveedores", element: <SuppliersInvoices /> },
       { path: "configuracion", element: <div>Configuración - Próximamente</div> },
     ],
   },

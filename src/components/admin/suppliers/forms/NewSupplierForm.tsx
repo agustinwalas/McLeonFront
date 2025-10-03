@@ -2,7 +2,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { supplierFormSchema, SupplierFormData } from "./schemas/supplierSchema";
 import { useSupplierStore } from "@/store/useSupplier";
@@ -13,7 +20,7 @@ interface FormProps {
 
 export const NewSupplierForm = ({ onSuccess }: FormProps) => {
   const { createSupplier, loading } = useSupplierStore();
-  
+
   const form = useForm<SupplierFormData>({
     resolver: zodResolver(supplierFormSchema),
     defaultValues: {
@@ -21,6 +28,7 @@ export const NewSupplierForm = ({ onSuccess }: FormProps) => {
       phone: "",
       email: "",
       location: "",
+      razonSocial: "",
     },
   });
 
@@ -32,6 +40,7 @@ export const NewSupplierForm = ({ onSuccess }: FormProps) => {
         email: data.email,
         location: data.location,
         suppliedProducts: [],
+        razonSocial: data.razonSocial,
       });
       form.reset();
       onSuccess?.();
@@ -50,7 +59,24 @@ export const NewSupplierForm = ({ onSuccess }: FormProps) => {
             <FormItem>
               <FormLabel>Nombre del proveedor</FormLabel>
               <FormControl>
-                <Input placeholder="Ingresá el nombre del proveedor" {...field} />
+                <Input
+                  placeholder="Ingresá el nombre del proveedor"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="razonSocial"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Razón Social</FormLabel>
+              <FormControl>
+                <Input placeholder="Razón Social" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,11 +125,7 @@ export const NewSupplierForm = ({ onSuccess }: FormProps) => {
           )}
         />
 
-        <Button 
-          type="submit" 
-          className="w-full" 
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {loading ? "Creando..." : "Crear proveedor"}
         </Button>

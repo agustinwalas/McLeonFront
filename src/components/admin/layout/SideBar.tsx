@@ -8,6 +8,7 @@ import {
   FileText,
   FolderOpen,
   ChartBarStacked,
+  FileTerminal,
 } from "lucide-react";
 
 import {
@@ -67,7 +68,12 @@ const items = [
     icon: Users,
   },
   {
-    title: "AFIP",
+    title: "Facturas Proveedores",
+    url: "/admin/facturas-proveedores",
+    icon: FileTerminal,
+  },
+  {
+    title: "Facturas AFIP",
     url: "/admin/afip",
     icon: FileText,
   },

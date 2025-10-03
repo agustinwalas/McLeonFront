@@ -9,8 +9,8 @@ import {
   FileText,
   FolderOpen,
   ChartBarStacked,
-  SettingsIcon,
   Menu,
+  FileTerminal,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -68,15 +68,15 @@ const items = [
     icon: Users,
   },
   {
-    title: "AFIP",
-    url: "/admin/afip",
-    icon: FileText,
+    title: "Facturas Proveedores",
+    url: "/admin/facturas-proveedores",
+    icon: FileTerminal,
   },
   {
-    title: "Configuración",
-    url: "/admin/configuracion",
-    icon: SettingsIcon,
-  },
+    title: "Facturas AFIP",
+    url: "/admin/afip",
+    icon: FileText,
+  }
 ];
 
 export function ResponsiveNavigation() {

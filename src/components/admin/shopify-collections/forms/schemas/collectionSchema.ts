@@ -21,7 +21,9 @@ export const collectionFormSchema = z.object({
   }),
   imageUrl: z
     .string()
-    .url({ message: "Debe ser una URL válida." })
+    .refine((val) => val === "" || z.string().url().safeParse(val).success, {
+      message: "Debe ser una URL válida o estar vacío.",
+    })
     .optional(),
 });
 
@@ -43,7 +45,9 @@ export const editCollectionFormSchema = z.object({
   type: z.enum(['manual', 'featured', 'seasonal']).optional(), // Solo para mostrar, no para validar
   imageUrl: z
     .string()
-    .url({ message: "Debe ser una URL válida." })
+    .refine((val) => val === "" || z.string().url().safeParse(val).success, {
+      message: "Debe ser una URL válida o estar vacío.",
+    })
     .optional(),
 });
 
