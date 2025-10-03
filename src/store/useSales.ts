@@ -78,9 +78,9 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   fetchSales: async () => {
     set({ isLoading: true, error: null });
     try {
-      console.log("🔍 Obteniendo lista de ventas...");
+ 
       const response = await api.get("/sales");
-      console.log("✅ Ventas obtenidas:", response.data.length);
+ 
       set({ sales: response.data, isLoading: false });
     } catch (error: any) {
       console.error("❌ Error obteniendo ventas:", error);
@@ -110,9 +110,9 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   getSaleById: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
-      console.log("🔍 Obteniendo venta por ID:", id);
+ 
       const response = await api.get(`/sales/${id}`);
-      console.log("✅ Venta obtenida:", response.data.saleNumber);
+ 
       const sale = response.data;
       set({ currentSale: sale, isLoading: false });
       return response.data;
@@ -127,7 +127,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
 
   deleteSale: async (id: string) => {
     try {
-      console.log("🗑️ Eliminando venta:", id);
+ 
       await api.delete(`/sales/${id}`);
 
       // Actualizar lista local
@@ -135,7 +135,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         sales: state.sales.filter((sale) => sale._id !== id),
       }));
 
-      console.log("✅ Venta eliminada exitosamente");
+ 
       toast.success("Venta eliminada exitosamente");
       return true;
     } catch (error: any) {
@@ -152,7 +152,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   // ========================================
 
   initializeForm: () => {
-    console.log("🔧 Inicializando formulario de venta");
+ 
     set({
       currentSale: null,
       formData: {
@@ -171,7 +171,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   },
 
   resetForm: () => {
-    console.log("🔄 Reseteando formulario de venta");
+ 
     set({
       currentSale: null,
       formData: {
@@ -190,7 +190,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   },
 
   updateFormData: (field: string, value: any) => {
-    console.log("📝 Actualizando formData:", { field, value });
+ 
     set((state) => ({
       formData: {
         ...state.formData,
@@ -200,14 +200,14 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   },
 
   addProduct: (product: any) => {
-    console.log("➕ Agregando producto:", product);
+ 
     set((state) => ({
       selectedProducts: [...state.selectedProducts, product],
     }));
   },
 
   updateProduct: (index: number, field: string, value: any) => {
-    console.log("📝 Actualizando producto:", { index, field, value });
+ 
     set((state) => {
       const updatedProducts = [...state.selectedProducts];
       updatedProducts[index] = {
@@ -219,7 +219,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   },
 
   removeProduct: (index: number) => {
-    console.log("🗑️ Removiendo producto en índice:", index);
+ 
     set((state) => ({
       selectedProducts: state.selectedProducts.filter((_, i) => i !== index),
     }));
@@ -234,7 +234,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
     set({ isSubmitting: true, error: null });
 
     try {
-      console.log("📋 FormData:", JSON.stringify(formData, null, 2));
+ 
       console.log(
         "🛍️ SelectedProducts:",
         JSON.stringify(selectedProducts, null, 2)
@@ -310,7 +310,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         isSubmitting: false,
       }));
 
-      console.log("✅ Venta creada exitosamente:", newSale.saleNumber);
+ 
       toast.success(`Venta ${newSale.saleNumber} creada exitosamente`);
       return true;
     } catch (error: any) {
@@ -333,11 +333,11 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   },
 
   loadSaleForEdit: async (saleId: string) => {
-    console.log("🔄 Cargando venta para editar:", saleId);
+ 
     set({ isLoading: true, error: null });
 
     try {
-      console.log("🔍 Llamando a getSaleById...");
+ 
 
       const sale = await get().getSaleById(saleId);
 
@@ -380,7 +380,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
           };
         });
 
-        console.log("📦 Productos mapeados:", mappedProducts);
+ 
 
         // Populate form with sale data
         const formData = {
@@ -399,7 +399,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
           totalDiscount: sale.totalDiscount || 0,
         };
 
-        console.log("📝 FormData populado:", formData);
+ 
 
         set({
           currentSale: sale,
@@ -409,7 +409,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
           error: null,
         });
 
-        console.log("✅ Store actualizado para edición");
+ 
       } else {
         console.warn("⚠️ No se encontró la venta con ID:", saleId);
         set({
@@ -437,7 +437,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
     set({ isSubmitting: true, error: null });
 
     try {
-      console.log("🚀 Actualizando venta:", saleId);
+ 
 
       // ✅ Obtener el usuario actual usando la nueva función
       const currentUser = useAuth.getState().getCurrentUser();
@@ -512,7 +512,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         isSubmitting: false,
       }));
 
-      console.log("✅ Venta actualizada exitosamente:", updatedSale.saleNumber);
+ 
       toast.success(`Venta ${updatedSale.saleNumber} actualizada exitosamente`);
       return true;
     } catch (error: any) {

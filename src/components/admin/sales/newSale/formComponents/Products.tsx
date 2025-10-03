@@ -27,7 +27,7 @@ export const Products = () => {
   // ✅ Fetch de productos al montar el componente
   useEffect(() => {
     if (products.length === 0) {
-      console.log("🔍 Cargando productos...");
+ 
       fetchProducts();
     }
   }, [products.length, fetchProducts]);

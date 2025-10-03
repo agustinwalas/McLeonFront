@@ -1,9 +1,8 @@
 import { Control, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Package } from "lucide-react";
-import { IVA_ID } from "../constants/afipConstants";
 
 interface VoucherProductsProps {
   control: Control<any>;
@@ -24,7 +23,7 @@ export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
           type="button"
           variant="secondary"
           onClick={() => {
-            append({ Id: 5, BaseImp: 0, Importe: 0 });
+            append({ Id: 5, BaseImp: 0, Importe: 0, productName: "" });
             setTimeout(onRecalc, 0);
           }}
         >
@@ -33,7 +32,7 @@ export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
         </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {fields.map((field, index) => {
           // ✅ Obtener información del producto si existe
           const productInfo = (field as any).productName ? {
@@ -45,104 +44,96 @@ export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
           return (
             <div 
               key={field.id} 
-              className="p-4 border rounded-lg bg-gray-50"
+              className="flex items-center gap-4 p-3 border rounded-lg bg-gray-50 flex-wrap"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-gray-500" />
-                  <div>
-                    <h4 className="font-medium text-sm">
-                      {productInfo ? productInfo.name : `Producto ${index + 1}`}
-                    </h4>
-                    {productInfo && (
-                      <p className="text-xs text-gray-600">
-                        Cantidad: {productInfo.quantity} × ${productInfo.unitPrice}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {fields.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      remove(index);
-                      setTimeout(onRecalc, 0);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+              {/* Campo oculto para alícuota IVA fija en 21% */}
+              <FormField
+                control={control}
+                name={`iva.${index}.Id`}
+                render={({ field }) => (
+                  <input 
+                    type="hidden" 
+                    {...field}
+                    value={5} // Siempre 21% para repostería
+                  />
                 )}
+              />
+
+              {/* Título del producto */}
+              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                <Package className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <FormField
+                    control={control}
+                    name={`iva.${index}.productName`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder={`Ingrese nombre del producto`}
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            className="text-sm font-medium border-none bg-transparent p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {productInfo && (
+                    <p className="text-xs text-gray-600 truncate">
+                      {productInfo.quantity} × ${productInfo.unitPrice}
+                    </p>
+                  )}
+                </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={control}
-                  name={`iva.${index}.Id`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Alícuota IVA</FormLabel>
-                      <FormControl>
-                        <select
-                          value={field.value}
-                          onChange={(e) => {
-                            field.onChange(Number(e.target.value));
-                            onRecalc();
-                          }}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        >
-                          {IVA_ID.map((o) => (
-                            <option key={o.value} value={o.value}>
-                              {o.label}
-                            </option>
-                          ))}
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
+              {/* Base Imponible */}
+              <div className="flex items-center gap-2 min-w-[120px]">
+                <span className="text-xs text-gray-600 whitespace-nowrap">Base:</span>
                 <FormField
                   control={control}
                   name={`iva.${index}.BaseImp`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Base Imponible ($)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           step="0.01"
-                          placeholder="1000.00"
+                          placeholder="0.00"
                           value={field.value}
                           onChange={(e) => {
                             field.onChange(Number(e.target.value));
                             onRecalc();
                           }}
+                          className="text-sm w-24"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+              </div>
+              
+              {/* IVA 21% */}
+              <div className="flex items-center gap-2 min-w-[120px]">
+                <span className="text-xs text-gray-600 whitespace-nowrap">IVA:</span>
                 <FormField
                   control={control}
                   name={`iva.${index}.Importe`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>IVA ($)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           step="0.01"
-                          placeholder="210.00"
+                          placeholder="0.00"
                           value={field.value}
                           onChange={(e) => {
                             field.onChange(Number(e.target.value));
                             onRecalc();
                           }}
+                          className="text-sm w-24"
                         />
                       </FormControl>
                       <FormMessage />
@@ -151,21 +142,20 @@ export function VoucherProducts({ control, onRecalc }: VoucherProductsProps) {
                 />
               </div>
 
-              {/* ✅ Mostrar información adicional del producto */}
-              {productInfo && (
-                <div className="mt-3 p-2 bg-blue-50 rounded border border-grey-200">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-                    <div>
-                      <span className="font-medium">Cantidad:</span> {productInfo.quantity}
-                    </div>
-                    <div>
-                      <span className="font-medium">Precio Unit.:</span> ${productInfo.unitPrice}
-                    </div>
-                    <div>
-                      <span className="font-medium">Subtotal:</span> ${(productInfo.quantity * productInfo.unitPrice).toFixed(2)}
-                    </div>
-                  </div>
-                </div>
+              {/* Botón eliminar */}
+              {fields.length > 1 && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    remove(index);
+                    setTimeout(onRecalc, 0);
+                  }}
+                  className="flex-shrink-0"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               )}
             </div>
           );

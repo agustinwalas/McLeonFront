@@ -201,7 +201,7 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
   // ✅ Función con tipos específicos
   extractSupplierIds: (associatedSuppliers: AssociatedSupplier[]): string[] => {
     if (!associatedSuppliers || !Array.isArray(associatedSuppliers)) {
-      console.log("⚠️ No hay proveedores asociados o no es array");
+ 
       return [];
     }
 
@@ -221,7 +221,7 @@ export const useSupplierStore = create<SupplierStoreState>((set, get) => ({
       })
       .filter((id): id is string => id !== null); // ✅ Type guard para filtrar nulls
 
-    console.log("✅ IDs extraídos de proveedores:", ids);
+ 
     return ids;
   },
 

@@ -33,7 +33,7 @@ export const Client = () => {
   // ✅ Fetch de clientes al montar el componente
   useEffect(() => {
     if (clients.length === 0) {
-      console.log("🔍 Cargando clientes...");
+ 
       fetchClients();
     }
   }, [clients.length, fetchClients]);

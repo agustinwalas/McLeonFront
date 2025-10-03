@@ -25,7 +25,7 @@ export const NewSaleForm = () => {
 
   // Initialize form on mount
   useEffect(() => {
-    console.log("🔧 Inicializando NewSaleForm");
+ 
     initializeForm();
     
     return () => {
@@ -45,7 +45,7 @@ export const NewSaleForm = () => {
     const success = await createSale();
     
     if (success) {
-      console.log("✅ Venta creada exitosamente");
+ 
       navigate("/admin/ventas");
     }
   };

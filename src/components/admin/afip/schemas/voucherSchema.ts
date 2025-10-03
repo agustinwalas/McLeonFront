@@ -24,12 +24,7 @@ export const voucherSchema = z.object({
   // Fecha
   cbteFch: z.string().min(8, "Formato AAAAMMDD"),
 
-  // Importes
-  impTotConc: z.number().nonnegative().default(0),
-  impOpEx: z.number().nonnegative().default(0),
-  impTrib: z.number().nonnegative().default(0),
-
-  // Calculados
+  // Importes calculados
   impNeto: z.number().nonnegative(),
   impIVA: z.number().nonnegative(),
   impTotal: z.number().nonnegative(),

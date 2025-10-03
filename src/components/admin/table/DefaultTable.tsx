@@ -37,8 +37,6 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
     pageSize: 50,
   });
 
-  console.log(data);
-
   useEffect(() => {
     localStorage.setItem("table-sorting", JSON.stringify(sorting));
   }, [sorting]);

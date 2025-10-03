@@ -56,8 +56,8 @@ export function NewProductForm({ onSuccess }: FormProps) {
 
   async function onSubmit(values: ProductFormData) {
     try {
-      console.log("🚀 Creando producto:", values);
-      console.log("🏪 Proveedores seleccionados:", values.associatedSuppliers);
+ 
+ 
 
       const productData: ProductCreateInput = {
         productCode: values.productCode,
@@ -78,7 +78,7 @@ export function NewProductForm({ onSuccess }: FormProps) {
 
       await createProduct(productData);
 
-      console.log("✅ Producto creado exitosamente");
+ 
 
       // Reset form after successful creation
       form.reset({
@@ -120,7 +120,6 @@ export function NewProductForm({ onSuccess }: FormProps) {
 
         {/* Proveedores */}
         <ProductSuppliers form={form} suppliers={suppliers} />
-
 
         {/* Componente de Collections */}
         <ProductCollections form={form} />

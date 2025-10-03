@@ -39,3 +39,10 @@ export const yyyymmdd = (d: Date | string) => {
 };
 
 export const onlyDigits = (v: string) => (v || "").replace(/\D+/g, "");
+
+// ✅ Datos del emisor desde variables de entorno
+export const EMISOR_CONFIG = {
+  CUIT: import.meta.env.VITE_AFIP_EMISOR_CUIT || "30719099730",
+  PUNTO_VENTA: Number(import.meta.env.VITE_AFIP_PUNTO_VENTA) || 1,
+  RAZON_SOCIAL: import.meta.env.VITE_AFIP_EMISOR_RAZON_SOCIAL || "Tu Empresa S.A."
+};

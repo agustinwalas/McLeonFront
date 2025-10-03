@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { ISalePopulated } from "@/types/sale";
 import { voucherSchema, VoucherFormData } from "../schemas/voucherSchema";
 import { populateFromSale } from "../utils/afipMappers";
-import { yyyymmdd } from "../constants/afipConstants";
+import { yyyymmdd, EMISOR_CONFIG } from "../constants/afipConstants";
 
 interface UseVoucherFormProps {
   sale?: ISalePopulated | null;
@@ -15,16 +15,13 @@ export function useVoucherForm({ sale, defaults }: UseVoucherFormProps) {
   // ✅ Combinar defaults con datos de la venta
   const getInitialValues = (): VoucherFormData => {
     let initialValues: VoucherFormData = {
-      emisorCuit: "",
-      ptoVta: 1,
+      emisorCuit: EMISOR_CONFIG.CUIT,
+      ptoVta: EMISOR_CONFIG.PUNTO_VENTA,
       cbteTipo: 6,
       docTipo: 99,
       docNro: "0",
       nombreReceptor: "",
       cbteFch: yyyymmdd(new Date()),
-      impTotConc: 0,
-      impOpEx: 0,
-      impTrib: 0,
       impNeto: 0,
       impIVA: 0,
       impTotal: 0,
@@ -56,7 +53,7 @@ export function useVoucherForm({ sale, defaults }: UseVoucherFormProps) {
   useEffect(() => {
     if (sale) {
       const saleData = populateFromSale(sale);
-      console.log("🔄 Actualizando formulario con nueva venta");
+ 
       
       // Reset con los nuevos datos
       form.reset({
@@ -76,10 +73,7 @@ export function useVoucherForm({ sale, defaults }: UseVoucherFormProps) {
     const iva = form.getValues("iva");
     const impIVA = iva.reduce((a, r) => a + (Number(r.Importe) || 0), 0);
     const impNeto = iva.reduce((a, r) => a + (Number(r.BaseImp) || 0), 0);
-    const impTotConc = Number(form.getValues("impTotConc") || 0);
-    const impOpEx = Number(form.getValues("impOpEx") || 0);
-    const impTrib = Number(form.getValues("impTrib") || 0);
-    const impTotal = impNeto + impIVA + impTotConc + impOpEx + impTrib;
+    const impTotal = impNeto + impIVA; // ✅ Solo IVA + Neto (sin otros tributos)
 
     form.setValue("impIVA", Number(impIVA.toFixed(2)));
     form.setValue("impNeto", Number(impNeto.toFixed(2)));

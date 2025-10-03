@@ -27,17 +27,17 @@ export default function ClientDetail() {
   // ✅ Mover el filtro a un useMemo que dependa de currentClient y sales
   const clientSales = useMemo(() => {
     if (!currentClient || !sales || sales.length === 0) {
-      console.log("🔍 No hay cliente o ventas para filtrar");
+ 
       return [];
     }
 
-    console.log("🔍 Filtrando ventas para cliente:", currentClient._id);
-    console.log("🔍 Total de ventas:", sales.length);
+ 
+ 
     
     const filtered = sales.filter(sale => {
       // ✅ Validar que sale y sale.client existen
       if (!sale || !sale.client) {
-        console.log("⚠️ Venta sin cliente:", sale);
+ 
         return false;
       }
 
@@ -48,19 +48,19 @@ export default function ClientDetail() {
       const matches = clientId === currentClient._id;
       
       if (matches) {
-        console.log("✅ Venta encontrada:", sale.saleNumber);
+ 
       }
       
       return matches;
     });
 
-    console.log("✅ Ventas filtradas:", filtered.length);
+ 
     return filtered;
   }, [currentClient, sales]);
 
   useEffect(() => {
     if (id) {
-      console.log("🔍 ClientDetail - Cargando cliente:", id);
+ 
       fetchClient(id);
       fetchSales();
     }
@@ -90,8 +90,8 @@ export default function ClientDetail() {
     return <ClientNotFound />;
   }
 
-  console.log("✅ ClientDetail - Mostrando cliente:", currentClient.name);
-  console.log("✅ ClientDetail - Ventas del cliente:", clientSales.length);
+ 
+ 
 
   return (
     <div className="container mx-auto p-6 space-y-6">

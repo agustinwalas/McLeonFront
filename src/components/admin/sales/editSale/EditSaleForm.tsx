@@ -55,7 +55,7 @@ export const EditSaleForm = () => {
     const success = await updateSale(id);
 
     if (success) {
-      console.log("✅ Venta actualizada exitosamente");
+ 
       navigate("/admin/ventas");
     }
   };

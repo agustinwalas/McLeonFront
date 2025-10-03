@@ -49,10 +49,10 @@ const useAuth = create<AuthState>()(
 
       // ✅ Nueva función para inicializar auth al cargar la app
       initializeAuth: () => {
-        console.log("🚀 Inicializando autenticación...");
+ 
         const token = localStorage.getItem("token");
         const expiry = localStorage.getItem("token_expiry");
-        console.log("🔍 Token encontrado:", !!token);
+ 
         if (!token || !expiry) {
           localStorage.removeItem("token");
           localStorage.removeItem("token_expiry");
@@ -121,7 +121,7 @@ const useAuth = create<AuthState>()(
             isAdmin: res.data.user?.isAdmin || res.data.isAdmin || false,
           };
 
-          console.log("✅ Usuario registrado:", user);
+ 
 
           // ✅ Guardar token y expiración personalizada (hoy a las 23:59)
           if (res.data.token) {
@@ -154,7 +154,7 @@ const useAuth = create<AuthState>()(
         try {
           const res = await api.post("/login", { email, password });
 
-          console.log("🔍 Respuesta del login:", res.data);
+ 
 
           const userData = res.data.user || res.data;
           const user: IUser = {
@@ -165,7 +165,7 @@ const useAuth = create<AuthState>()(
             isAdmin: userData.isAdmin || false,
           };
 
-          console.log("✅ Usuario normalizado:", user);
+ 
 
           // ✅ Verificar que hay token
           if (!res.data.token) {
@@ -176,7 +176,7 @@ const useAuth = create<AuthState>()(
           const now = new Date();
           const expiry = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 0, 0).getTime();
           localStorage.setItem("token_expiry", String(expiry));
-          console.log("✅ Token y expiración guardados");
+ 
 
           set({
             user,
@@ -195,7 +195,7 @@ const useAuth = create<AuthState>()(
       },
 
       logout: () => {
-        console.log("🚪 Logout ejecutado");
+ 
         localStorage.removeItem("token");
         localStorage.removeItem("token_expiry");
         set({
@@ -215,7 +215,7 @@ const useAuth = create<AuthState>()(
         });
         
         if (!state.isAuthenticated || !state.user) {
-          console.log("❌ No autenticado o sin usuario");
+ 
           return null;
         }
 
@@ -265,16 +265,16 @@ const useAuth = create<AuthState>()(
       // ✅ Storage personalizado MÁS SIMPLE
       storage: {
         getItem: (key) => {
-          console.log("📖 Cargando storage:", key);
+ 
           try {
             const item = localStorage.getItem(key);
             if (!item) {
-              console.log("📖 No hay datos en storage");
+ 
               return null;
             }
 
             const parsed = JSON.parse(item);
-            console.log("📖 Datos cargados:", parsed);
+ 
 
             // ✅ NO validar token aquí, solo cargar datos
             return parsed;
@@ -286,17 +286,17 @@ const useAuth = create<AuthState>()(
         },
         
         setItem: (key, value) => {
-          console.log("💾 Guardando storage:", key, value);
+ 
           try {
             localStorage.setItem(key, JSON.stringify(value));
-            console.log("✅ Storage guardado");
+ 
           } catch (error) {
             console.error("❌ Error guardando storage:", error);
           }
         },
         
         removeItem: (key) => {
-          console.log("🗑️ Removiendo storage:", key);
+ 
           localStorage.removeItem(key);
         },
       },

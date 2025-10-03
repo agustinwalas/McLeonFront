@@ -114,9 +114,9 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
 
   async function onSubmit(values: ProductFormData) {
     try {
-      console.log("🔄 Actualizando producto:", product._id);
-      console.log("📦 Datos del formulario:", values);
-      console.log("🏪 Proveedores seleccionados:", values.associatedSuppliers);
+ 
+ 
+ 
 
       const productData: ProductUpdateInput = {
         productCode: values.productCode,
@@ -137,7 +137,7 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
 
       await updateProduct(product._id, productData);
 
-      console.log("✅ Producto actualizado exitosamente");
+ 
 
       if (onSuccess) {
         onSuccess();

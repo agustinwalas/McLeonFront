@@ -31,7 +31,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.get("/clients");
-      console.log("✅ Clientes cargados:", response.data.length);
+ 
       set({
         clients: response.data,
         loading: false,
@@ -54,12 +54,12 @@ export const useClientStore = create<ClientStore>((set, get) => ({
   fetchClient: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      console.log("🔍 Buscando cliente:", id);
+ 
 
       // Primero intentar encontrar en la lista local
       const existingClient = get().clients.find((client) => client._id === id);
       if (existingClient) {
-        console.log("✅ Cliente encontrado en cache:", existingClient.name);
+ 
         set({
           currentClient: existingClient,
           loading: false,
@@ -68,11 +68,11 @@ export const useClientStore = create<ClientStore>((set, get) => ({
       }
 
       // Si no está en cache, hacer request al backend
-      console.log("🌐 Obteniendo cliente del servidor...");
+ 
       const response = await axios.get(`/clients/${id}`);
       const client = response.data;
 
-      console.log("✅ Cliente obtenido del servidor:", client.name);
+ 
 
       set({
         currentClient: client,
@@ -98,11 +98,11 @@ export const useClientStore = create<ClientStore>((set, get) => ({
   createClient: async (clientData: ClientCreateInput) => {
     set({ loading: true, error: null });
     try {
-      console.log("🚀 Creando cliente:", clientData);
+ 
       const response = await axios.post("/clients", clientData);
       const newClient = response.data;
 
-      console.log("✅ Cliente creado:", newClient);
+ 
 
       set((state) => ({
         clients: [newClient, ...state.clients], // ✅ Agregar al inicio

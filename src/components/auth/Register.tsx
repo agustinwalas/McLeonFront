@@ -48,7 +48,7 @@ export function RegisterForm() {
     // Excluir confirmPassword del objeto que se envía al backend
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...registerData } = data;
-    console.log("Register data:", registerData);
+ 
     register(registerData);
   };
 

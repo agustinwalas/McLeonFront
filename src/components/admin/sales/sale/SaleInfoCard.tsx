@@ -62,8 +62,8 @@ const getDocumentTypeLabel = (docType: string) => {
 };
 
 export function SaleInfoCard({ sale }: SaleInfoCardProps) {
-  console.log("Sale data:", sale);
-  console.log("Client data:", sale.client);
+ 
+ 
   
   // ✅ Función helper para manejar el cliente
   const getClientInfo = () => {
@@ -121,7 +121,7 @@ export function SaleInfoCard({ sale }: SaleInfoCardProps) {
   const userInfo = getUserInfo();
 
   // ✅ Debug adicional
-  console.log("Client info processed:", clientInfo);
+ 
 
   return (
     <Card>

@@ -1,6 +1,6 @@
 import { ISalePopulated } from "@/types/sale";
 import { VoucherFormData, IvaData } from "../schemas/voucherSchema";
-import { yyyymmdd, onlyDigits } from "../constants/afipConstants";
+import { yyyymmdd, onlyDigits, EMISOR_CONFIG } from "../constants/afipConstants";
 
 // ✅ Función para mapear condición IVA del cliente a tipo de comprobante
 export const getComprobanteType = (afipCondicionIva: number): number => {
@@ -32,7 +32,7 @@ export const getDocTipo = (documentType: string): number => {
 
 // ✅ Función para calcular IVA por cada producto individual
 export const calculateIvaFromSale = (sale: ISalePopulated): IvaData[] => {
-  console.log("🧮 Calculando IVA por productos:", sale.products.length);
+ 
 
   const ivaItems: IvaData[] = sale.products.map((productSale, index) => {
     // Subtotal del producto (quantity * unitPrice con descuentos aplicados)
@@ -61,7 +61,7 @@ export const calculateIvaFromSale = (sale: ISalePopulated): IvaData[] => {
     };
   });
 
-  console.log("✅ IVA calculado por productos:", ivaItems);
+ 
   return ivaItems;
 };
 
@@ -83,7 +83,7 @@ const mapTaxConditionToAfipCode = (taxCondition: string): number => {
 
 // ✅ Función para popular datos desde la venta
 export const populateFromSale = (sale: ISalePopulated): Partial<VoucherFormData> => {
-  console.log("🔄 Populando formulario con venta:", sale.saleNumber);
+ 
 
   const client = sale.client;
   const cbteTipo = getComprobanteType(mapTaxConditionToAfipCode(client.taxCondition));
@@ -95,9 +95,9 @@ export const populateFromSale = (sale: ISalePopulated): Partial<VoucherFormData>
   const impIVA = ivaData.reduce((sum, item) => sum + item.Importe, 0);
 
   const populated = {
-    // Emisor (valores por defecto, puedes ajustarlos)
-    emisorCuit: "20123456789", // ✅ Tu CUIT de la empresa
-    ptoVta: 1,
+    // Emisor desde configuración
+    emisorCuit: EMISOR_CONFIG.CUIT,
+    ptoVta: EMISOR_CONFIG.PUNTO_VENTA,
     cbteTipo: cbteTipo,
 
     // Receptor desde el cliente
@@ -109,9 +109,6 @@ export const populateFromSale = (sale: ISalePopulated): Partial<VoucherFormData>
     cbteFch: yyyymmdd(new Date()),
 
     // Importes desde la venta
-    impTotConc: 0,
-    impOpEx: 0,
-    impTrib: 0,
     impNeto: Number(impNeto.toFixed(2)),
     impIVA: Number(impIVA.toFixed(2)),
     impTotal: sale.totalAmount,
@@ -124,43 +121,49 @@ export const populateFromSale = (sale: ISalePopulated): Partial<VoucherFormData>
     monCotiz: 1 as const,
   };
 
-  console.log("✅ Datos populados:", populated);
+ 
   return populated;
 };
 
 // ✅ Función para crear payload AFIP
 export const createAfipPayload = (values: VoucherFormData, sale?: ISalePopulated | null) => {
-  return {
+  const payload = {
     CbteTipo: values.cbteTipo,
     PtoVta: values.ptoVta,
     Concepto: 1, // Productos fijo
     DocTipo: values.docTipo,
     DocNro: Number(onlyDigits(values.docNro) || "0"),
-    CbteDesde: undefined,
-    CbteHasta: undefined,
     CbteFch: values.cbteFch,
 
-    ImpTotal: values.impTotal,
-    ImpTotConc: values.impTotConc,
-    ImpNeto: values.impNeto,
-    ImpOpEx: values.impOpEx,
-    ImpIVA: values.impIVA,
-    ImpTrib: values.impTrib,
+    // ✅ Importes (campos no usados siempre en 0)
+    ImpTotal: Number(values.impTotal.toFixed(2)),
+    ImpTotConc: 0, // ✅ Siempre 0 para repostería
+    ImpNeto: Number(values.impNeto.toFixed(2)),
+    ImpOpEx: 0,    // ✅ Siempre 0 para repostería  
+    ImpIVA: Number(values.impIVA.toFixed(2)),
+    ImpTrib: 0,    // ✅ Siempre 0 para repostería
 
     MonId: "PES",
     MonCotiz: 1,
 
+    // ✅ IVA con importes redondeados
     Iva: values.iva.map((r) => ({
       Id: r.Id,
-      BaseImp: r.BaseImp,
-      Importe: r.Importe,
+      BaseImp: Number(r.BaseImp.toFixed(2)),
+      Importe: Number(r.Importe.toFixed(2)),
     })),
 
-    EmisorCUIT: Number(onlyDigits(values.emisorCuit)),
+    // ✅ CUIT emisor desde configuración
+    EmisorCUIT: Number(onlyDigits(EMISOR_CONFIG.CUIT)),
     NombreReceptor: values.nombreReceptor,
 
     // ✅ Datos adicionales de la venta
     VentaId: sale?._id,
     VentaNumero: sale?.saleNumber,
+
+    // ✅ Campos adicionales para completar el comprobante
+    FchVtoPago: values.cbteFch, // Mismo día como vencimiento por defecto
   };
+
+  return payload;
 };

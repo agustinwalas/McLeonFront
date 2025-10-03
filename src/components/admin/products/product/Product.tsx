@@ -27,8 +27,8 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (product) {
-      console.log('Product:', product);
-      console.log('Product associatedSuppliers:', product.associatedSuppliers);
+ 
+ 
       
       // El backend ya está enviando los proveedores populados
       if (product.associatedSuppliers && product.associatedSuppliers.length > 0) {
