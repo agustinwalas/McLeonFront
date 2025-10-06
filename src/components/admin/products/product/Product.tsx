@@ -34,6 +34,7 @@ export default function ProductDetail() {
       if (product.associatedSuppliers && product.associatedSuppliers.length > 0) {
         const mappedSuppliers = product.associatedSuppliers.map(supplier => ({
           ...supplier,
+          razonSocial: (supplier as any).razonSocial || supplier.name, // Use name as razonSocial fallback only if razonSocial doesn't exist
           suppliedProducts: (supplier as any).suppliedProducts || []
         }));
         setProductSuppliers(mappedSuppliers);
