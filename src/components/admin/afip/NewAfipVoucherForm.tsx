@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAfipStore } from "@/store/useAfip";
 import { useSalesStore } from "@/store/useSales";
-import { toast } from "sonner";
 import { VoucherDetails } from "./voucher/VoucherDetails";
 import { VoucherProducts } from "./voucher/VoucherProducts";
 import { VoucherTotals } from "./voucher/VoucherTotals";
@@ -98,46 +97,10 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
         });
       }
     } catch (error: any) {
-      // ✅ Logging detallado del error
-      console.group("❌ Error creando comprobante AFIP");
-      console.error("Error completo:", error);
-      console.error("Error response:", error?.response);
-      console.error("Error response data:", error?.response?.data);
-      console.error("Error message:", error?.message);
-      
-      // Extraer mensaje de error más específico
-      let errorMessage = "Error desconocido al crear comprobante AFIP";
-      
-      if (error?.response?.data) {
-        if (typeof error.response.data === 'string') {
-          errorMessage = error.response.data;
-        } else if (error.response.data.message) {
-          errorMessage = error.response.data.message;
-        } else if (error.response.data.error) {
-          errorMessage = error.response.data.error;
-        } else {
-          errorMessage = JSON.stringify(error.response.data);
-        }
-      } else if (error?.message) {
-        errorMessage = error.message;
-      }
-      
-      console.error("Mensaje de error procesado:", errorMessage);
-      console.groupEnd();
-      
-      // Mostrar el error al usuario con toast detallado
-      toast.error("❌ Error al crear comprobante AFIP", {
-        description: errorMessage,
-        duration: 10000, // 10 segundos para leer el error
-        action: {
-          label: "Ver detalles",
-          onClick: () => {
-            console.group("🔍 Detalles completos del error AFIP");
-            console.log("Error objeto completo:", error);
-            console.groupEnd();
-          }
-        }
-      });
+      console.error(
+        "❌ Error creando comprobante AFIP:",
+        error?.response?.data || error
+      );
     }
   }
 

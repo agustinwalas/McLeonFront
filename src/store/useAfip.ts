@@ -94,7 +94,7 @@ export const useAfipStore = create<AfipStoreState>((set) => ({
       let errorMessage = "Error al crear comprobante AFIP";
       
       if (axiosError.response?.data) {
-        const responseData = axiosError.response.data;
+        const responseData = axiosError.response.data.error || axiosError.response.data;
         
         if (typeof responseData === 'string') {
           errorMessage = responseData;
@@ -111,7 +111,7 @@ export const useAfipStore = create<AfipStoreState>((set) => ({
       
       // Agregar información del status si está disponible
       if (axiosError.response?.status) {
-        errorMessage = `[${axiosError.response.status}] ${errorMessage}`;
+        errorMessage = `${errorMessage}`;
       }
 
       set({
