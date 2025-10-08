@@ -25,6 +25,9 @@ export const voucherSchema = z.object({
   cbteFch: z.string().min(8, "Formato AAAAMMDD"),
 
   // Importes calculados
+  impTotConc: z.number().nonnegative().default(0), // Importe total conceptos no gravados
+  impOpEx: z.number().nonnegative().default(0),    // Importe operaciones exentas
+  impTrib: z.number().nonnegative().default(0),    // Importe tributos
   impNeto: z.number().nonnegative(),
   impIVA: z.number().nonnegative(),
   impTotal: z.number().nonnegative(),
