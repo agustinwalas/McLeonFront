@@ -224,7 +224,7 @@ export const Products = () => {
                           className="w-full justify-between h-10"
                         >
                           {selectedProduct
-                            ? `${selectedProduct.name}`
+                            ? `${selectedProduct.productCode} - ${selectedProduct.name}`
                             : "Seleccionar producto..."
                           }
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -232,14 +232,14 @@ export const Products = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-full p-0" align="start">
                         <Command>
-                          <CommandInput placeholder="Buscar producto..." />
+                          <CommandInput placeholder="Buscar por nombre o código..." />
                           <CommandList>
                             <CommandEmpty>No se encontraron productos.</CommandEmpty>
                             <CommandGroup>
                               {products.map((product) => (
                                 <CommandItem
                                   key={product._id}
-                                  value={`${product.name} ${product.retailPrice}`}
+                                  value={`${product.name} ${product.productCode} ${product.retailPrice}`}
                                   onSelect={() => handleProductSelect(index, product._id)}
                                 >
                                   <Check
@@ -249,9 +249,9 @@ export const Products = () => {
                                     )}
                                   />
                                   <div className="flex flex-col">
-                                    <span className="font-medium">{product.name} - <span className="lowercase">{product.unitOfMeasure}</span></span>
+                                    <span className="font-medium">{product.productCode} - <span className="lowercase">{product.name}</span></span>
                                     <span className="text-sm text-muted-foreground">
-                                      Minorista: ${product.retailPrice} | Mayorista: ${product.wholesalePrice}
+                                      Código: {product.productCode} | Minorista: ${product.retailPrice} | Mayorista: ${product.wholesalePrice}
                                     </span>
                                   </div>
                                 </CommandItem>
