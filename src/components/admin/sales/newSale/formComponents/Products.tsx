@@ -23,6 +23,9 @@ export const Products = () => {
 
   // Estado para controlar los popover abiertos
   const [openPopovers, setOpenPopovers] = useState<boolean[]>([]);
+  
+  // Estado para mantener los valores de cantidad como strings mientras se escriben
+  const [quantityInputs, setQuantityInputs] = useState<string[]>([]);
 
   // ✅ Fetch de productos al montar el componente
   useEffect(() => {
@@ -40,12 +43,29 @@ export const Products = () => {
 
   // ✅ Helper function para manejar cambios de cantidad (con decimales)
   const handleQuantityChange = (index: number, value: string) => {
+    // Permitir solo números, punto, coma y un solo separador decimal
+    const sanitizedValue = value.replace(/[^0-9.,]/g, '');
+    
+    // Contar separadores decimales
+    const commaCount = (sanitizedValue.match(/,/g) || []).length;
+    const dotCount = (sanitizedValue.match(/\./g) || []).length;
+    
+    // Si hay más de un separador, no actualizar
+    if (commaCount + dotCount > 1) {
+      return;
+    }
+    
+    // Actualizar el input visual inmediatamente (permite "0,2", "0.", etc)
+    const newQuantityInputs = [...quantityInputs];
+    newQuantityInputs[index] = sanitizedValue;
+    setQuantityInputs(newQuantityInputs);
+    
     // Permitir valores decimales con punto o coma
-    const normalizedValue = value.replace(',', '.');
+    const normalizedValue = sanitizedValue.replace(',', '.');
     const numValue = parseFloat(normalizedValue);
     
-    // Si no es un número válido, usar 0
-    if (isNaN(numValue)) {
+    // Si no es un número válido o está vacío, usar 0
+    if (isNaN(numValue) || sanitizedValue === '') {
       updateProduct(index, "quantity", 0);
       recalculateSubtotal(index, 0);
       return;
@@ -57,6 +77,15 @@ export const Products = () => {
     // Actualizar cantidad y recalcular subtotal
     updateProduct(index, "quantity", finalValue);
     recalculateSubtotal(index, finalValue);
+  };
+  
+  // ✅ Helper function para manejar cuando el input pierde el foco
+  const handleQuantityBlur = (index: number) => {
+    const item = selectedProducts[index];
+    // Actualizar el input con el valor final formateado
+    const newQuantityInputs = [...quantityInputs];
+    newQuantityInputs[index] = item.quantity.toString();
+    setQuantityInputs(newQuantityInputs);
   };
 
   // ✅ Helper function para manejar cambios de descuento
@@ -172,9 +201,15 @@ export const Products = () => {
     }
   };
 
-  // Inicializar popovers
+  // Inicializar popovers y quantity inputs
   useEffect(() => {
     initializePopovers();
+    
+    // Inicializar quantityInputs con los valores actuales
+    if (quantityInputs.length !== selectedProducts.length) {
+      setQuantityInputs(selectedProducts.map(item => item.quantity.toString()));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProducts.length]);
 
   return (
@@ -280,16 +315,10 @@ export const Products = () => {
                   <div style={{ gridArea: "cantidad", width: "80px" }}>
                     <label className="text-sm font-medium mb-2 block">Cant.  {selectedProduct ? getUnitOfMeasureShort(selectedProduct.unitOfMeasure) : ''} </label>
                     <Input
-                      type="number"
-                      min="0"
-                      step="0.001"
-                      value={item.quantity}
+                      type="text"
+                      value={quantityInputs[index] || item.quantity.toString()}
                       onChange={(e) => handleQuantityChange(index, e.target.value)}
-                      onBlur={(e) => {
-                        if (e.target.value === '') {
-                          updateProduct(index, "quantity", 0);
-                        }
-                      }}
+                      onBlur={() => handleQuantityBlur(index)}
                       className="text-center h-10"
                       placeholder="0.0"
                     />
