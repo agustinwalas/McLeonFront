@@ -4,34 +4,29 @@ import { CategoryActions } from "./CategoryActions";
 
 export const categoryColumns: ColumnDef<ICategory>[] = [
   {
+    accessorKey: "fullName",
+    header: "Nombre Completo",
+    cell: ({ row }) => (
+      <span className="font-medium">{row.original.fullName}</span>
+    ),
+  },
+  {
     accessorKey: "name",
     header: "Nombre Corto",
     cell: ({ row }) => <span>{row.original.name}</span>,
   },
-  {
-    accessorKey: "fullName",
-    header: "Nombre Completo",
-    cell: ({ row }) => <span>{row.original.fullName}</span>,
-  },
+
   {
     accessorKey: "active",
     header: "Estado",
-    cell: ({ row }) => (
-      <div>
-        {row.original.active ? "Activa" : "Inactiva"}
-      </div>
-    ),
+    cell: ({ row }) => <div>{row.original.active ? "Activa" : "Inactiva"}</div>,
   },
   {
     accessorKey: "createdAt",
     header: "Fecha de Creación",
     cell: ({ row }) => {
       const date = new Date(row.original.createdAt || "");
-      return (
-        <span>
-          {date.toLocaleDateString("es-AR")}
-        </span>
-      );
+      return <span>{date.toLocaleDateString("es-AR")}</span>;
     },
   },
   {

@@ -21,7 +21,7 @@ export const salesColumns: ColumnDef<ISalePopulated>[] = [
     header: "N° Venta",
     cell: ({ row }) => {
       const saleNumber = row.getValue("saleNumber") as string;
-      return <div>{saleNumber}</div>;
+      return <div className="font-medium">{saleNumber}</div>;
     },
   },
   {
@@ -126,6 +126,20 @@ export const salesColumns: ColumnDef<ISalePopulated>[] = [
           {user.name || user.email || (
             <span className="text-gray-500 italic">Sin nombre</span>
           )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "afipData.cae",
+    header: "Factura AFIP",
+    cell: ({ row }) => {
+      const sale = row.original;
+      const hasAfipInvoice = sale.afipData?.cae;
+      
+      return (
+        <div>
+          {hasAfipInvoice ? 'Facturada' : 'Sin facturar'}
         </div>
       );
     },

@@ -21,7 +21,7 @@ export const SupplierInvoicesColumns = (
       </div>
     ),
     cell: ({ row }) => (
-      <div className="font-medium">{row.original.supplier?.name || "N/A"}</div>
+      <div className="font-medium min-w-[150px]">{row.original.supplier?.name || "N/A"}</div>
     ),
   },
   {

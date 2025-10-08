@@ -14,6 +14,17 @@ export const useProductColumns = (
   const { categories } = useCategoryStore();
   return [
     {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <SortButton
+          label="Nombre"
+          isSorted={column.getIsSorted()}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        />
+      ),
+      cell: ({ row }) => <div className="font-medium min-w-[150px]">{row.original.name}</div>,
+    },
+    {
       accessorKey: "productCode",
       header: ({ column }) => (
         <SortButton
@@ -23,17 +34,6 @@ export const useProductColumns = (
         />
       ),
       cell: ({ row }) => <span>{row.original.productCode}</span>,
-    },
-    {
-      accessorKey: "name",
-      header: ({ column }) => (
-        <SortButton
-          label="Nombre"
-          isSorted={column.getIsSorted()}
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        />
-      ),
-      cell: ({ row }) => <div>{row.original.name}</div>,
     },
     {
       accessorKey: "category",

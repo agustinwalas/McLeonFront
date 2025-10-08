@@ -22,7 +22,13 @@ import {
 } from "@/components/ui/table";
 import TableSearchBar from "./TableSearchBar";
 import { Button } from "@/components/ui/button";
-import { Printer, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  Printer,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 type AdminTableProps<TData> = {
   columns: ColumnDef<TData, unknown>[];
@@ -145,7 +151,7 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-left px-4 py-2 text-sm font-medium text-gray-700${
+                    className={`min-w-[80px] text-left px-4 py-2 text-sm font-medium text-gray-700${
                       header.column.id === "actions" ? " no-print" : ""
                     }`}
                   >
@@ -173,7 +179,10 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
                       className={`px-4 py-2 text-sm text-gray-800 max-w-[200px] break-words${
                         cell.column.id === "actions" ? " no-print" : ""
                       }`}
-                      style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+                      style={{
+                        wordWrap: "break-word",
+                        overflowWrap: "break-word",
+                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -196,16 +205,19 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Controles de paginación */}
-      <div className="flex items-center justify-between px-2 py-4">
-        <div className="flex items-center space-x-6 lg:space-x-8">
+      <div className="flex flex-wrap items-center justify-center lg:justify-between gap-4 px-2 py-4">
+        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 lg:gap-6">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Filas por página</p>
             <select
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
-                const value = e.target.value === 'all' ? data.length : Number(e.target.value);
+                const value =
+                  e.target.value === "all"
+                    ? data.length
+                    : Number(e.target.value);
                 table.setPageSize(value);
               }}
               className="h-8 w-[90px] rounded border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
@@ -217,13 +229,13 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
               <option value="all">Todos</option>
             </select>
           </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+          <div className="flex min-w-[100px] items-center justify-center text-sm font-medium">
             Página {table.getState().pagination.pageIndex + 1} de{" "}
             {table.getPageCount()}
           </div>
         </div>
-        
-        <div className="flex items-center space-x-2">
+
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
@@ -240,37 +252,40 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          
+
           {/* Números de página */}
-          <div className="flex items-center space-x-1">
-            {Array.from({ length: Math.min(5, table.getPageCount()) }, (_, i) => {
-              const currentPage = table.getState().pagination.pageIndex;
-              const totalPages = table.getPageCount();
-              
-              let startPage = Math.max(0, currentPage - 2);
-              const endPage = Math.min(totalPages - 1, startPage + 4);
-              
-              if (endPage - startPage < 4) {
-                startPage = Math.max(0, endPage - 4);
+          <div className="flex flex-wrap items-center gap-1">
+            {Array.from(
+              { length: Math.min(5, table.getPageCount()) },
+              (_, i) => {
+                const currentPage = table.getState().pagination.pageIndex;
+                const totalPages = table.getPageCount();
+
+                let startPage = Math.max(0, currentPage - 2);
+                const endPage = Math.min(totalPages - 1, startPage + 4);
+
+                if (endPage - startPage < 4) {
+                  startPage = Math.max(0, endPage - 4);
+                }
+
+                const pageNumber = startPage + i;
+
+                if (pageNumber >= totalPages) return null;
+
+                return (
+                  <Button
+                    key={pageNumber}
+                    variant={pageNumber === currentPage ? "default" : "outline"}
+                    className="h-8 w-8 p-0"
+                    onClick={() => table.setPageIndex(pageNumber)}
+                  >
+                    {pageNumber + 1}
+                  </Button>
+                );
               }
-              
-              const pageNumber = startPage + i;
-              
-              if (pageNumber >= totalPages) return null;
-              
-              return (
-                <Button
-                  key={pageNumber}
-                  variant={pageNumber === currentPage ? "default" : "outline"}
-                  className="h-8 w-8 p-0"
-                  onClick={() => table.setPageIndex(pageNumber)}
-                >
-                  {pageNumber + 1}
-                </Button>
-              );
-            })}
+            )}
           </div>
-          
+
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
@@ -289,13 +304,20 @@ export function DefaultTable<TData>({ columns, data }: AdminTableProps<TData>) {
           </Button>
         </div>
       </div>
-      
+
       {/* Información de resultados */}
-      <div className="flex items-center justify-between px-2">
-        <div className="text-sm text-muted-foreground">
-          Mostrando {table.getFilteredRowModel().rows.length > 0 ? (table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1 : 0} a{" "}
+      <div className="flex items-center justify-center lg:justify-between px-2">
+        <div className="text-sm text-muted-foreground text-center lg:text-left">
+          Mostrando{" "}
+          {table.getFilteredRowModel().rows.length > 0
+            ? table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+              1
+            : 0}{" "}
+          a{" "}
           {Math.min(
-            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+            (table.getState().pagination.pageIndex + 1) *
+              table.getState().pagination.pageSize,
             table.getFilteredRowModel().rows.length
           )}{" "}
           de {table.getFilteredRowModel().rows.length} resultado(s)

@@ -1,5 +1,5 @@
 import { NewCategoryForm } from "@/components/admin/categories/forms/NewCategoryForm";
-import { CategoriesTable } from "@/components/admin/categories/table/CategoriesTable";
+import { CategoriesTable } from "@/components/admin/categories/table/CategoryTable";
 import { Button } from "@/components/ui/button";
 import { useSheetStore } from "@/store/useSheet";
 

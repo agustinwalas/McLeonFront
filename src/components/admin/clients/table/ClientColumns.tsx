@@ -13,7 +13,7 @@ export const clientColumns: ColumnDef<IClient>[] = [
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       />
     ),
-    cell: ({ row }) => <span>{row.original.name}</span>,
+    cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
   },
   {
     accessorKey: "DocumentNumber",

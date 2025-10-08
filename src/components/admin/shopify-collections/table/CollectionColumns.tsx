@@ -19,7 +19,7 @@ export const collectionColumns: ColumnDef<IShopifyCollection>[] = [
     accessorKey: "collectionName",
     header: "Nombre",
     cell: ({ row }) => (
-      <div className="font-medium">{row.original.collectionName}</div>
+      <div className="font-medium min-w-[150px]">{row.original.collectionName}</div>
     ),
   },
   {

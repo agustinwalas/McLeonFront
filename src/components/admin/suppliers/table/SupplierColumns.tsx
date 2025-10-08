@@ -14,7 +14,7 @@ export const createSupplierColumns = (products: IProductPopulated[]): ColumnDef<
       />
     ),
     cell: ({ row }) => (
-      <div>
+      <div className="font-medium min-w-[150px]">
         {row.original.name}
       </div>
     ),

@@ -44,7 +44,7 @@ export default function SaleDetail() {
         <SaleProductsCard sale={currentSale} />
       </div>
 
-      <AfipSection sale={currentSale} onAfipGenerated={handleAfipGenerated} />
+      <AfipSection sale={currentSale} onAfipGenerated={handleAfipGenerated} /> 
     </div>
   );
 }
