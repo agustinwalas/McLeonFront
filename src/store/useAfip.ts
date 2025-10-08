@@ -79,12 +79,40 @@ export const useAfipStore = create<AfipStoreState>((set) => ({
 
       return resp.data;
     } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string; error?: string }>;
-      console.error("Error AFIP - crear comprobante:", error);
+      const axiosError = error as AxiosError<{ message?: string; error?: string; details?: any }>;
       
-      const errorMessage = axiosError.response?.data?.message ||
-        (axiosError.response?.data as any)?.error ||
-        "Error al crear comprobante AFIP";
+      // 🔍 Logging detallado del error
+      console.group("❌ Error AFIP Store - crear comprobante");
+      console.error("Error completo:", error);
+      console.error("Axios error response:", axiosError.response);
+      console.error("Axios error response data:", axiosError.response?.data);
+      console.error("Status:", axiosError.response?.status);
+      console.error("Status Text:", axiosError.response?.statusText);
+      console.groupEnd();
+      
+      // 📝 Extraer mensaje de error más específico
+      let errorMessage = "Error al crear comprobante AFIP";
+      
+      if (axiosError.response?.data) {
+        const responseData = axiosError.response.data;
+        
+        if (typeof responseData === 'string') {
+          errorMessage = responseData;
+        } else if (responseData.message) {
+          errorMessage = responseData.message;
+        } else if ((responseData as any).error) {
+          errorMessage = (responseData as any).error;
+        } else {
+          errorMessage = JSON.stringify(responseData, null, 2);
+        }
+      } else if (axiosError.message) {
+        errorMessage = axiosError.message;
+      }
+      
+      // Agregar información del status si está disponible
+      if (axiosError.response?.status) {
+        errorMessage = `[${axiosError.response.status}] ${errorMessage}`;
+      }
 
       set({
         error: errorMessage,
@@ -94,8 +122,11 @@ export const useAfipStore = create<AfipStoreState>((set) => ({
       toast.error("❌ Error al generar comprobante AFIP", {
         id: "afip-voucher",
         description: errorMessage,
-        duration: 6000
+        duration: 8000
       });
+
+      // Re-throw el error para que el componente pueda manejarlo si es necesario
+      throw error;
     }
   },
 
