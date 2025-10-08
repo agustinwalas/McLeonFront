@@ -38,11 +38,21 @@ export const Products = () => {
     return value.replace(/^0+/, '') || '0';
   };
 
-  // ✅ Helper function para manejar cambios de cantidad
+  // ✅ Helper function para manejar cambios de cantidad (con decimales)
   const handleQuantityChange = (index: number, value: string) => {
-    const cleanValue = removeLeadingZeros(value);
-    const numValue = parseInt(cleanValue) || 0;
-    const finalValue = Math.max(0, numValue);
+    // Permitir valores decimales con punto o coma
+    const normalizedValue = value.replace(',', '.');
+    const numValue = parseFloat(normalizedValue);
+    
+    // Si no es un número válido, usar 0
+    if (isNaN(numValue)) {
+      updateProduct(index, "quantity", 0);
+      recalculateSubtotal(index, 0);
+      return;
+    }
+    
+    // Asegurar que sea positivo y limitar a 3 decimales
+    const finalValue = Math.max(0, Math.round(numValue * 1000) / 1000);
     
     // Actualizar cantidad y recalcular subtotal
     updateProduct(index, "quantity", finalValue);
@@ -266,12 +276,13 @@ export const Products = () => {
                     </select>
                   </div>
 
-                  {/* Cantidad - Ancho fijo */}
+                  {/* Cantidad - Ancho fijo (acepta decimales) */}
                   <div style={{ gridArea: "cantidad", width: "80px" }}>
                     <label className="text-sm font-medium mb-2 block">Cant.  {selectedProduct ? getUnitOfMeasureShort(selectedProduct.unitOfMeasure) : ''} </label>
                     <Input
                       type="number"
                       min="0"
+                      step="0.001"
                       value={item.quantity}
                       onChange={(e) => handleQuantityChange(index, e.target.value)}
                       onBlur={(e) => {
@@ -279,14 +290,8 @@ export const Products = () => {
                           updateProduct(index, "quantity", 0);
                         }
                       }}
-                      onInput={(e) => {
-                        const target = e.target as HTMLInputElement;
-                        const cleanValue = removeLeadingZeros(target.value);
-                        if (target.value !== cleanValue) {
-                          target.value = cleanValue;
-                        }
-                      }}
                       className="text-center h-10"
+                      placeholder="0.0"
                     />
                   </div>
 

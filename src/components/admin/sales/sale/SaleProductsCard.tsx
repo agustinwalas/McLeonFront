@@ -94,7 +94,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                   <div>
                     <p className="text-gray-600">Cantidad:</p>
                     <p className="font-semibold">
-                      {item.quantity}{" "}
+                      {item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(3).replace(/\.?0+$/, '')}{" "}
                       {getUnitOfMeasureLabel(productInfo.unitOfMeasure)}{" "}
                     </p>
                   </div>
