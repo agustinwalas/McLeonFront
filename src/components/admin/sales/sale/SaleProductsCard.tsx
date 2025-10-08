@@ -94,7 +94,9 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                   <div>
                     <p className="text-gray-600">Cantidad:</p>
                     <p className="font-semibold">
-                      {item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(3).replace(/\.?0+$/, '')}{" "}
+                      {item.quantity % 1 === 0
+                        ? item.quantity
+                        : item.quantity.toFixed(2).replace(/\.?0+$/, "")}{" "}
                       {getUnitOfMeasureLabel(productInfo.unitOfMeasure)}{" "}
                     </p>
                   </div>
@@ -103,8 +105,38 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                     <p className="font-semibold">
                       $
                       {item.unitPrice.toLocaleString("es-AR", {
-                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
                       })}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-gray-600">Precio base total:</p>
+                    <p className="font-semibold">
+                      $
+                      {(() => {
+                        // Precio unitario incluye IVA, calculamos la base (precio sin IVA)
+                        const precioBase = item.unitPrice / 1.21;
+                        const precioBaseTotale = precioBase * item.quantity;
+                        return precioBaseTotale.toLocaleString("es-AR", {
+                          maximumFractionDigits: 2,
+                        });
+                      })()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">IVA total:</p>
+                    <p className="font-semibold">
+                      $
+                      {(() => {
+                        // Calculamos el IVA: precio con IVA - precio sin IVA
+                        const precioBase = item.unitPrice / 1.21;
+                        const iva = item.unitPrice - precioBase;
+                        const ivaTotal = iva * item.quantity;
+                        return ivaTotal.toLocaleString("es-AR", {
+                          maximumFractionDigits: 2,
+                        });
+                      })()}
                     </p>
                   </div>
                   {item.discountPercentage < 100 && (
@@ -123,7 +155,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                             item.unitPrice *
                             (item.discountPercentage / 100)
                           ).toLocaleString("es-AR", {
-                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
                           })}
                         </p>
                       </div>
@@ -137,7 +169,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                     <span className="font-bold">
                       $
                       {item.subtotal.toLocaleString("es-AR", {
-                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
                       })}
                     </span>
                   </div>
@@ -149,12 +181,37 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
           {/* Resumen Total */}
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Subtotal:</span>
+              <span>Precio base:</span>
               <span>
                 $
-                {sale.subtotal.toLocaleString("es-AR", {
-                  minimumFractionDigits: 2,
-                })}
+                {(() => {
+                  // Sumar todos los precios base de los productos
+                  const precioBaseTotal = sale.products.reduce((acc, item) => {
+                    const precioBase = item.unitPrice / 1.21;
+                    return acc + precioBase * item.quantity;
+                  }, 0);
+                  return precioBaseTotal.toLocaleString("es-AR", {
+                    maximumFractionDigits: 2,
+                  });
+                })()}
+              </span>
+            </div>
+
+            <div className="flex justify-between text-sm">
+              <span>IVA:</span>
+              <span>
+                $
+                {(() => {
+                  // Sumar todos los IVAs de los productos
+                  const ivaTotal = sale.products.reduce((acc, item) => {
+                    const precioBase = item.unitPrice / 1.21;
+                    const iva = item.unitPrice - precioBase;
+                    return acc + iva * item.quantity;
+                  }, 0);
+                  return ivaTotal.toLocaleString("es-AR", {
+                    maximumFractionDigits: 2,
+                  });
+                })()}
               </span>
             </div>
 
@@ -162,8 +219,8 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
               <span>Descuento total:</span>
               <span>
                 $
-                {sale.totalDiscount.toLocaleString("es-AR", {
-                  minimumFractionDigits: 2,
+                {sale.totalDiscount?.toLocaleString("es-AR", {
+                  maximumFractionDigits: 2,
                 })}
               </span>
             </div>
@@ -173,7 +230,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
               <span>
                 $
                 {sale.deliveryFee?.toLocaleString("es-AR", {
-                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
                 })}
               </span>
             </div>
@@ -183,7 +240,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
               <span>
                 $
                 {sale.totalAmount.toLocaleString("es-AR", {
-                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
                 })}
               </span>
             </div>

@@ -71,8 +71,8 @@ export const Products = () => {
       return;
     }
     
-    // Asegurar que sea positivo y limitar a 3 decimales
-    const finalValue = Math.max(0, Math.round(numValue * 1000) / 1000);
+    // Asegurar que sea positivo y limitar a 2 decimales
+    const finalValue = Math.max(0, Math.round(numValue * 100) / 100);
     
     // Actualizar cantidad y recalcular subtotal
     updateProduct(index, "quantity", finalValue);
@@ -82,7 +82,7 @@ export const Products = () => {
   // ✅ Helper function para manejar cuando el input pierde el foco
   const handleQuantityBlur = (index: number) => {
     const item = selectedProducts[index];
-    // Actualizar el input con el valor final formateado
+    // Actualizar el input con el valor final formateado (máximo 2 decimales)
     const newQuantityInputs = [...quantityInputs];
     newQuantityInputs[index] = item.quantity.toString();
     setQuantityInputs(newQuantityInputs);
