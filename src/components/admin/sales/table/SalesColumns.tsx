@@ -128,7 +128,7 @@ export const salesColumns: ColumnDef<ISalePopulated>[] = [
           )}
         </div>
       );
-    },
+    }, 
   },
   {
     accessorKey: "afipData.cae",
