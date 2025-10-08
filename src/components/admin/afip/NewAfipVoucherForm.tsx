@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAfipStore } from "@/store/useAfip";
 import { useSalesStore } from "@/store/useSales";
 import { VoucherDetails } from "./voucher/VoucherDetails";
@@ -26,6 +26,7 @@ interface Props {
 
 export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { createVoucher, loading: afipLoading } = useAfipStore();
   const {
     getSaleById,
@@ -38,7 +39,7 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
   const [fetchAttempted, setFetchAttempted] = useState(false);
 
   // ✅ Función para fetch de la venta
-  const fetchSale = async (id: string) => {
+  const fetchSale = useCallback(async (id: string) => {
     setFetchAttempted(false); // Limpiar errores previos
     setSale(null);
 
@@ -57,7 +58,7 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
     } finally {
       setFetchAttempted(true);
     }
-  };
+  }, [getSaleById]);
 
   // ✅ Fetch de la venta al cargar el componente
   useEffect(() => {
@@ -67,7 +68,7 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
       console.warn("⚠️ No se proporcionó ID de venta en la URL");
       setFetchAttempted(true);
     }
-  }, [id]);
+  }, [id, fetchSale]);
 
   // ✅ Custom hooks
   const { form, recalc, getInitialValues } = useVoucherForm({ sale, defaults });
@@ -77,7 +78,14 @@ export function NewAfipVoucherForm({ defaults, onSuccess }: Props) {
     try {
       const payload = createAfipPayload(values, sale);
 
-      const resp = await createVoucher(payload);
+      const resp = await createVoucher(payload, () => {
+        // ✅ Callback de éxito - Redireccionar a la venta
+        if (sale?._id) {
+          setTimeout(() => {
+            navigate(`/admin/ventas/${sale._id}`);
+          }, 2000); // Dar tiempo para que se vea el toast de éxito
+        }
+      });
 
       onSuccess?.(resp?.CAE);
 
