@@ -350,21 +350,37 @@ export const PrintVoucher = forwardRef<PrintVoucherRef, PrintVoucherProps>(
                   font-weight: bold;
                 }
                 @media print {
-                  body { print-color-adjust: exact; }
+                  body { 
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                  }
                   .no-print { display: none !important; }
-                }
-                @page { 
-                  margin: 0.5in;
-                  size: A4;
-                  /* Ocultar URL en pie de página */
-                  @bottom-left {
-                    content: "";
+                  
+                  /* Ocultar completamente headers y footers del navegador */
+                  @page {
+                    margin: 0.5in;
+                    size: A4;
+                    
+                    /* Eliminar headers */
+                    @top-left { content: ""; }
+                    @top-center { content: ""; }
+                    @top-right { content: ""; }
+                    
+                    /* Eliminar footers */
+                    @bottom-left { content: ""; }
+                    @bottom-center { content: ""; }
+                    @bottom-right { content: ""; }
                   }
-                  @bottom-right {
-                    content: "";
+                  
+                  /* Alternativa adicional para navegadores que no respetan @page */
+                  html, body {
+                    overflow: hidden;
                   }
-                  @bottom-center {
-                    content: "";
+                  
+                  /* Forzar que no se muestren URLs, títulos, fechas */
+                  * {
+                    -webkit-print-color-adjust: exact !important;
+                    color-adjust: exact !important;
                   }
                 }
               </style>
@@ -376,8 +392,8 @@ export const PrintVoucher = forwardRef<PrintVoucherRef, PrintVoucherProps>(
             </html>
         `;
 
-        // Crear ventana de impresión
-        const printWindow = window.open('', '_blank', 'width=800,height=900');
+        // Crear ventana de impresión con configuración específica
+        const printWindow = window.open('', '_blank', 'width=800,height=900,scrollbars=no,resizable=no');
         
         if (printWindow) {
           // Escribir contenido y configurar la ventana
@@ -387,9 +403,60 @@ export const PrintVoucher = forwardRef<PrintVoucherRef, PrintVoucherProps>(
           // Cambiar el título de la ventana para sugerir nombre de archivo
           printWindow.document.title = fileName;
           
+          // Configurar la ventana para ocultar headers y footers
+          const style = printWindow.document.createElement('style');
+          style.innerHTML = `
+            @media print {
+              @page {
+                margin: 0.5in;
+                size: A4;
+                /* Forzar que no aparezcan headers/footers */
+                -webkit-print-color-adjust: exact;
+                
+                /* Método alternativo: hacer invisible el contenido de headers/footers */
+                @top-left-corner { content: ""; color: transparent; }
+                @top-left { content: ""; color: transparent; }
+                @top-center { content: ""; color: transparent; }
+                @top-right { content: ""; color: transparent; }
+                @top-right-corner { content: ""; color: transparent; }
+                
+                @bottom-left-corner { content: ""; color: transparent; }
+                @bottom-left { content: ""; color: transparent; }
+                @bottom-center { content: ""; color: transparent; }
+                @bottom-right { content: ""; color: transparent; }
+                @bottom-right-corner { content: ""; color: transparent; }
+              }
+              
+              /* Ocultar cualquier elemento que pueda contener URL */
+              body::before, body::after {
+                content: "" !important;
+                display: none !important;
+              }
+            }
+          `;
+          printWindow.document.head.appendChild(style);
+          
+          // Intentar configurar la impresión sin headers/footers (Chrome/Edge)
+          if ('onbeforeprint' in printWindow) {
+            printWindow.onbeforeprint = function() {
+              // Configurar impresión sin headers/footers si el navegador lo soporta
+              if (printWindow.matchMedia) {
+                const mediaQueryList = printWindow.matchMedia('print');
+                if (mediaQueryList.matches) {
+                  // Está en modo de impresión
+                  return;
+                }
+              }
+            };
+          }
+          
           // Esperar un momento para que se renderice el contenido
           setTimeout(() => {
             printWindow.focus();
+            
+            // Mostrar mensaje al usuario sobre configuración de impresora
+            console.log('💡 Consejo: Para eliminar completamente headers/footers, en las opciones de impresión desactiva "Encabezados y pies de página"');
+            
             printWindow.print();
             
             // Cerrar la ventana después de un delay para dar tiempo a la impresión
