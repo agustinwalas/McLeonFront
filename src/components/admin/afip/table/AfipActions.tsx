@@ -147,6 +147,7 @@ export const AfipActions = ({ sale }: { sale: ISalePopulated }) => {
         <PrintVoucher
           ref={printRef}
           data={{
+            // Datos del comprobante
             cbteTipo: sale.afipData.tipoComprobante || 6,
             ptoVta: sale.afipData.puntoVenta || 1,
             cbteDesde: sale.afipData.numeroComprobante,
@@ -156,29 +157,51 @@ export const AfipActions = ({ sale }: { sale: ISalePopulated }) => {
               new Date().toISOString().split("T")[0],
             cae: sale.afipData.cae,
             vencimiento: sale.afipData.vencimientoCae,
+
+            // Datos del receptor
             docTipo: sale.afipData.documentoTipo || 96,
             docNro:
               sale.afipData.documentoNumero ||
               sale.client?.documentNumber ||
               "0",
             nombreReceptor: sale.client?.name || "Consumidor Final",
+
+            // Importes
             impNeto: sale.afipData.importeNeto || sale.subtotal,
             impIVA:
               sale.afipData.importeIva || sale.totalAmount - sale.subtotal,
             impTotal: sale.afipData.importeTotal || sale.totalAmount,
-            iva: sale.products.length > 1 
-              ? sale.products.map((product) => ({
-                  Id: 5, // IVA 21%
-                  BaseImp: product.unitPrice * product.quantity,
-                  Importe: (product.unitPrice * product.quantity * 0.21),
-                  productName: product.product.name,
-                }))
-              : [{
-                  Id: 5, // IVA 21%
-                  BaseImp: sale.afipData.importeNeto || sale.subtotal,
-                  Importe: sale.afipData.importeIva || sale.totalAmount - sale.subtotal,
-                  productName: sale.products[0]?.product.name || "Producto",
-                }],
+
+            // Detalle IVA con nombres de productos
+            iva:
+              sale.products.length > 1
+                ? sale.products.map((product) => ({
+                    Id: 5, // IVA 21%
+                    BaseImp: product.unitPrice * product.quantity,
+                    Importe: product.unitPrice * product.quantity * 0.21,
+                    productName: product.product.name,
+                    productCode: product.product.productCode,
+                    quantity: product.quantity,
+                    unitPrice: product.unitPrice,
+                  }))
+                : [
+                    {
+                      Id: 5, // IVA 21%
+                      BaseImp: sale.afipData.importeNeto || sale.subtotal,
+                      Importe:
+                        sale.afipData.importeIva ||
+                        sale.totalAmount - sale.subtotal,
+                      productName: sale.products[0]?.product.name || "Producto",
+                      productCode: sale.products[0]?.product.productCode,
+                      quantity: sale.products[0]?.quantity || 1,
+                      unitPrice: sale.products[0]?.unitPrice || 0,
+                    },
+                  ],
+
+            // Método de pago
+            paymentMethod: sale.paymentMethod,
+
+            // Otros datos requeridos
             monId: "PES",
             monCotiz: 1,
           }}

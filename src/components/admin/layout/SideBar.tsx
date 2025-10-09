@@ -9,6 +9,7 @@ import {
   FolderOpen,
   ChartBarStacked,
   FileTerminal,
+  LayoutDashboard,
 } from "lucide-react";
 
 import {
@@ -33,6 +34,11 @@ function year() {
 
 // Menu items.
 const items = [
+  {
+    title: "Dashboard",
+    url: "/admin/dashboard",
+    icon: LayoutDashboard,
+  },
   {
     title: "Ventas",
     url: "/admin/ventas",

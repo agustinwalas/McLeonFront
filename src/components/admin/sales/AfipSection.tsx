@@ -250,13 +250,22 @@ export function AfipSection({ sale }: AfipSectionProps) {
                   BaseImp: product.unitPrice * product.quantity,
                   Importe: (product.unitPrice * product.quantity * 0.21),
                   productName: product.product.name,
+                  productCode: product.product.productCode,
+                  quantity: product.quantity,
+                  unitPrice: product.unitPrice,
                 }))
               : [{
                   Id: 5, // IVA 21%
                   BaseImp: sale.afipData.importeNeto || sale.subtotal,
                   Importe: sale.afipData.importeIva || (sale.totalAmount - sale.subtotal),
                   productName: sale.products[0]?.product.name || "Producto",
+                  productCode: sale.products[0]?.product.productCode,
+                  quantity: sale.products[0]?.quantity || 1,
+                  unitPrice: sale.products[0]?.unitPrice || 0,
                 }],
+            
+            // Método de pago
+            paymentMethod: sale.paymentMethod,
             
             // Otros datos requeridos
             monId: "PES",

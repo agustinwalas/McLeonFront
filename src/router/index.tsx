@@ -11,6 +11,7 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 
 // Lazy loading para páginas del admin
+const Dashboard = lazy(() => import("@/pages/admin/Dashboard/Dashboard").then(m => ({ default: m.Dashboard })));
 const Products = lazy(() => import("@/pages/admin/Products/Products").then(m => ({ default: m.Products })));
 const ProductDetail = lazy(() => import("@/components/admin/products/product/Product"));
 const Categories = lazy(() => import("@/pages/admin/Categories/Categories").then(m => ({ default: m.Categories })));
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
+      { 
+        path: "dashboard", 
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Dashboard />
+          </Suspense>
+        ) 
+      },
       { 
         path: "productos", 
         element: (
