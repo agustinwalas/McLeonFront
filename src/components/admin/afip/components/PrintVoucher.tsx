@@ -356,38 +356,110 @@ export const PrintVoucher = forwardRef<PrintVoucherRef, PrintVoucherProps>(
                   }
                   .no-print { display: none !important; }
                   
-                  /* Ocultar completamente headers y footers del navegador */
+                  /* Configuración agresiva para ocultar headers y footers */
                   @page {
-                    margin: 0.5in;
+                    margin: 0.3in 0.5in; /* Reducir márgenes superior e inferior */
                     size: A4;
                     
-                    /* Eliminar headers */
-                    @top-left { content: ""; }
-                    @top-center { content: ""; }
-                    @top-right { content: ""; }
+                    /* Forzar headers en blanco */
+                    @top-left { 
+                      content: " " !important; 
+                      color: #ffffff !important; 
+                      background: #ffffff !important;
+                      font-size: 0 !important;
+                      visibility: hidden !important;
+                    }
+                    @top-center { 
+                      content: " " !important; 
+                      color: #ffffff !important; 
+                      background: #ffffff !important;
+                      font-size: 0 !important;
+                      visibility: hidden !important;
+                    }
+                    @top-right { 
+                      content: " " !important; 
+                      color: #ffffff !important; 
+                      background: #ffffff !important;
+                      font-size: 0 !important;
+                      visibility: hidden !important;
+                    }
                     
-                    /* Eliminar footers */
-                    @bottom-left { content: ""; }
-                    @bottom-center { content: ""; }
-                    @bottom-right { content: ""; }
+                    /* Forzar footers en blanco */
+                    @bottom-left { 
+                      content: " " !important; 
+                      color: #ffffff !important; 
+                      background: #ffffff !important;
+                      font-size: 0 !important;
+                      visibility: hidden !important;
+                    }
+                    @bottom-center { 
+                      content: " " !important; 
+                      color: #ffffff !important; 
+                      background: #ffffff !important;
+                      font-size: 0 !important;
+                      visibility: hidden !important;
+                    }
+                    @bottom-right { 
+                      content: " " !important; 
+                      color: #ffffff !important; 
+                      background: #ffffff !important;
+                      font-size: 0 !important;
+                      visibility: hidden !important;
+                    }
                   }
                   
-                  /* Alternativa adicional para navegadores que no respetan @page */
-                  html, body {
-                    overflow: hidden;
+                  /* Método alternativo: crear overlays blancos */
+                  html::before {
+                    content: "";
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 0.3in;
+                    background: #ffffff !important;
+                    z-index: 9999;
+                    display: block !important;
                   }
                   
-                  /* Forzar que no se muestren URLs, títulos, fechas */
+                  html::after {
+                    content: "";
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 0.3in;
+                    background: #ffffff !important;
+                    z-index: 9999;
+                    display: block !important;
+                  }
+                  
+                  /* Ocultar cualquier contenido automático del navegador */
                   * {
                     -webkit-print-color-adjust: exact !important;
                     color-adjust: exact !important;
+                  }
+                  
+                  /* Forzar que el contenido principal tenga prioridad */
+                  .comprobante {
+                    position: relative;
+                    z-index: 10000;
+                    background: white !important;
                   }
                 }
               </style>
             </head>
             <body>
-              ${generateComprobanteContent('ORIGINAL')}
-              ${generateComprobanteContent('DUPLICADO')}
+              <!-- Overlay superior para cubrir header del navegador -->
+              <div style="position: fixed; top: -1in; left: -1in; right: -1in; height: 1in; background: white; z-index: 9998;"></div>
+              
+              <!-- Overlay inferior para cubrir footer del navegador -->
+              <div style="position: fixed; bottom: -1in; left: -1in; right: -1in; height: 1in; background: white; z-index: 9998;"></div>
+              
+              <!-- Contenido principal -->
+              <div style="position: relative; z-index: 9999; background: white; min-height: 100vh;">
+                ${generateComprobanteContent('ORIGINAL')}
+                ${generateComprobanteContent('DUPLICADO')}
+              </div>
             </body>
             </html>
         `;
@@ -403,38 +475,80 @@ export const PrintVoucher = forwardRef<PrintVoucherRef, PrintVoucherProps>(
           // Cambiar el título de la ventana para sugerir nombre de archivo
           printWindow.document.title = fileName;
           
-          // Configurar la ventana para ocultar headers y footers
+          // Configuración agresiva para eliminar headers y footers
           const style = printWindow.document.createElement('style');
           style.innerHTML = `
             @media print {
               @page {
-                margin: 0.5in;
+                margin: 0.3in 0.5in;
                 size: A4;
-                /* Forzar que no aparezcan headers/footers */
-                -webkit-print-color-adjust: exact;
                 
-                /* Método alternativo: hacer invisible el contenido de headers/footers */
-                @top-left-corner { content: ""; color: transparent; }
-                @top-left { content: ""; color: transparent; }
-                @top-center { content: ""; color: transparent; }
-                @top-right { content: ""; color: transparent; }
-                @top-right-corner { content: ""; color: transparent; }
-                
-                @bottom-left-corner { content: ""; color: transparent; }
-                @bottom-left { content: ""; color: transparent; }
-                @bottom-center { content: ""; color: transparent; }
-                @bottom-right { content: ""; color: transparent; }
-                @bottom-right-corner { content: ""; color: transparent; }
+                /* Método 1: Content vacío con colores blancos */
+                @top-left { content: " "; color: #ffffff !important; background: #ffffff !important; font-size: 0 !important; }
+                @top-center { content: " "; color: #ffffff !important; background: #ffffff !important; font-size: 0 !important; }
+                @top-right { content: " "; color: #ffffff !important; background: #ffffff !important; font-size: 0 !important; }
+                @bottom-left { content: " "; color: #ffffff !important; background: #ffffff !important; font-size: 0 !important; }
+                @bottom-center { content: " "; color: #ffffff !important; background: #ffffff !important; font-size: 0 !important; }
+                @bottom-right { content: " "; color: #ffffff !important; background: #ffffff !important; font-size: 0 !important; }
               }
               
-              /* Ocultar cualquier elemento que pueda contener URL */
-              body::before, body::after {
-                content: "" !important;
-                display: none !important;
+              /* Método 2: Overlays blancos para cubrir headers/footers */
+              body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 0.4in;
+                background: #ffffff !important;
+                z-index: 9999;
+                display: block !important;
+              }
+              
+              body::after {
+                content: "";
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 0.4in;
+                background: #ffffff !important;
+                z-index: 9999;
+                display: block !important;
+              }
+              
+              /* Método 3: Forzar contenido principal encima */
+              .comprobante {
+                position: relative !important;
+                z-index: 10000 !important;
+                background: white !important;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
               }
             }
           `;
           printWindow.document.head.appendChild(style);
+          
+          // Método adicional: Intentar modificar el título para que sea invisible
+          const titleElement = printWindow.document.createElement('style');
+          titleElement.innerHTML = `
+            @media print {
+              /* Hacer que cualquier texto automático sea blanco */
+              * {
+                color: black !important;
+              }
+              
+              /* Específicamente para headers/footers del navegador */
+              @page {
+                @top-left { content: counter(page) " " !important; color: white !important; font-size: 1px !important; }
+                @top-right { content: " " !important; color: white !important; font-size: 1px !important; }
+                @bottom-left { content: " " !important; color: white !important; font-size: 1px !important; }
+                @bottom-right { content: " " !important; color: white !important; font-size: 1px !important; }
+                @bottom-center { content: " " !important; color: white !important; font-size: 1px !important; }
+              }
+            }
+          `;
+          printWindow.document.head.appendChild(titleElement);
           
           // Intentar configurar la impresión sin headers/footers (Chrome/Edge)
           if ('onbeforeprint' in printWindow) {
@@ -450,20 +564,43 @@ export const PrintVoucher = forwardRef<PrintVoucherRef, PrintVoucherProps>(
             };
           }
           
-          // Esperar un momento para que se renderice el contenido
+          // Configuración final antes de imprimir
           setTimeout(() => {
+            // Intentar configurar la página programáticamente
+            try {
+              // Crear meta tags para configurar la impresión
+              const metaNoHeader = printWindow.document.createElement('meta');
+              metaNoHeader.name = 'print-header';
+              metaNoHeader.content = '';
+              printWindow.document.head.appendChild(metaNoHeader);
+              
+              const metaNoFooter = printWindow.document.createElement('meta');
+              metaNoFooter.name = 'print-footer';
+              metaNoFooter.content = '';
+              printWindow.document.head.appendChild(metaNoFooter);
+              
+              // Configurar el título como espacio en blanco
+              printWindow.document.title = ' ';
+              
+            } catch {
+              console.log('No se pudo configurar meta tags de impresión');
+            }
+            
             printWindow.focus();
             
-            // Mostrar mensaje al usuario sobre configuración de impresora
-            console.log('💡 Consejo: Para eliminar completamente headers/footers, en las opciones de impresión desactiva "Encabezados y pies de página"');
+            // Mostrar mensaje al usuario
+            console.log('💡 Si aún aparecen headers/footers:');
+            console.log('   Chrome/Edge: Más opciones → Desmarcar "Encabezados y pies de página"');
+            console.log('   Firefox: Archivo → Configurar página → Desmarcar headers/footers');
             
+            // Intentar llamar print con configuración personalizada
             printWindow.print();
             
-            // Cerrar la ventana después de un delay para dar tiempo a la impresión
+            // Cerrar la ventana después de un delay
             setTimeout(() => {
               printWindow.close();
-            }, 500);
-          }, 500);
+            }, 1000);
+          }, 800);
         }
       }
     };
