@@ -237,6 +237,7 @@ export function AfipSection({ sale }: AfipSectionProps) {
             docTipo: sale.afipData.documentoTipo || 96,
             docNro: sale.afipData.documentoNumero || sale.client?.documentNumber || "0",
             nombreReceptor: sale.client?.name || "Consumidor Final",
+            direccionReceptor: sale.client?.address || undefined,
             
             // Importes
             impNeto: sale.afipData.importeNeto || sale.subtotal,

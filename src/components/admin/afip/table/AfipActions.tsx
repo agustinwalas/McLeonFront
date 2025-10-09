@@ -165,6 +165,7 @@ export const AfipActions = ({ sale }: { sale: ISalePopulated }) => {
               sale.client?.documentNumber ||
               "0",
             nombreReceptor: sale.client?.name || "Consumidor Final",
+            direccionReceptor: sale.client?.address || undefined,
 
             // Importes
             impNeto: sale.afipData.importeNeto || sale.subtotal,
