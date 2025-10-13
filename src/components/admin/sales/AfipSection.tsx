@@ -2,11 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, CheckCircle, XCircle, Clock, Printer } from "lucide-react";
+import { FileText, CheckCircle, XCircle, Clock, Printer, CreditCard, Receipt } from "lucide-react";
 import { ISalePopulated } from "@/types/sale";
 import { useNavigate } from "react-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { PrintVoucher, PrintVoucherRef } from "@/components/admin/afip/components/PrintVoucher";
+import { CreateNoteModal } from "../notes/CreateNoteModal";
+import { NoteType } from "@/types/note";
 
 interface AfipSectionProps {
   sale: ISalePopulated;
@@ -16,11 +18,20 @@ interface AfipSectionProps {
 export function AfipSection({ sale }: AfipSectionProps) {
   const navigate = useNavigate();
   const printRef = useRef<PrintVoucherRef>(null);
+  
+  // Estados para los modales de notas
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showDebitModal, setShowDebitModal] = useState(false);
 
   const handlePrint = () => {
     if (printRef.current) {
       printRef.current.print();
     }
+  };
+
+  // Verificar si la venta tiene factura generada (con CAE)
+  const hasValidInvoice = () => {
+    return !!(sale.afipData?.cae && sale.saleNumber);
   };
 
   const getStatusIcon = (estado: string) => {
@@ -56,15 +67,39 @@ export function AfipSection({ sale }: AfipSectionProps) {
             Comprobante AFIP
           </CardTitle>
           {sale.afipData?.cae && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePrint}
-              className="flex items-center gap-2"
-            >
-              <Printer className="h-4 w-4" />
-              Imprimir
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"  
+                onClick={handlePrint}
+                className="flex items-center gap-2"
+              >
+                <Printer className="h-4 w-4" />
+                Imprimir
+              </Button>
+              {hasValidInvoice() && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowCreditModal(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    Nota Crédito
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDebitModal(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Receipt className="h-4 w-4" />
+                    Nota Débito
+                  </Button>
+                </>
+              )}
+            </div>
           )}
         </div>
       </CardHeader>
@@ -272,6 +307,25 @@ export function AfipSection({ sale }: AfipSectionProps) {
             monId: "PES",
             monCotiz: 1
           }}
+        />
+      )}
+
+      {/* Modales para Notas de Crédito y Débito */}
+      {showCreditModal && (
+        <CreateNoteModal
+          isOpen={showCreditModal}
+          onClose={() => setShowCreditModal(false)}
+          noteType={NoteType.CREDITO}
+          sale={sale}
+        />
+      )}
+
+      {showDebitModal && (
+        <CreateNoteModal
+          isOpen={showDebitModal}
+          onClose={() => setShowDebitModal(false)}
+          noteType={NoteType.DEBITO}
+          sale={sale}
         />
       )}
     </Card>
