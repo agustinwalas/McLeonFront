@@ -61,6 +61,29 @@ export const calculateIvaFromSale = (sale: ISalePopulated): IvaData[] => {
     };
   });
 
+  // ✅ Agregar el costo de envío como un item adicional si existe
+  if (sale.deliveryFee && sale.deliveryFee > 0) {
+    const deliveryFeeWithIva = sale.deliveryFee;
+    const deliveryBaseImponible = deliveryFeeWithIva / 1.21;
+    const deliveryIvaImporte = deliveryFeeWithIva - deliveryBaseImponible;
+
+    console.log(`🚚 Envío:`, {
+      costoEnvio: deliveryFeeWithIva,
+      baseImponible: Number(deliveryBaseImponible.toFixed(2)),
+      ivaImporte: Number(deliveryIvaImporte.toFixed(2))
+    });
+
+    ivaItems.push({
+      Id: 5, // 21% para envío también
+      BaseImp: Number(deliveryBaseImponible.toFixed(2)),
+      Importe: Number(deliveryIvaImporte.toFixed(2)),
+      // ✅ Información del envío
+      productName: 'Envío a domicilio',
+      quantity: 1,
+      unitPrice: deliveryFeeWithIva,
+    });
+  }
+
  
   return ivaItems;
 };

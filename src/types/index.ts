@@ -86,6 +86,32 @@ export interface QueryParams {
   order?: 'asc' | 'desc';
 }
 
+// Dashboard types
+export type {
+  DashboardOverview,
+  SalesByPeriod,
+  ComparativeAnalysis,
+  TopProduct,
+  TopClient,
+  PaymentMethodStats,
+  AfipStats,
+  CategoryStats,
+  DashboardResponse,
+  DashboardFilters,
+  DashboardApiResponse,
+  OverviewApiResponse,
+  SalesByPeriodApiResponse,
+  TopProductsApiResponse,
+  TopClientsApiResponse,
+  PaymentMethodsApiResponse,
+  AfipStatsApiResponse,
+  ComparativeApiResponse,
+  PeriodType,
+  PaymentMethodType
+} from './dashboard';
+
+export { DASHBOARD_CONSTANTS } from './dashboard';
+
 // Error response type
 export interface ErrorResponse {
   success: false;

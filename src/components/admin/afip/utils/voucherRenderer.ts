@@ -133,7 +133,7 @@ export const renderVoucherPageAsString = (
               ${item.unitPrice?.toFixed(2) || '0.00'}
             </td>
             <td style="text-align: right; padding: 8px 5px;">
-              ${item.BaseImp.toFixed(2)}
+              ${(item.BaseImp + item.Importe).toFixed(2)}
             </td>
           </tr>
         `).join('')}

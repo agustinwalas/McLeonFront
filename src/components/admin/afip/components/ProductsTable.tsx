@@ -50,7 +50,7 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({ iva }) => {
                 {item.unitPrice?.toFixed(2) || '0.00'}
               </td>
               <td style={{ textAlign: 'right', padding: '8px 5px' }}>
-                {item.BaseImp.toFixed(2)}
+                {(item.BaseImp + item.Importe).toFixed(2)}
               </td>
             </tr>
           ))}
