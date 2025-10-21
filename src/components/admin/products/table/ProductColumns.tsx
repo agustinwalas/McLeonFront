@@ -34,6 +34,16 @@ export const useProductColumns = (
         />
       ),
       cell: ({ row }) => <span>{row.original.productCode}</span>,
+      sortingFn: (rowA, rowB, columnId) => {
+        const a = rowA.getValue(columnId) as string;
+        const b = rowB.getValue(columnId) as string;
+        
+        // Ordenamiento numérico natural - maneja casos como BUS1, BUS2, ..., BUS9, BUS10
+        return a.localeCompare(b, undefined, { 
+          numeric: true, 
+          sensitivity: 'base' 
+        });
+      },
     },
     {
       accessorKey: "category",
