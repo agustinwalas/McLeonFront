@@ -198,16 +198,37 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
             </div>
 
             <div className="flex justify-between text-sm">
-              <span>IVA:</span>
+              <span>Envío Base:</span>
+              <span>
+                $
+                {(sale.deliveryFee
+                  ? sale.deliveryFee / 1.21
+                  : 0
+                ).toLocaleString("es-AR", {
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </div>
+
+            <div className="flex justify-between text-sm">
+              <span>IVA Total:</span>
               <span>
                 $
                 {(() => {
                   // Sumar todos los IVAs de los productos
-                  const ivaTotal = sale.products.reduce((acc, item) => {
-                    const precioBase = item.unitPrice / 1.21;
-                    const iva = item.unitPrice - precioBase;
-                    return acc + iva * item.quantity;
-                  }, 0);
+                  const ivaTotalProductos = sale.products.reduce(
+                    (acc, item) => {
+                      const precioBase = item.unitPrice / 1.21;
+                      const iva = item.unitPrice - precioBase;
+                      return acc + iva * item.quantity;
+                    },
+                    0
+                  );
+                  // Sumar IVA del envío si corresponde
+                  const ivaDelivery = sale.deliveryFee
+                    ? sale.deliveryFee - sale.deliveryFee / 1.21
+                    : 0;
+                  const ivaTotal = ivaTotalProductos + ivaDelivery;
                   return ivaTotal.toLocaleString("es-AR", {
                     maximumFractionDigits: 2,
                   });
@@ -220,16 +241,6 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
               <span>
                 $
                 {sale.totalDiscount?.toLocaleString("es-AR", {
-                  maximumFractionDigits: 2,
-                })}
-              </span>
-            </div>
-
-            <div className="flex justify-between text-sm">
-              <span>Envío:</span>
-              <span>
-                $
-                {sale.deliveryFee?.toLocaleString("es-AR", {
                   maximumFractionDigits: 2,
                 })}
               </span>

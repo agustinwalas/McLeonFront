@@ -149,10 +149,10 @@ export const renderVoucherPageAsString = (
               ${formatearCantidad(item.quantity)}
             </td>
             <td style="text-align: right; padding: 8px 5px;">
-              ${(((item.unitPrice || 0) * (item.quantity || 0)) * 0.79).toFixed(2) }
+              ${(((item.unitPrice || 0) * (item.quantity || 0)) / 1.21).toFixed(2) }
             </td>
              <td style="text-align: right; padding: 8px 5px;">
-              ${(((item.unitPrice || 0) * (item.quantity || 0)) * 0.21).toFixed(2) }
+              ${(((item.unitPrice || 0) * (item.quantity || 0)) * 0.1735537).toFixed(2) }
             </td>
             <td style="text-align: right; padding: 8px 5px;">
               ${((item.unitPrice || 0) * (item.quantity || 0)).toFixed(2)}
