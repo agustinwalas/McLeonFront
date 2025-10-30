@@ -78,7 +78,7 @@ export const calculateIvaFromSale = (sale: ISalePopulated): IvaData[] => {
       BaseImp: Number(deliveryBaseImponible.toFixed(2)),
       Importe: Number(deliveryIvaImporte.toFixed(2)),
       // ✅ Información del envío
-      productName: 'Envío a domicilio',
+      productName: 'ENVÍO A DOMICILIO',
       quantity: 1,
       unitPrice: deliveryFeeWithIva,
     });

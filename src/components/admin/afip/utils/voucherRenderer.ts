@@ -51,7 +51,7 @@ export const renderVoucherPageAsString = (
         Id: 5, // o el ID de IVA correspondiente para servicios
         BaseImp: deliveryFee / 1.21,
         Importe: deliveryFee - deliveryFee / 1.21,
-        productName: 'Envío a domicilio',
+        productName: 'ENVÍO A DOMICILIO',
         productCode: 'ENVIO',
         quantity: 1,
         unitPrice: deliveryFee
