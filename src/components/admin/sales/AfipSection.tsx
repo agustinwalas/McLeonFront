@@ -260,6 +260,7 @@ export function AfipSection({ sale }: AfipSectionProps) {
           ref={printRef}
           data={{
             // Datos del comprobante
+            deliveryFee: sale.deliveryFee,
             cbteTipo: sale.afipData.tipoComprobante || 6,
             ptoVta: sale.afipData.puntoVenta || 1,
             cbteDesde: sale.afipData.numeroComprobante,

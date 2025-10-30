@@ -41,6 +41,24 @@ export const renderVoucherPageAsString = (
   data: PrintVoucherData, 
   tipo: 'ORIGINAL' | 'DUPLICADO'
 ): string => {
+  // Si hay deliveryFee, agregarlo como un producto más
+  let ivaWithDelivery = data.iva;
+  if (typeof (data as any).deliveryFee === 'number' && (data as any).deliveryFee > 0) {
+    const deliveryFee = (data as any).deliveryFee;
+    ivaWithDelivery = [
+      ...data.iva,
+      {
+        Id: 5, // o el ID de IVA correspondiente para servicios
+        BaseImp: deliveryFee / 1.21,
+        Importe: deliveryFee - deliveryFee / 1.21,
+        productName: 'Envío a domicilio',
+        productCode: 'ENVIO',
+        quantity: 1,
+        unitPrice: deliveryFee
+      }
+    ];
+  }
+
   return `
     <!-- Header - Datos del emisor y receptor -->
     <div style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 15px;">
@@ -117,12 +135,13 @@ export const renderVoucherPageAsString = (
           <th style="text-align: left; padding: 5px;">Cód.</th>
           <th style="text-align: left; padding: 5px;">Descripción</th>
           <th style="text-align: center; padding: 5px;">Cantidad</th>
-          <th style="text-align: right; padding: 5px;">Pr. Unitario</th>
+          <th style="text-align: right; padding: 5px;">Base</th>
+          <th style="text-align: right; padding: 5px;">Iva</th>
           <th style="text-align: right; padding: 5px;">Total</th>
         </tr>
       </thead>
       <tbody>
-        ${data.iva.map((item, index) => `
+        ${ivaWithDelivery.map((item, index) => `
           <tr>
             <td style="padding: 8px 5px;">${item.productCode || `PRE${index + 1}`}</td>
             <td style="padding: 8px 5px;">${item.productName || 'PRODUCTO'}</td>
@@ -130,10 +149,13 @@ export const renderVoucherPageAsString = (
               ${formatearCantidad(item.quantity)}
             </td>
             <td style="text-align: right; padding: 8px 5px;">
-              ${item.unitPrice?.toFixed(2) || '0.00'}
+              ${(((item.unitPrice || 0) * (item.quantity || 0)) * 0.79).toFixed(2) }
+            </td>
+             <td style="text-align: right; padding: 8px 5px;">
+              ${(((item.unitPrice || 0) * (item.quantity || 0)) * 0.21).toFixed(2) }
             </td>
             <td style="text-align: right; padding: 8px 5px;">
-              ${(item.BaseImp + item.Importe).toFixed(2)}
+              ${((item.unitPrice || 0) * (item.quantity || 0)).toFixed(2)}
             </td>
           </tr>
         `).join('')}

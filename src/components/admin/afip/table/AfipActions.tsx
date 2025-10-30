@@ -205,6 +205,7 @@ export const AfipActions = ({ sale }: { sale: ISalePopulated }) => {
             // Otros datos requeridos
             monId: "PES",
             monCotiz: 1,
+            deliveryFee: sale.deliveryFee,
           }}
         />
       )}

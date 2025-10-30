@@ -40,6 +40,7 @@ interface PrintVoucherData {
   monId: string;
   monCotiz: number;
   paymentMethod?: string;
+  deliveryFee?: number;
 }
 
 interface PrintVoucherProps {
