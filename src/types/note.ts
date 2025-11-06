@@ -69,6 +69,9 @@ export interface Note {
   ivaAmount: number;
   totalAmount: number;
   
+  // Forma de pago
+  paymentMethod?: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' | 'CHEQUE';
+  
   // AFIP
   cbteTipo?: number;
   ptoVta?: number;

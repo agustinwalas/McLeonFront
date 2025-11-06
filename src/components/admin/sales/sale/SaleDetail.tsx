@@ -6,6 +6,7 @@ import { SaleHeader } from "./SaleHeader";
 import { SaleInfoCard } from "./SaleInfoCard";
 import { SaleProductsCard } from "./SaleProductsCard";
 import { AfipSection } from "../AfipSection";
+import { NotesSection } from "../NotesSection";
 
 export default function SaleDetail() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,12 @@ export default function SaleDetail() {
   const handleAfipGenerated = async () => {
     if (id) {
       await getSaleById(id); 
+    }
+  };
+
+  const handleNoteCreated = async () => {
+    if (id) {
+      await getSaleById(id);
     }
   };
 
@@ -44,7 +51,13 @@ export default function SaleDetail() {
         <SaleProductsCard sale={currentSale} />
       </div>
 
-      <AfipSection sale={currentSale} onAfipGenerated={handleAfipGenerated} /> 
+      <AfipSection 
+        sale={currentSale} 
+        onAfipGenerated={handleAfipGenerated} 
+        onNoteCreated={handleNoteCreated}
+      />
+      
+      <NotesSection sale={currentSale} onNoteCreated={handleNoteCreated} />
     </div>
   );
 }

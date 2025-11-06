@@ -13,9 +13,10 @@ import { NoteType } from "@/types/note";
 interface AfipSectionProps {
   sale: ISalePopulated;
   onAfipGenerated: () => void;
+  onNoteCreated?: () => void;
 }
 
-export function AfipSection({ sale }: AfipSectionProps) {
+export function AfipSection({ sale, onNoteCreated }: AfipSectionProps) {
   const navigate = useNavigate();
   const printRef = useRef<PrintVoucherRef>(null);
   
@@ -318,6 +319,7 @@ export function AfipSection({ sale }: AfipSectionProps) {
           onClose={() => setShowCreditModal(false)}
           noteType={NoteType.CREDITO}
           sale={sale}
+          onSuccess={onNoteCreated}
         />
       )}
 
@@ -327,6 +329,7 @@ export function AfipSection({ sale }: AfipSectionProps) {
           onClose={() => setShowDebitModal(false)}
           noteType={NoteType.DEBITO}
           sale={sale}
+          onSuccess={onNoteCreated}
         />
       )}
     </Card>

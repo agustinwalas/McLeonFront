@@ -36,7 +36,7 @@ export const CreateNoteModal: React.FC<CreateNoteModalProps> = ({
   noteType,
   onSuccess,
 }) => {
-  const { /* createCreditNote, createDebitNote, */ canCreateNote } = useNoteActions();
+  const { createCreditNote, createDebitNote, canCreateNote, sendNoteToAfip } = useNoteActions();
 
   const [formData, setFormData] = useState({
     reason: "",
@@ -46,6 +46,7 @@ export const CreateNoteModal: React.FC<CreateNoteModalProps> = ({
   });
 
   const [loading, setLoading] = useState(false);
+  const [sendToAfip, setSendToAfip] = useState(true); // Enviar a AFIP por defecto
 
   // Resetear formulario cuando se abre el modal y cargar productos originales
   useEffect(() => {
@@ -169,63 +170,60 @@ export const CreateNoteModal: React.FC<CreateNoteModalProps> = ({
 
     setLoading(true);
 
-    // Preparar el payload que se enviará al backend
-    const payload = {
-      saleId: sale.id,
-      reason: formData.reason,
-      description: formData.description,
-      items: formData.items,
-      // Datos adicionales para contexto
-      noteType: noteType,
-      originalSaleData: {
-        saleNumber: sale.saleNumber,
-        cae: sale.afipData?.cae,
-        caeExpiration: sale.afipData?.caeExpiration,
-        totalAmount: sale.totalAmount,
-        client: sale.client
-      }
-    };
-
-    console.log("=== PAYLOAD PARA NOTA DE", noteType, "===");
-    console.log("🔸 Sale ID:", payload.saleId);
-    console.log("🔸 Motivo:", payload.reason);
-    console.log("🔸 Descripción:", payload.description);
-    console.log("🔸 Items a procesar:", payload.items);
-    console.log("🔸 Datos factura original:", payload.originalSaleData);
-    console.log("🔸 Payload completo:", payload);
-    console.log("=======================================");
-
     try {
-      // ========== MODO PRUEBA - NO SE ENVÍA AL BACKEND ==========
-      /*
+      console.log("=== CREANDO NOTA DE", noteType, "===");
+      console.log("🔸 Sale ID:", sale._id);
+      console.log("🔸 Motivo:", formData.reason);
+      console.log("🔸 Descripción:", formData.description);
+      console.log("🔸 Items:", formData.items);
+      console.log("🔸 Enviar a AFIP:", sendToAfip);
+
+      let createdNote;
+
+      // Crear la nota según el tipo
       if (noteType === NoteType.CREDITO) {
-        // Para AFIP: Nota de Crédito debe referenciar comprobante original
-        // Campos AFIP necesarios: CbtesAsoc, ImpTotal, ImpNeto, ImpIVA, etc.
-        await createCreditNote(
-          sale.id,
+        createdNote = await createCreditNote(
+          sale._id,
           formData.reason,
           formData.description,
           formData.items
         );
       } else {
-        // Para AFIP: Nota de Débito debe referenciar comprobante original  
-        // Campos AFIP necesarios: CbtesAsoc, ImpTotal, ImpNeto, ImpIVA, etc.
-        await createDebitNote(
-          sale.id,
+        createdNote = await createDebitNote(
+          sale._id,
           formData.reason,
           formData.description,
           formData.items
         );
       }
-      */
 
-      // Solo simulamos el éxito para ver el payload
-      console.log("✅ SIMULACIÓN: Nota creada exitosamente (NO se envió al backend)");
-      
-      toast.success(`Nota de ${noteType.toLowerCase()} creada exitosamente (MODO PRUEBA)`);
+      console.log("✅ Nota creada exitosamente:", createdNote);
+
+      // Si la opción está habilitada, enviar directamente a AFIP
+      if (sendToAfip) {
+        try {
+          console.log("📤 Enviando nota a AFIP...");
+          const noteWithCae = await sendNoteToAfip(createdNote.id);
+          console.log("✅ Nota enviada a AFIP. CAE:", noteWithCae.cae);
+          toast.success(
+            `Nota de ${noteType.toLowerCase()} creada y autorizada por AFIP. CAE: ${noteWithCae.cae}`
+          );
+        } catch (afipError: any) {
+          console.error("❌ Error al enviar a AFIP:", afipError);
+          toast.warning(
+            `Nota creada pero error al enviar a AFIP: ${afipError.message}. Puede enviarla manualmente más tarde.`
+          );
+        }
+      } else {
+        toast.success(
+          `Nota de ${noteType.toLowerCase()} creada exitosamente. Recuerde enviarla a AFIP para obtener el CAE.`
+        );
+      }
+
       onSuccess?.();
       onClose();
     } catch (error: any) {
+      console.error("❌ Error al crear la nota:", error);
       toast.error(error.message || "Error al crear la nota");
     } finally {
       setLoading(false);
@@ -455,6 +453,20 @@ export const CreateNoteModal: React.FC<CreateNoteModalProps> = ({
             </Card>
           )}
 
+          {/* Opción de envío a AFIP */}
+          <div className="flex items-center space-x-2 p-4 border rounded-lg bg-muted/50">
+            <input
+              type="checkbox"
+              id="sendToAfip"
+              checked={sendToAfip}
+              onChange={(e) => setSendToAfip(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300"
+            />
+            <label htmlFor="sendToAfip" className="text-sm font-medium cursor-pointer">
+              Enviar automáticamente a AFIP para obtener CAE
+            </label>
+          </div>
+
           {/* Botones */}
           <div className="flex justify-end gap-4">
             <Button type="button" variant="outline" onClick={onClose}>
@@ -462,8 +474,10 @@ export const CreateNoteModal: React.FC<CreateNoteModalProps> = ({
             </Button>
             <Button type="submit" disabled={loading}>
               {loading
-                ? "Creando..."
-                : `Crear Nota de ${noteType === NoteType.DEBITO ? "Débito" : "Crédito"}`}
+                ? "Procesando..."
+                : sendToAfip
+                ? `Crear y Enviar a AFIP`
+                : `Crear Nota (sin CAE)`}
             </Button>
           </div>
         </form>

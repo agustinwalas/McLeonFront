@@ -33,6 +33,7 @@ interface NoteStore {
   updateNote: (id: string, data: UpdateNoteData) => Promise<Note>;
   deleteNote: (id: string) => Promise<void>;
   getNoteStats: (dateFrom?: string, dateTo?: string) => Promise<void>;
+  sendNoteToAfip: (noteId: string) => Promise<Note>;
   
   // Utilidades
   clearError: () => void;
@@ -240,6 +241,36 @@ export const useNote = create<NoteStore>((set) => ({
     }
   },
 
+  // Enviar nota a AFIP para obtener CAE
+  sendNoteToAfip: async (noteId: string): Promise<Note> => {
+    set({ loading: true, error: null });
+    try {
+      const response = await api.post(`/notes/${noteId}/send-to-afip`);
+      
+      if (response.data.success) {
+        const updatedNote = response.data.data;
+        
+        // Actualizar la nota en el estado
+        set(state => ({
+          notes: state.notes.map(note => 
+            note.id === noteId ? updatedNote : note
+          ),
+          currentNote: state.currentNote?.id === noteId ? updatedNote : state.currentNote,
+          loading: false
+        }));
+        
+        return updatedNote;
+      } else {
+        set({ error: response.data.message || 'Error al enviar nota a AFIP', loading: false });
+        throw new Error(response.data.message || 'Error al enviar nota a AFIP');
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Error al enviar nota a AFIP';
+      set({ error: errorMessage, loading: false });
+      throw new Error(errorMessage);
+    }
+  },
+
   // Utilidades
   clearError: () => set({ error: null }),
   
@@ -261,7 +292,7 @@ export const useNote = create<NoteStore>((set) => ({
 
 // Hook para funciones específicas de notas de crédito/débito
 export const useNoteActions = () => {
-  const { createNote, getNotesBySale } = useNote();
+  const { createNote, getNotesBySale, sendNoteToAfip } = useNote();
 
   // Crear nota de crédito desde una venta
   const createCreditNote = async (
@@ -304,6 +335,7 @@ export const useNoteActions = () => {
     createCreditNote,
     createDebitNote,
     canCreateNote,
-    getNotesBySale
+    getNotesBySale,
+    sendNoteToAfip
   };
 };

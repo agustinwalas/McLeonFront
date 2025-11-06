@@ -135,13 +135,16 @@ export const renderVoucherPageAsString = (
           <th style="text-align: left; padding: 5px;">Cód.</th>
           <th style="text-align: left; padding: 5px;">Descripción</th>
           <th style="text-align: center; padding: 5px;">Cantidad</th>
-          <th style="text-align: right; padding: 5px;">Base</th>
-          <th style="text-align: right; padding: 5px;">Iva</th>
+          <th style="text-align: right; padding: 5px;">Precio Unit.</th>
           <th style="text-align: right; padding: 5px;">Total</th>
         </tr>
       </thead>
       <tbody>
-        ${ivaWithDelivery.map((item, index) => `
+        ${ivaWithDelivery.map((item, index) => {
+          const precioUnitBase = ((item.unitPrice || 0) / 1.21);
+          const totalBase = precioUnitBase * (item.quantity || 1);
+          
+          return `
           <tr>
             <td style="padding: 8px 5px;">${item.productCode || `PRE${index + 1}`}</td>
             <td style="padding: 8px 5px;">${item.productName || 'PRODUCTO'}</td>
@@ -149,16 +152,14 @@ export const renderVoucherPageAsString = (
               ${formatearCantidad(item.quantity)}
             </td>
             <td style="text-align: right; padding: 8px 5px;">
-              ${(((item.unitPrice || 0) * (item.quantity || 0)) / 1.21).toFixed(2) }
-            </td>
-             <td style="text-align: right; padding: 8px 5px;">
-              ${(((item.unitPrice || 0) * (item.quantity || 0)) * 0.1735537).toFixed(2) }
+              ${precioUnitBase.toFixed(2)}
             </td>
             <td style="text-align: right; padding: 8px 5px;">
-              ${((item.unitPrice || 0) * (item.quantity || 0)).toFixed(2)}
+              ${totalBase.toFixed(2)}
             </td>
           </tr>
-        `).join('')}
+        `;
+        }).join('')}
       </tbody>
     </table>
 
