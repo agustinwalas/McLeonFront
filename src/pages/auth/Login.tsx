@@ -11,12 +11,12 @@ export default function Login() {
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/admin/productos", { replace: true });
+      navigate("/admin/ventas", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
   const handleLoginSuccess = () => {
-    navigate("/admin/productos", { replace: true });
+    navigate("/admin/ventas", { replace: true });
   };
 
   return (

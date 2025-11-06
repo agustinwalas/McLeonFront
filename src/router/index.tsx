@@ -61,6 +61,14 @@ const router = createBrowserRouter([
     ),
     children: [
       { 
+        index: true,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Sales />
+          </Suspense>
+        ) 
+      },
+      { 
         path: "dashboard", 
         element: (
           <Suspense fallback={<LoadingFallback />}>

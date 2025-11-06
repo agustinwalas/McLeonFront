@@ -11,7 +11,7 @@ export default function Register() {
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/admin/productos", { replace: true });
+      navigate("/admin/ventas", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
