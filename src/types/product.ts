@@ -9,6 +9,7 @@ export interface IProduct {
   _id: string;
   productCode: string;
   name: string;
+  shopifyName?: string;
   associatedSuppliers: string[];
   images?: string[];
   category: string;
@@ -47,6 +48,7 @@ export interface IProductPopulated extends Omit<IProduct, 'category' | 'associat
 export interface ProductCreateInput {
   productCode: string;
   name: string;
+  shopifyName?: string;
   description?: string;
   category?: string;
   purchaseCost: number;
@@ -64,6 +66,7 @@ export interface ProductCreateInput {
 export interface ProductUpdateInput {
   productCode?: string;
   name?: string;
+  shopifyName?: string;
   description?: string;
   category?: string;
   purchaseCost?: number;

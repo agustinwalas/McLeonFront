@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useEffect } from "react";
 import { ProductCreateInput } from "@/types";
@@ -39,6 +40,7 @@ export function NewProductForm({ onSuccess }: FormProps) {
     defaultValues: {
       productCode: "",
       name: "",
+      shopifyName: "",
       description: "",
       category: "",
       wholesalePrice: 0,
@@ -62,6 +64,7 @@ export function NewProductForm({ onSuccess }: FormProps) {
       const productData: ProductCreateInput = {
         productCode: values.productCode,
         name: values.name,
+        shopifyName: values.shopifyName,
         description: values.description,
         category: values.category || undefined,
         purchaseCost: values.purchaseCost,
@@ -84,6 +87,7 @@ export function NewProductForm({ onSuccess }: FormProps) {
       form.reset({
         productCode: "",
         name: "",
+        shopifyName: "",
         description: "",
         category: "",
         wholesalePrice: 0,
@@ -109,25 +113,37 @@ export function NewProductForm({ onSuccess }: FormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Datos básicos */}
-        <ProductBasicInfo form={form} categories={categories} />
+        <Tabs defaultValue="admin" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="admin">Administración</TabsTrigger>
+            <TabsTrigger value="shopify">Shopify</TabsTrigger>
+          </TabsList>
 
-        {/* Precios */}
-        <ProductPricing form={form} />
+          <TabsContent value="admin" className="space-y-4 mt-4">
+            {/* Datos básicos */}
+            <ProductBasicInfo form={form} categories={categories} />
 
-        {/* Stock */}
-        <ProductStock form={form} />
+            {/* Precios */}
+            <ProductPricing form={form} />
 
-        {/* Proveedores */}
-        <ProductSuppliers form={form} suppliers={suppliers} />
+            {/* Stock */}
+            <ProductStock form={form} />
 
-        {/* Componente de Collections */}
-        <ProductCollections form={form} />
+            {/* Proveedores */}
+            <ProductSuppliers form={form} suppliers={suppliers} />
+          </TabsContent>
 
-        <ProductShopify form={form} />
+          <TabsContent value="shopify" className="space-y-4 mt-4">
+            {/* Nombre Shopify */}
+            <ProductShopify form={form} />
 
-        {/* Imágenes */}
-        <ProductImages form={form} />
+            {/* Colecciones */}
+            <ProductCollections form={form} />
+
+            {/* Imágenes */}
+            <ProductImages form={form} />
+          </TabsContent>
+        </Tabs>
 
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? (

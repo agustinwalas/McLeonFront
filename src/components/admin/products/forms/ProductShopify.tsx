@@ -5,9 +5,10 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { ProductFormData } from "./schemas/productSchema";
+import { SimpleRichTextEditor } from "./SimpleRichTextEditor";
 
 interface ProductShopifyProps {
   form: UseFormReturn<ProductFormData>;
@@ -15,23 +16,39 @@ interface ProductShopifyProps {
 
 export function ProductShopify({ form }: ProductShopifyProps) {
   return (
-    <FormField
-      control={form.control}
-      name="activeInShopify"
-      render={({ field }) => (
-        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-          <FormControl>
-            <Checkbox
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-          </FormControl>
-          <FormLabel className="text-sm font-normal">
-            Activo en Shopify
-          </FormLabel>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <div className="space-y-4">
+
+      <FormField
+        control={form.control}
+        name="shopifyName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nombre Shopify</FormLabel>
+            <FormControl>
+              <Input placeholder="Nombre personalizado para Shopify" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <SimpleRichTextEditor
+                value={field.value || ""}
+                onChange={field.onChange}
+                placeholder="Descripción detallada del producto para mostrar en Shopify..."
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+    </div>
   );
 }

@@ -10,7 +10,6 @@ import { UseFormReturn } from "react-hook-form";
 import { ProductFormData } from "./schemas/productSchema";
 import { UnitOfMeasure } from "@/types/product";
 import { ICategory } from "@/types";
-import { SimpleRichTextEditor } from "./SimpleRichTextEditor";
 
 interface ProductBasicInfoProps {
   form: UseFormReturn<ProductFormData>;
@@ -41,22 +40,6 @@ export function ProductBasicInfo({ form, categories }: ProductBasicInfoProps) {
             <FormLabel>Nombre del Producto</FormLabel>
             <FormControl>
               <Input placeholder="Ej: Torta de Chocolate" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="description"
-        render={({ field }) => (
-          <FormItem className="md:col-span-2">
-            <FormControl>
-              <SimpleRichTextEditor
-                value={field.value || ""}
-                onChange={field.onChange}
-                placeholder="Descripción detallada del producto..."
-              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -109,7 +92,6 @@ export function ProductBasicInfo({ form, categories }: ProductBasicInfoProps) {
           </FormItem>
         )}
       />
-      
     </div>
   );
 }

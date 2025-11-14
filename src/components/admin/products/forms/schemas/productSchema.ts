@@ -5,6 +5,7 @@ import { UnitOfMeasure } from "@/types/product";
 export const productFormSchema = z.object({
   productCode: z.string().min(1, { message: "El código es obligatorio." }),
   name: z.string().min(1, { message: "El nombre es obligatorio." }),
+  shopifyName: z.string().optional(),
   description: z.string().optional(),
   category: z.string(),
   collections: z.array(z.string()).optional(),
