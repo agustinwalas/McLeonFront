@@ -20,6 +20,7 @@ import { useCategoryStore } from "@/store/useCategory";
 import { useSupplierStore } from "@/store/useSupplier";
 import { ProductShopify } from "./ProductShopify";
 import { ProductCollections } from "./ProductCollections";
+import { ProductActiveShopify } from "../ProductActiveShopify";
 
 interface FormProps {
   onSuccess?: () => void;
@@ -58,9 +59,6 @@ export function NewProductForm({ onSuccess }: FormProps) {
 
   async function onSubmit(values: ProductFormData) {
     try {
- 
- 
-
       const productData: ProductCreateInput = {
         productCode: values.productCode,
         name: values.name,
@@ -80,8 +78,6 @@ export function NewProductForm({ onSuccess }: FormProps) {
       };
 
       await createProduct(productData);
-
- 
 
       // Reset form after successful creation
       form.reset({
@@ -142,6 +138,9 @@ export function NewProductForm({ onSuccess }: FormProps) {
 
             {/* Imágenes */}
             <ProductImages form={form} />
+
+            {/* Activo en Shopify */}
+            <ProductActiveShopify form={form} />
           </TabsContent>
         </Tabs>
 

@@ -187,7 +187,6 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
 
             {/* Activo en Shopify */}
             <ProductActiveShopify form={form} />
-
             
           </TabsContent>
         </Tabs>
