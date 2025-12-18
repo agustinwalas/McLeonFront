@@ -2,13 +2,11 @@ import { useState } from "react";
 import {
   LogOutIcon,
   ShoppingCart,
-  ShoppingBasket,
   Package,
   Truck,
   Users,
   FileText,
   FolderOpen,
-  ChartBarStacked,
   Menu,
   FileTerminal,
 } from "lucide-react";
@@ -38,11 +36,6 @@ const items = [
     icon: ShoppingCart,
   },
   {
-    title: "Ventas Shopify",
-    url: "/admin/ventas-shopify",
-    icon: ShoppingBasket,
-  },
-  {
     title: "Productos",
     url: "/admin/productos",
     icon: Package,
@@ -51,11 +44,6 @@ const items = [
     title: "Categorías",
     url: "/admin/categorias",
     icon: FolderOpen,
-  },
-  {
-    title: "Colecciones",
-    url: "/admin/shopify-collections",
-    icon: ChartBarStacked,
   },
   {
     title: "Proveedores",

@@ -134,13 +134,6 @@ export function ProductImageCard({ product }: ProductImageCardProps) {
                 : "N/A"}
             </p>
           </div>
-
-          <div>
-            <h3 className="font-medium text-gray-900">Activo en Shopify</h3>
-            <p className="text-gray-600">
-              {product.activeInShopify ? "Sí" : "No"}
-            </p>
-          </div>
         </div>
       </CardContent>
     </Card>

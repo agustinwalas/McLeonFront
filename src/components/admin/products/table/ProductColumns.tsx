@@ -128,19 +128,6 @@ export const useProductColumns = (
       },
     },
     {
-      accessorKey: "activeInShopify",
-      header: ({ column }) => (
-        <SortButton
-          label="Shopify"
-          isSorted={column.getIsSorted()}
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        />
-      ),
-      cell: ({ row }) => (
-        <span>{row.original.activeInShopify ? "Activo" : "Inactivo"}</span>
-      ),
-    },
-    {
       accessorKey: "actions",
       header: "Acciones",
       cell: ({ row }) => <ProductActions product={row.original} />,

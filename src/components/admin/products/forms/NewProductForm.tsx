@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useEffect } from "react";
 import { ProductCreateInput } from "@/types";
@@ -18,9 +17,6 @@ import { ProductImages } from "./ProductImages";
 import { useProductStore } from "@/store/useProduct";
 import { useCategoryStore } from "@/store/useCategory";
 import { useSupplierStore } from "@/store/useSupplier";
-import { ProductShopify } from "./ProductShopify";
-import { ProductCollections } from "./ProductCollections";
-import { ProductActiveShopify } from "../ProductActiveShopify";
 
 interface FormProps {
   onSuccess?: () => void;
@@ -41,19 +37,16 @@ export function NewProductForm({ onSuccess }: FormProps) {
     defaultValues: {
       productCode: "",
       name: "",
-      shopifyName: "",
-      description: "",
-      category: "",
+      description: \"\",
+      category: \"\",
       wholesalePrice: 0,
       purchaseCost: 0,
       retailPrice: 0,
       currentStock: 0,
       minimumStock: 0,
-      activeInShopify: false,
       unitOfMeasure: UnitOfMeasure.UNIDAD,
       images: [],
       associatedSuppliers: [],
-      collections: [],
     },
   });
 
@@ -62,7 +55,6 @@ export function NewProductForm({ onSuccess }: FormProps) {
       const productData: ProductCreateInput = {
         productCode: values.productCode,
         name: values.name,
-        shopifyName: values.shopifyName,
         description: values.description,
         category: values.category || undefined,
         purchaseCost: values.purchaseCost,
@@ -71,10 +63,8 @@ export function NewProductForm({ onSuccess }: FormProps) {
         currentStock: values.currentStock,
         minimumStock: values.minimumStock,
         unitOfMeasure: values.unitOfMeasure,
-        activeInShopify: values.activeInShopify,
         images: values.images || [],
         associatedSuppliers: values.associatedSuppliers || [],
-        collections: values.collections || [],
       };
 
       await createProduct(productData);
@@ -83,7 +73,6 @@ export function NewProductForm({ onSuccess }: FormProps) {
       form.reset({
         productCode: "",
         name: "",
-        shopifyName: "",
         description: "",
         category: "",
         wholesalePrice: 0,
@@ -91,11 +80,9 @@ export function NewProductForm({ onSuccess }: FormProps) {
         retailPrice: 0,
         currentStock: 0,
         minimumStock: 0,
-        activeInShopify: false,
         unitOfMeasure: UnitOfMeasure.UNIDAD, // ✅ Reset con valor por defecto
         images: [],
         associatedSuppliers: [],
-        collections: [],
       });
 
       if (onSuccess) {
@@ -109,40 +96,20 @@ export function NewProductForm({ onSuccess }: FormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Tabs defaultValue="admin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="admin">Administración</TabsTrigger>
-            <TabsTrigger value="shopify">Shopify</TabsTrigger>
-          </TabsList>
+        {/* Datos básicos */}
+        <ProductBasicInfo form={form} categories={categories} />
 
-          <TabsContent value="admin" className="space-y-4 mt-4">
-            {/* Datos básicos */}
-            <ProductBasicInfo form={form} categories={categories} />
+        {/* Precios */}
+        <ProductPricing form={form} />
 
-            {/* Precios */}
-            <ProductPricing form={form} />
+        {/* Stock */}
+        <ProductStock form={form} />
 
-            {/* Stock */}
-            <ProductStock form={form} />
+        {/* Proveedores */}
+        <ProductSuppliers form={form} suppliers={suppliers} />
 
-            {/* Proveedores */}
-            <ProductSuppliers form={form} suppliers={suppliers} />
-          </TabsContent>
-
-          <TabsContent value="shopify" className="space-y-4 mt-4">
-            {/* Nombre Shopify */}
-            <ProductShopify form={form} />
-
-            {/* Colecciones */}
-            <ProductCollections form={form} />
-
-            {/* Imágenes */}
-            <ProductImages form={form} />
-
-            {/* Activo en Shopify */}
-            <ProductActiveShopify form={form} />
-          </TabsContent>
-        </Tabs>
+        {/* Imágenes */}
+        <ProductImages form={form} />
 
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? (

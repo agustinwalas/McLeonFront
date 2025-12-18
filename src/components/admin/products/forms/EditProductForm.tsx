@@ -4,13 +4,11 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductBasicInfo } from "./ProductBasicInfo";
 import { ProductPricing } from "./ProductPricing";
 import { ProductStock } from "./ProductStock";
 import { ProductSuppliers } from "./ProductSuppliers";
 import { ProductImages } from "./ProductImages";
-import { ProductShopify } from "./ProductShopify";
 
 import { useEffect } from "react";
 import { ProductUpdateInput, IProductPopulated } from "@/types";
@@ -19,8 +17,6 @@ import { productFormSchema, ProductFormData } from "./schemas/productSchema";
 import { useProductStore } from "@/store/useProduct";
 import { useCategoryStore } from "@/store/useCategory";
 import { useSupplierStore } from "@/store/useSupplier";
-import { ProductCollections } from "./ProductCollections";
-import { ProductActiveShopify } from "../ProductActiveShopify";
 
 interface FormProps {
   product: IProductPopulated;
@@ -65,7 +61,6 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
     defaultValues: {
       productCode: product.productCode || "",
       name: product.name || "",
-      shopifyName: product.shopifyName || "",
       category: getCategoryId(product.category),
       wholesalePrice: product.wholesalePrice || 0,
       purchaseCost: product.purchaseCost || 0,
@@ -74,16 +69,12 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
       minimumStock: product.minimumStock || 0,
       unitOfMeasure: product.unitOfMeasure || UnitOfMeasure.UNIDAD,
       images: [],
-      activeInShopify: product.activeInShopify || false,
       description: product.description || "",
       associatedSuppliers: Array.isArray(product.associatedSuppliers)
         ? product.associatedSuppliers.map((supplier) =>
             typeof supplier === "string" ? supplier : supplier._id
           )
         : [],
-      collections: (product.collections || []).map((collection) =>
-        typeof collection === "string" ? collection : collection._id
-      ),
     },
   });
 
@@ -93,7 +84,6 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
       form.reset({
         productCode: product.productCode || "",
         name: product.name || "",
-        shopifyName: product.shopifyName || "",
         category: getCategoryId(product.category),
         wholesalePrice: product.wholesalePrice || 0,
         purchaseCost: product.purchaseCost || 0,
@@ -102,16 +92,12 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
         minimumStock: product.minimumStock || 0,
         unitOfMeasure: product.unitOfMeasure || UnitOfMeasure.UNIDAD,
         images: product.images || [],
-        activeInShopify: product.activeInShopify || false,
         description: product.description || "",
         associatedSuppliers: Array.isArray(product.associatedSuppliers)
           ? product.associatedSuppliers.map((supplier) =>
               typeof supplier === "string" ? supplier : supplier._id
             )
           : [],
-        collections: (product.collections || []).map((collection) =>
-          typeof collection === "string" ? collection : collection._id
-        ),
       });
     }
   }, [product, form]);
@@ -125,19 +111,16 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
       const productData: ProductUpdateInput = {
         productCode: values.productCode,
         name: values.name,
-        shopifyName: values.shopifyName,
         description: values.description, 
         category: values.category || undefined,
         purchaseCost: values.purchaseCost,
         wholesalePrice: values.wholesalePrice,
-        activeInShopify: values.activeInShopify,
         retailPrice: values.retailPrice,
         currentStock: values.currentStock,
         minimumStock: values.minimumStock,
         unitOfMeasure: values.unitOfMeasure,
         images: values.images || undefined,
         associatedSuppliers: values.associatedSuppliers || [],
-        collections: values.collections || [],
       };
 
       await updateProduct(product._id, productData);
@@ -155,41 +138,20 @@ export function EditProductForm({ product, onSuccess }: FormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Tabs defaultValue="admin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="admin">Administración</TabsTrigger>
-            <TabsTrigger value="shopify">Shopify</TabsTrigger>
-          </TabsList>
+        {/* Datos básicos */}
+        <ProductBasicInfo form={form} categories={categories} />
 
-          <TabsContent value="admin" className="space-y-4 mt-4">
-            {/* Datos básicos */}
-            <ProductBasicInfo form={form} categories={categories} />
+        {/* Precios */}
+        <ProductPricing form={form} />
 
-            {/* Precios */}
-            <ProductPricing form={form} />
+        {/* Stock */}
+        <ProductStock form={form} />
 
-            {/* Stock */}
-            <ProductStock form={form} />
+        {/* Proveedores */}
+        <ProductSuppliers form={form} suppliers={suppliers} />
 
-            {/* Proveedores */}
-            <ProductSuppliers form={form} suppliers={suppliers} />
-          </TabsContent>
-
-          <TabsContent value="shopify" className="space-y-4 mt-4">
-            {/* Shopify (activo, nombre, descripción) */}
-            <ProductShopify form={form} />
-
-            {/* Colecciones */}
-            <ProductCollections form={form} />
-
-            {/* Imágenes */}
-            <ProductImages form={form} />
-
-            {/* Activo en Shopify */}
-            <ProductActiveShopify form={form} />
-            
-          </TabsContent>
-        </Tabs>
+        {/* Imágenes */}
+        <ProductImages form={form} />
 
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? (

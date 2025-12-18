@@ -15,7 +15,6 @@ const Dashboard = lazy(() => import("@/pages/admin/Dashboard/Dashboard").then(m 
 const Products = lazy(() => import("@/pages/admin/Products/Products").then(m => ({ default: m.Products })));
 const ProductDetail = lazy(() => import("@/components/admin/products/product/Product"));
 const Categories = lazy(() => import("@/pages/admin/Categories/Categories").then(m => ({ default: m.Categories })));
-const ShopifyCollections = lazy(() => import("@/pages/admin/ShopifyCollections/ShopifyCollections").then(m => ({ default: m.ShopifyCollections })));
 const Afip = lazy(() => import("@/pages/admin/Afip/Afip").then(m => ({ default: m.Afip })));
 const Clients = lazy(() => import("@/pages/admin/Clients/Clients").then(m => ({ default: m.Clients })));
 const ClientDetail = lazy(() => import("@/components/admin/clients/client/ClientDetail"));
@@ -26,7 +25,6 @@ const Suppliers = lazy(() => import("@/pages/admin/Suppliers/Suppliers").then(m 
 const SupplierDetail = lazy(() => import("@/components/admin/suppliers/supplier/Supplier"));
 const VoucherCreator = lazy(() => import("@/pages/admin/Afip/VoucherCreator").then(m => ({ default: m.VoucherCreator })));
 const EditSale = lazy(() => import("@/pages/admin/Sales/EditSale"));
-const ShopifySalesPage = lazy(() => import("@/pages/admin/ShopifySales/shopify-sales"));
 const SuppliersInvoices = lazy(() => import("@/pages/admin/Suppliers invoices/SuppliersInvoices").then(m => ({ default: m.SuppliersInvoices })));
 
 // Componente de loading
@@ -109,14 +107,6 @@ const router = createBrowserRouter([
         ) 
       },
       { 
-        path: "shopify-collections", 
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <ShopifyCollections />
-          </Suspense>
-        ) 
-      },
-      { 
         path: "afip", 
         element: (
           <Suspense fallback={<LoadingFallback />}>
@@ -153,14 +143,6 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <NewSale />
-          </Suspense>
-        ) 
-      },
-      { 
-        path: "ventas-shopify", 
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <ShopifySalesPage />
           </Suspense>
         ) 
       },

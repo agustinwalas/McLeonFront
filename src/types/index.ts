@@ -5,17 +5,6 @@ export type {
   CategoryUpdateInput
 } from './category';
 
-// Shopify Collection types
-export type {
-  IShopifyCollection,
-  ShopifyCollectionCreateInput,
-  ShopifyCollectionFromCategoryInput,
-  ShopifyCollectionUpdateInput,
-  ShopifyCollectionSyncResponse,
-  ShopifyCollectionType,
-  ShopifyCollectionStatus
-} from './shopifyCollection';
-
 // Client types
 export type {
   IClient,

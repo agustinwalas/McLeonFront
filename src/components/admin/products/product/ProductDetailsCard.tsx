@@ -75,21 +75,6 @@ export function ProductDetailsCard({ product, suppliers = [] }: ProductDetailsCa
               <p className="text-red-600 font-medium">⚠️ Stock bajo - Producto por debajo del mínimo</p>
             </div>
           )}
-
-          <div>
-            <h3 className="font-medium text-gray-900">Colecciones de Shopify</h3>
-            {product.collections && product.collections.length > 0 ? (
-              <div className="text-gray-600 space-y-1">
-                {product.collections.map((collection) => (
-                  <p key={collection._id}>{collection.collectionName}</p>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600">Sin colecciones asignadas</p>
-            )}
-          </div>
-
-          
         </div>
         
       </CardContent>

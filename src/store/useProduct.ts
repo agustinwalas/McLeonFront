@@ -312,43 +312,6 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
     }
   },
 
-  resyncAllActiveProducts: async () => {
-    try {
-      set({ loading: true, error: null });
-      
-      const response = await api.post("/shopify/resync-all-active");
-      const { results } = response.data;
-      
-      toast.success(
-        `Re-sincronización completada: ${results.successful}/${results.total} productos sincronizados`,
-        { duration: 5000 }
-      );
-      
-      if (results.failed > 0) {
-        toast.error(`${results.failed} productos fallaron`, { duration: 5000 });
-      }
-      
-      // Refrescar la lista de productos
-      await get().fetchProducts();
-      
-      return {
-        successful: results.successful,
-        failed: results.failed,
-        total: results.total
-      };
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string }>;
-      const errorMessage = axiosError.response?.data?.message || "Error en la re-sincronización";
-      
-      set({ error: errorMessage, loading: false });
-      toast.error(errorMessage);
-      
-      throw error;
-    } finally {
-      set({ loading: false });
-    }
-  },
-
   clearError: () => set({ error: null }),
   
   setLoading: (loading: boolean) => set({ loading }),
