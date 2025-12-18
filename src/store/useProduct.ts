@@ -30,7 +30,6 @@ interface ProductStoreState {
   createProduct: (productData: ProductCreateInput) => Promise<void>;
   updateProduct: (id: string, productData: ProductUpdateInput) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
-  resyncAllActiveProducts: () => Promise<{ successful: number; failed: number; total: number }>;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
   reset: () => void; 
