@@ -37,8 +37,8 @@ export function NewProductForm({ onSuccess }: FormProps) {
     defaultValues: {
       productCode: "",
       name: "",
-      description: \"\",
-      category: \"\",
+      description: "",
+      category: "",
       wholesalePrice: 0,
       purchaseCost: 0,
       retailPrice: 0,
