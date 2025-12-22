@@ -186,8 +186,8 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                     0
                   );
                   // Sumar IVA del envío si corresponde
-                  const ivaDelivery = sale.deliveryFee
-                    ? sale.deliveryFee - sale.deliveryFee / 1.21
+                  const ivaDelivery = (sale.deliveryFee ?? 0) > 0
+                    ? (sale.deliveryFee ?? 0) - (sale.deliveryFee ?? 0) / 1.21
                     : 0;
                   const ivaTotal = ivaTotalProductos + ivaDelivery;
                   return ivaTotal.toLocaleString("es-AR", {

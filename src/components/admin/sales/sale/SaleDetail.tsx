@@ -18,12 +18,6 @@ export default function SaleDetail() {
     }
   }, [id, getSaleById]);
 
-  const handleAfipGenerated = async () => {
-    if (id) {
-      await getSaleById(id); 
-    }
-  };
-
   const handleNoteCreated = async () => {
     if (id) {
       await getSaleById(id);

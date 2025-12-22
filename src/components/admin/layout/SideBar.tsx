@@ -4,7 +4,6 @@ import {
   Package,
   Truck,
   Users,
-  FileText,
   FolderOpen,
   FileTerminal,
   LayoutDashboard,

@@ -5,7 +5,6 @@ import {
   Package,
   Truck,
   Users,
-  FileText,
   FolderOpen,
   Menu,
   FileTerminal,

@@ -35,6 +35,7 @@ describe('useSales Store', () => {
         paymentMethod: 'EFECTIVO',
         deliveryType: 'RETIRO_LOCAL',
         deliveryFee: 0,
+        amountPaid: 0,
         notes: '',
         totalDiscount: 0
       },

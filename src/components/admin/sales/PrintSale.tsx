@@ -39,19 +39,19 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
             .header {
               text-align: center;
               margin-bottom: 30px;
-              border-bottom: 2px solid #05294f;
+              border-bottom: 2px solid #000;
               padding-bottom: 20px;
             }
             
             .header h1 {
-              color: #05294f;
+              color: #000;
               font-size: 24pt;
               margin-bottom: 10px;
             }
             
             .sale-number {
               font-size: 18pt;
-              color: #666;
+              color: #333;
               margin-bottom: 5px;
             }
             
@@ -60,8 +60,9 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
             }
             
             .section-title {
-              background-color: #05294f;
-              color: white;
+              background-color: #fff;
+              color: #000;
+              border: 2px solid #000;
               padding: 10px;
               font-size: 14pt;
               font-weight: bold;
@@ -82,7 +83,7 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
             
             .info-label {
               font-weight: bold;
-              color: #05294f;
+              color: #000;
             }
             
             .products-table {
@@ -92,7 +93,7 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
             }
             
             .products-table th {
-              background-color: #05294f;
+              background-color: #000;
               color: white;
               padding: 12px;
               text-align: left;
@@ -127,9 +128,9 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
             
             .total-final {
               font-size: 18pt;
-              color: #05294f;
+              color: #000;
               font-weight: bold;
-              border-top: 2px solid #05294f;
+              border-top: 2px solid #000;
               padding-top: 10px;
               margin-top: 10px;
             }
@@ -154,17 +155,17 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
           <div class="header">
             <h1>McLeon</h1>
             <div class="sale-number">Venta N° ${sale.saleNumber}</div>
-            <div>${new Date(sale.createdAt).toLocaleDateString('es-AR', {
+            <div>${new Date(sale.createdAt || new Date()).toLocaleDateString('es-AR', {
               year: 'numeric',
               month: 'long',
-              day: 'numeric',
+              day: 'numeric'
+            } as Intl.DateTimeFormatOptions)} ${new Date(sale.createdAt || new Date()).toLocaleTimeString('es-AR', {
               hour: '2-digit',
               minute: '2-digit'
-            })}</div>
+            } as Intl.DateTimeFormatOptions)}</div>
           </div>
 
           <div class="section">
-            <div class="section-title">Información del Cliente</div>
             <div class="info-grid">
               <div class="info-item">
                 <div class="info-label">Nombre:</div>
@@ -174,19 +175,10 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
                 <div class="info-label">Documento:</div>
                 <div>${sale.client?.documentNumber || '-'}</div>
               </div>
-              <div class="info-item">
-                <div class="info-label">Teléfono:</div>
-                <div>${sale.client?.phone || '-'}</div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">Email:</div>
-                <div>${sale.client?.email || '-'}</div>
-              </div>
             </div>
           </div>
 
           <div class="section">
-            <div class="section-title">Detalles de la Venta</div>
             <div class="info-grid">
               <div class="info-item">
                 <div class="info-label">Método de Pago:</div>
@@ -194,30 +186,25 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
               </div>
               <div class="info-item">
                 <div class="info-label">Tipo de Entrega:</div>
-                <div>${sale.deliveryType === 'pickup' ? 'Retiro Local' : 'Envío a Domicilio'}</div>
+                <div>${sale.deliveryType === 'RETIRO_LOCAL' ? 'Retiro Local' : 'Envío a Domicilio'}</div>
               </div>
-              ${sale.deliveryType === 'delivery' && sale.deliveryAddress ? `
+              ${sale.deliveryType === 'DELIVERY' && sale.deliveryAddress ? `
               <div class="info-item" style="grid-column: 1 / -1;">
                 <div class="info-label">Dirección de Entrega:</div>
                 <div>${sale.deliveryAddress}</div>
               </div>
               ` : ''}
-              <div class="info-item">
-                <div class="info-label">Vendedor:</div>
-                <div>${sale.user?.name || sale.user?.email || 'Sin vendedor'}</div>
-              </div>
             </div>
           </div>
 
           <div class="section">
-            <div class="section-title">Productos</div>
             <table class="products-table">
               <thead>
                 <tr>
                   <th>Producto</th>
                   <th>Cantidad</th>
                   <th>Precio Unit.</th>
-                  <th>Descuento</th>
+                  <th>Costo</th>
                   <th>Subtotal</th>
                 </tr>
               </thead>
@@ -265,17 +252,17 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
               <span>$${sale.totalAmount.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
             </div>
             ${sale.amountPaid && sale.amountPaid > 0 ? `
-            <div class="totals-row" style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; color: #0066cc;">
+            <div class="totals-row" style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; color: #000;">
               <span class="totals-label">Pago Actual:</span>
               <span>$${sale.amountPaid.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
             </div>
             ${sale.amountPaid < sale.totalAmount ? `
-            <div class="totals-row" style="color: #ff6600;">
+            <div class="totals-row" style="color: #000;">
               <span class="totals-label">Faltante:</span>
               <span>$${(sale.totalAmount - sale.amountPaid).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
             </div>
             ` : `
-            <div style="text-align: center; padding: 10px; color: #008800; font-weight: bold;">
+            <div style="text-align: center; padding: 10px; color: #000; font-weight: bold;">
               ✓ Pago Completo
             </div>
             `}
@@ -285,7 +272,7 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
           ${sale.notes ? `
           <div class="section">
             <div class="section-title">Notas</div>
-            <div style="padding: 10px; background-color: #f9f9f9; border-left: 3px solid #05294f;">
+            <div style="padding: 10px; background-color: #f9f9f9; border-left: 3px solid #000;">
               ${sale.notes}
             </div>
           </div>

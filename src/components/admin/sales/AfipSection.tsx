@@ -177,24 +177,24 @@ export function AfipSection({ sale, onNoteCreated }: AfipSectionProps) {
             )}
 
             {/* Información de importes */}
-            {(sale.afipData.importeTotal || sale.afipData.importeNeto || sale.afipData.importeIva) && (
+            {(sale.afipData?.importeTotal || sale.afipData?.importeNeto || sale.afipData?.importeIva) && (
               <div className="border-t pt-3">
                 <h4 className="font-medium text-sm mb-2">Importes</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  {sale.afipData.importeNeto && (
+                  {sale.afipData?.importeNeto && (
                     <div>
                       <p className="text-gray-600">Importe Neto:</p>
                       <p className="font-semibold">${sale.afipData.importeNeto.toFixed(2)}</p>
                     </div>
                   )}
                   {/* IVA deshabilitado - siempre 0% */}
-                  {false && sale.afipData.importeIva && (
+                  {false && sale.afipData?.importeIva && (
                     <div>
                       <p className="text-gray-600">IVA:</p>
                       <p className="font-semibold">${sale.afipData.importeIva.toFixed(2)}</p>
                     </div>
                   )}
-                  {sale.afipData.importeTotal && (
+                  {sale.afipData?.importeTotal && (
                     <div>
                       <p className="text-gray-600">Total:</p>
                       <p className="font-semibold text-lg">${sale.afipData.importeTotal.toFixed(2)}</p>
