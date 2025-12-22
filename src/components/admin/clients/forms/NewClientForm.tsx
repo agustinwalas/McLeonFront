@@ -102,7 +102,7 @@ export function NewClientForm({ onSuccess }: FormProps) {
       clientType: "PERSONA_FISICA",
       documentType: "",
       documentNumber: "",
-      taxCondition: "",
+      taxCondition: "No Categorizado",
       email: "",
       phone: "",
       street: "",

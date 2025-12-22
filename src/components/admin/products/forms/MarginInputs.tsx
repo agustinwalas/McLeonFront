@@ -78,8 +78,7 @@ export function MarginInputs({ wholesaleMargin, retailMargin, onChange }: Margin
         </div>
         <FormMessage />
       </div>
-      <div className="flex items-center justify-between mt-2">
-        <span className="text-xs text-gray-500">El precio final suma el IVA (21%)</span>
+      <div className="flex items-center justify-end mt-2">
         <Button size="icon" onClick={handleSave} disabled={loading} title="Guardar cambios" className="h-7 w-7 p-1">
           {success ? <Save className="text-green-600" size={16} /> : <Save size={16} />}
         </Button>

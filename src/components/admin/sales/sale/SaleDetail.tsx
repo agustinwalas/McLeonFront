@@ -5,7 +5,7 @@ import { SaleError, SaleLoadingSkeleton, SaleNotFound } from "./SaleStates";
 import { SaleHeader } from "./SaleHeader";
 import { SaleInfoCard } from "./SaleInfoCard";
 import { SaleProductsCard } from "./SaleProductsCard";
-import { AfipSection } from "../AfipSection";
+// import { AfipSection } from "../AfipSection";
 import { NotesSection } from "../NotesSection";
 
 export default function SaleDetail() {
@@ -51,11 +51,12 @@ export default function SaleDetail() {
         <SaleProductsCard sale={currentSale} />
       </div>
 
-      <AfipSection 
+      {/* AFIP deshabilitado temporalmente */}
+      {/* <AfipSection 
         sale={currentSale} 
         onAfipGenerated={handleAfipGenerated} 
         onNoteCreated={handleNoteCreated}
-      />
+      /> */}
       
       <NotesSection sale={currentSale} onNoteCreated={handleNoteCreated} />
     </div>

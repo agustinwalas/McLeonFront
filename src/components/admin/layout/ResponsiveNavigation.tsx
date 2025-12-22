@@ -59,11 +59,6 @@ const items = [
     title: "Facturas Proveedores",
     url: "/admin/facturas-proveedores",
     icon: FileTerminal,
-  },
-  {
-    title: "Facturas AFIP",
-    url: "/admin/afip",
-    icon: FileText,
   }
 ];
 

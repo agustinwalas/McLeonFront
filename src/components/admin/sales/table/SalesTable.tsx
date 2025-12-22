@@ -4,11 +4,21 @@ import { DefaultTable } from "../../table/DefaultTable";
 import { salesColumns } from "./SalesColumns";
 import { useSalesStore } from "@/store/useSales"; // ✅ Corregido: named export
 
+interface SalesTableProps {
+  showOnlyDebt?: boolean;
+}
 
-
-function SalesTable() {
+function SalesTable({ showOnlyDebt = false }: SalesTableProps) {
   
   const { sales, isLoading, error } = useSalesStore();
+
+  // Filter sales with debt if showOnlyDebt is true
+  const filteredSales = showOnlyDebt 
+    ? sales.filter(sale => {
+        const remaining = sale.totalAmount - (sale.amountPaid || 0);
+        return remaining > 0;
+      })
+    : sales;
 
   if (isLoading) {
     return (
@@ -30,7 +40,7 @@ function SalesTable() {
 
   return (
     <>
-      <DefaultTable data={sales} columns={salesColumns} />
+      <DefaultTable data={filteredSales} columns={salesColumns} />
     </>
   );
 }

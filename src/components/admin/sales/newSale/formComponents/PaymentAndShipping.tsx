@@ -63,6 +63,22 @@ export const PaymentAndShipping = () => {
           </div>
         )}
 
+        <div>
+          <label className="text-sm font-medium mb-2 block">
+            Pago Actual
+          </label>
+          <Input
+            type="number"
+            step="0.01"
+            min="0"
+            value={formData.amountPaid || 0}
+            onChange={(e) =>
+              updateFormData("amountPaid", parseFloat(e.target.value) || 0)
+            }
+            placeholder="0.00"
+          />
+        </div>
+
       </CardContent>
     </Card>
   );

@@ -187,7 +187,8 @@ export function AfipSection({ sale, onNoteCreated }: AfipSectionProps) {
                       <p className="font-semibold">${sale.afipData.importeNeto.toFixed(2)}</p>
                     </div>
                   )}
-                  {sale.afipData.importeIva && (
+                  {/* IVA deshabilitado - siempre 0% */}
+                  {false && sale.afipData.importeIva && (
                     <div>
                       <p className="text-gray-600">IVA:</p>
                       <p className="font-semibold">${sale.afipData.importeIva.toFixed(2)}</p>

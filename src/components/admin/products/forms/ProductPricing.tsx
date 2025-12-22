@@ -40,9 +40,9 @@ export function ProductPricing({ form }: ProductPricingProps) {
   // Solo autocompleta si no fue editado manualmente
   useEffect(() => {
     if (purchaseCost) {
-      const IVA = 1.21;
-      const calcWholesale = Math.round((purchaseCost * wholesaleMargin * IVA) * 100) / 100;
-      const calcRetail = Math.round((purchaseCost * retailMargin * IVA) * 100) / 100;
+      // IVA 0% - sin aplicar multiplicador adicional
+      const calcWholesale = Math.round((purchaseCost * wholesaleMargin) * 100) / 100;
+      const calcRetail = Math.round((purchaseCost * retailMargin) * 100) / 100;
       
       if (!wholesaleManual) form.setValue("wholesalePrice", calcWholesale);
       if (!retailManual) form.setValue("retailPrice", calcRetail);

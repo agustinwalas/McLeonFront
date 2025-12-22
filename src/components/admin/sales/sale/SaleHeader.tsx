@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ISalePopulated } from "@/types/sale";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useSalesStore from "@/store/useSales";
 import { useDialogStore } from "@/store/useDialog";
 import { toast } from "sonner";
+import { Printer } from "lucide-react";
+import { PrintSale, PrintSaleRef } from "../PrintSale";
 
 interface SaleHeaderProps {
   sale: ISalePopulated;
@@ -15,6 +17,13 @@ export function SaleHeader({ sale }: SaleHeaderProps) {
   const { deleteSale } = useSalesStore();
   const { openDialog, closeDialog } = useDialogStore();
   const navigate = useNavigate();
+  const printRef = useRef<PrintSaleRef>(null);
+
+  const handlePrint = () => {
+    if (printRef.current) {
+      printRef.current.print();
+    }
+  };
 
   const handleDelete = () => {
     const confirmDelete = async () => {
@@ -93,6 +102,10 @@ export function SaleHeader({ sale }: SaleHeaderProps) {
       </div>
 
       <div className="flex gap-2 flex-wrap justify-end">
+        <Button variant="outline" onClick={handlePrint}>
+          <Printer className="h-4 w-4 mr-2" />
+          Imprimir Venta
+        </Button>
         <Button onClick={handleDelete}>
           Eliminar Venta
         </Button>
@@ -103,6 +116,8 @@ export function SaleHeader({ sale }: SaleHeaderProps) {
           <Link to="/admin/ventas">Volver a ventas</Link>
         </Button>
       </div>
+
+      <PrintSale ref={printRef} sale={sale} />
     </div>
   );
 }

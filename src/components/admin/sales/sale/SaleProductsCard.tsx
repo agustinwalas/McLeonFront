@@ -110,20 +110,8 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                     </p>
                   </div>
 
-                  <div>
-                    <p className="text-gray-600">Precio base total:</p>
-                    <p className="font-semibold">
-                      $
-                      {(() => {
-                        // Precio unitario incluye IVA, calculamos la base (precio sin IVA)
-                        const precioBase = item.unitPrice / 1.21;
-                        const precioBaseTotale = precioBase * item.quantity;
-                        return precioBaseTotale.toLocaleString("es-AR", {
-                          maximumFractionDigits: 2,
-                        });
-                      })()}
-                    </p>
-                  </div>
+                  {/* IVA deshabilitado - siempre 0% */}
+                  {false && (
                   <div>
                     <p className="text-gray-600">IVA total:</p>
                     <p className="font-semibold">
@@ -139,6 +127,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                       })()}
                     </p>
                   </div>
+                  )}
                   {item.discountPercentage < 100 && (
                     <>
                       <div>
@@ -180,36 +169,8 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
 
           {/* Resumen Total */}
           <div className="border-t pt-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Precio base:</span>
-              <span>
-                $
-                {(() => {
-                  // Sumar todos los precios base de los productos
-                  const precioBaseTotal = sale.products.reduce((acc, item) => {
-                    const precioBase = item.unitPrice / 1.21;
-                    return acc + precioBase * item.quantity;
-                  }, 0);
-                  return precioBaseTotal.toLocaleString("es-AR", {
-                    maximumFractionDigits: 2,
-                  });
-                })()}
-              </span>
-            </div>
-
-            <div className="flex justify-between text-sm">
-              <span>Envío Base:</span>
-              <span>
-                $
-                {(sale.deliveryFee
-                  ? sale.deliveryFee / 1.21
-                  : 0
-                ).toLocaleString("es-AR", {
-                  maximumFractionDigits: 2,
-                })}
-              </span>
-            </div>
-
+            {/* IVA deshabilitado - siempre 0% */}
+            {false && (
             <div className="flex justify-between text-sm">
               <span>IVA Total:</span>
               <span>
@@ -235,6 +196,7 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                 })()}
               </span>
             </div>
+            )}
 
             <div className="flex justify-between text-sm">
               <span>Descuento total:</span>
@@ -255,6 +217,37 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
                 })}
               </span>
             </div>
+
+            {/* Pago Actual y Faltante */}
+            {sale.amountPaid > 0 && (
+              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2 mt-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-800 font-medium">Pago Actual:</span>
+                  <span className="font-semibold text-blue-900">
+                    $
+                    {sale.amountPaid.toLocaleString("es-AR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                {sale.amountPaid < sale.totalAmount && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-orange-800 font-medium">Faltante:</span>
+                    <span className="font-semibold text-orange-900">
+                      $
+                      {(sale.totalAmount - sale.amountPaid).toLocaleString("es-AR", {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
+                  </div>
+                )}
+                {sale.amountPaid >= sale.totalAmount && (
+                  <div className="text-center text-sm text-green-700 font-medium">
+                    ✓ Pago completo
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

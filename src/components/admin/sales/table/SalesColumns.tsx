@@ -58,6 +58,26 @@ export const salesColumns: ColumnDef<ISalePopulated>[] = [
     },
   },
   {
+    accessorKey: "amountPaid",
+    header: "Faltante",
+    cell: ({ row }) => {
+      const total = row.getValue("totalAmount") as number;
+      const paid = row.original.amountPaid || 0;
+      const remaining = total - paid;
+      
+      if (remaining <= 0) {
+        return <div>Pago</div>;
+      }
+      
+      return (
+        <div className="text-orange-600 font-medium">
+          $
+          {remaining.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "paymentMethod",
     header: "Método de Pago",
     cell: ({ row }) => {
@@ -110,40 +130,21 @@ export const salesColumns: ColumnDef<ISalePopulated>[] = [
       );
     },
   },
-  {
-    accessorKey: "user.name",
-    header: "Vendedor",
-    cell: ({ row }) => {
-      const user = row.original.user;
-
-      // ✅ Manejar usuario borrado o undefined
-      if (!user) {
-        return <div className="text-gray-500 italic">Usuario eliminado</div>;
-      }
-
-      return (
-        <div>
-          {user.name || user.email || (
-            <span className="text-gray-500 italic">Sin nombre</span>
-          )}
-        </div>
-      );
-    }, 
-  },
-  {
-    accessorKey: "afipData.cae",
-    header: "Factura AFIP",
-    cell: ({ row }) => {
-      const sale = row.original;
-      const hasAfipInvoice = sale.afipData?.cae;
-      
-      return (
-        <div>
-          {hasAfipInvoice ? 'Facturada' : 'Sin facturar'}
-        </div>
-      );
-    },
-  },
+  // AFIP deshabilitado temporalmente
+  // {
+  //   accessorKey: "afipData.cae",
+  //   header: "Factura AFIP",
+  //   cell: ({ row }) => {
+  //     const sale = row.original;
+  //     const hasAfipInvoice = sale.afipData?.cae;
+  //     
+  //     return (
+  //       <div>
+  //         {hasAfipInvoice ? 'Facturada' : 'Sin facturar'}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     id: "actions",
     cell: ({ row }) => <SaleActions sale={row.original} />,

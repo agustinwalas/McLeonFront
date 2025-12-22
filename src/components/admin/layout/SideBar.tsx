@@ -67,11 +67,6 @@ const items = [
     url: "/admin/facturas-proveedores",
     icon: FileTerminal,
   },
-  {
-    title: "Facturas AFIP",
-    url: "/admin/afip",
-    icon: FileText,
-  },
 ];
 
 export function AppSidebar() {

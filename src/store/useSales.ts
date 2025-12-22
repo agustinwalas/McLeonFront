@@ -16,6 +16,7 @@ interface SalesState {
     paymentMethod: "EFECTIVO" | "TARJETA" | "TRANSFERENCIA" | "CHEQUE";
     deliveryType: "RETIRO_LOCAL" | "DELIVERY";
     deliveryFee: number;
+    amountPaid: number;
     notes: string;
     totalDiscount: number;
   };
@@ -63,6 +64,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
     paymentMethod: "EFECTIVO",
     deliveryType: "RETIRO_LOCAL",
     deliveryFee: 0,
+    amountPaid: 0,
     notes: "",
     totalDiscount: 0,
   },
@@ -160,6 +162,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         paymentMethod: "EFECTIVO",
         deliveryType: "RETIRO_LOCAL",
         deliveryFee: 0,
+        amountPaid: 0,
         notes: "",
         totalDiscount: 0,
       },
@@ -179,6 +182,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         paymentMethod: "EFECTIVO",
         deliveryType: "RETIRO_LOCAL",
         deliveryFee: 0,
+        amountPaid: 0,
         notes: "",
         totalDiscount: 0,
       },
@@ -276,6 +280,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         paymentMethod: formData.paymentMethod,
         deliveryType: formData.deliveryType,
         deliveryFee: formData.deliveryFee,
+        amountPaid: formData.amountPaid || 0,
         notes: formData.notes,
         totalDiscount: formData.totalDiscount,
         products: selectedProducts.map((p) => {
@@ -397,6 +402,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
           deliveryFee: sale.deliveryFee || 0,
           notes: sale.notes || "",
           totalDiscount: sale.totalDiscount || 0,
+          amountPaid: sale.amountPaid || 0,
         };
 
  
@@ -477,6 +483,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
         deliveryFee: formData.deliveryFee,
         notes: formData.notes,
         totalDiscount: formData.totalDiscount,
+        amountPaid: formData.amountPaid || 0,
         products: selectedProducts.map((p) => {
           const product = products.find((prod) => prod._id === p.product);
           return {

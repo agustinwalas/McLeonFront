@@ -185,9 +185,12 @@ export function NotesSection({ sale, onNoteCreated }: NotesSectionProps) {
                           <div className="text-lg font-bold text-blue-600">
                             {formatCurrency(note.totalAmount)}
                           </div>
+                          {/* IVA deshabilitado - siempre 0% */}
+                          {false && (
                           <div className="text-xs text-muted-foreground">
                             IVA: {formatCurrency(note.ivaAmount)}
                           </div>
+                          )}
                         </div>
                         {/* Botones en la esquina superior derecha */}
                         <div className="flex gap-2">
@@ -306,9 +309,12 @@ export function NotesSection({ sale, onNoteCreated }: NotesSectionProps) {
                           <div className="text-lg font-bold text-orange-600">
                             {formatCurrency(note.totalAmount)}
                           </div>
+                          {/* IVA deshabilitado - siempre 0% */}
+                          {false && (
                           <div className="text-xs text-muted-foreground">
                             IVA: {formatCurrency(note.ivaAmount)}
                           </div>
+                          )}
                         </div>
                         {/* Botones en la esquina superior derecha */}
                         <div className="flex gap-2">

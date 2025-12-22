@@ -157,6 +157,30 @@ export function SaleInfoCard({ sale }: SaleInfoCardProps) {
             </p>
           </div>
 
+          {/* Pago Actual */}
+          {sale.amountPaid > 0 && (
+            <div>
+              <h3 className="font-medium text-gray-900">Pago Actual</h3>
+              <p className="text-blue-700 font-semibold">
+                ${sale.amountPaid.toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                })}
+              </p>
+              {sale.amountPaid < sale.totalAmount && (
+                <p className="text-orange-600 text-sm mt-1">
+                  Faltante: ${(sale.totalAmount - sale.amountPaid).toLocaleString("es-AR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </p>
+              )}
+              {sale.amountPaid >= sale.totalAmount && (
+                <p className="text-green-600 text-sm mt-1">
+                  ✓ Pago completo
+                </p>
+              )}
+            </div>
+          )}
+
           <div>
             <h3 className="font-medium text-gray-900">Tipo de Entrega</h3>
             <p className="text-gray-600">

@@ -166,6 +166,37 @@ export const Summary = () => {
             </div>
           </div>
 
+          {/* Pago Actual y Faltante */}
+          {formData.amountPaid > 0 && (
+            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-blue-800 font-medium">Pago Actual:</span>
+                <span className="font-semibold text-blue-900">
+                  $
+                  {formData.amountPaid.toLocaleString("es-AR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+              {formData.amountPaid < total && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-orange-800 font-medium">Faltante:</span>
+                  <span className="font-semibold text-orange-900">
+                    $
+                    {(total - formData.amountPaid).toLocaleString("es-AR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+              )}
+              {formData.amountPaid >= total && (
+                <div className="text-center text-sm text-green-700 font-medium">
+                  ✓ Pago completo
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Info adicional */}
           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
             <div className="grid grid-cols-2 gap-2 text-xs text-gray-700">

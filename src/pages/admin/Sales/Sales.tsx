@@ -5,10 +5,12 @@ import { DateFilter } from "@/components/admin/sales/filters/DateFilter";
 import { useState, useEffect } from "react";
 import { useSalesStore } from "@/store/useSales";
 import { format } from "date-fns";
+import { CircleDollarSign } from "lucide-react";
 
 export const Sales = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [showOnlyDebt, setShowOnlyDebt] = useState(false);
 
   const { fetchSales, fetchSalesByDate } = useSalesStore();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -46,6 +48,14 @@ export const Sales = () => {
           />
 
           <Button
+            variant={showOnlyDebt ? "default" : "outline"}
+            onClick={() => setShowOnlyDebt(!showOnlyDebt)}
+            className={showOnlyDebt ? "bg-orange-600 hover:bg-orange-700" : ""}
+          >
+            <CircleDollarSign className="h-4 w-4" />
+          </Button>
+
+          <Button
             className="btn btn-primary"
             onClick={() => navigate("/admin/ventas/nueva")}
           >
@@ -54,7 +64,7 @@ export const Sales = () => {
         </div>
       </div>
 
-      <SalesTable />
+      <SalesTable showOnlyDebt={showOnlyDebt} />
     </>
   );
 };
