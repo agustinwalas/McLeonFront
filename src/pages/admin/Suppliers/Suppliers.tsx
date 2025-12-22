@@ -59,9 +59,9 @@ export const Suppliers = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
         <h1 className="text-xl font-semibold">Proveedores</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
             variant="outline"
             onClick={handlePrintProductsBySupplier}
