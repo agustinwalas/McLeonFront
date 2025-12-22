@@ -27,7 +27,7 @@ export default function Login() {
             <img
               className="h-full w-auto"
               src="/LogoMcleon.png"
-              alt="Stampi"
+              alt="McLeon"
             />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">

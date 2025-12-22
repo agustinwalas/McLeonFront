@@ -131,7 +131,7 @@ export function AppSidebar() {
             </div>
           </SidebarGroupLabel>
           <SidebarGroupLabel className="text-white">
-            <span>Stampi {year()} - All rights reserved.</span>
+            <span>McLeon {year()} - All rights reserved.</span>
           </SidebarGroupLabel>
         </SidebarGroup>
       </SidebarContent>

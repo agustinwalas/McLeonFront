@@ -87,7 +87,7 @@ export function ResponsiveNavigation() {
     return (
       <>
         {/* Mobile Navbar */}
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <nav className="fixed top-0 left-0 right-0 z-50 border-b shadow-sm" style={{ backgroundColor: '#05294f', borderColor: '#073d6f' }}>
           <div className="flex items-center justify-between px-4 py-3">
             {/* Logo */}
             <div className="flex items-center">
@@ -101,13 +101,13 @@ export function ResponsiveNavigation() {
             {/* Hamburger Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="text-white hover:text-white hover:bg-[#073d6f]">
                   <Menu size={24} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80">
+              <SheetContent side="left" className="w-80" style={{ backgroundColor: '#05294f' }}>
                 <SheetHeader>
-                  <SheetTitle className="flex items-center gap-3">
+                  <SheetTitle className="flex items-center gap-3 text-white">
                     <img
                       src="/LogoMcleon.png"
                       alt="Logo"
@@ -124,7 +124,7 @@ export function ResponsiveNavigation() {
                         key={item.title}
                         to={item.url}
                         onClick={handleLinkClick}
-                        className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 text-sm rounded-md text-white hover:bg-[#073d6f] transition-colors"
                       >
                         <item.icon size={18} />
                         <span>{item.title}</span>
@@ -133,20 +133,20 @@ export function ResponsiveNavigation() {
                   </div>
 
                   {/* Divider */}
-                  <div className="border-t border-gray-200 my-4"></div>
+                  <div className="border-t border-[#073d6f] my-4"></div>
 
                   {/* Logout */}
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 transition-colors w-full text-left text-red-600"
+                    className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-[#073d6f] transition-colors w-full text-left text-red-400"
                   >
                     <LogOutIcon size={18} />
                     <span>Cerrar Sesión</span>
                   </button>
 
                   {/* Footer */}
-                  <div className="absolute bottom-4 left-4 right-4 text-xs text-gray-500 text-center">
-                    <span>Stampi {year()} - All rights reserved.</span>
+                  <div className="absolute bottom-4 left-4 right-4 text-xs text-gray-300 text-center">
+                    <span>McLeon {year()} - All rights reserved.</span>
                   </div>
                 </div>
               </SheetContent>
