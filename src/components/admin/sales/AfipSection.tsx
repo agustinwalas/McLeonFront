@@ -184,30 +184,30 @@ export function AfipSection({ sale, onNoteCreated }: AfipSectionProps) {
                   {sale.afipData?.importeNeto && (
                     <div>
                       <p className="text-gray-600">Importe Neto:</p>
-                      <p className="font-semibold">${sale.afipData.importeNeto.toFixed(2)}</p>
+                      <p className="font-semibold">${sale.afipData?.importeNeto.toFixed(2)}</p>
                     </div>
                   )}
                   {/* IVA deshabilitado - siempre 0% */}
                   {false && sale.afipData?.importeIva && (
                     <div>
                       <p className="text-gray-600">IVA:</p>
-                      <p className="font-semibold">${sale.afipData.importeIva.toFixed(2)}</p>
+                      <p className="font-semibold">${sale.afipData?.importeIva.toFixed(2)}</p>
                     </div>
                   )}
                   {sale.afipData?.importeTotal && (
                     <div>
                       <p className="text-gray-600">Total:</p>
-                      <p className="font-semibold text-lg">${sale.afipData.importeTotal.toFixed(2)}</p>
+                      <p className="font-semibold text-lg">${sale.afipData?.importeTotal.toFixed(2)}</p>
                     </div>
                   )}
                   {sale.afipData?.concepto && (
                     <div>
                       <p className="text-gray-600">Concepto:</p>
                       <p className="font-semibold">
-                        {sale.afipData.concepto === 1 ? "Productos" :
-                         sale.afipData.concepto === 2 ? "Servicios" :
-                         sale.afipData.concepto === 3 ? "Productos y Servicios" :
-                         `Concepto ${sale.afipData.concepto}`}
+                        {sale.afipData?.concepto === 1 ? "Productos" :
+                         sale.afipData?.concepto === 2 ? "Servicios" :
+                         sale.afipData?.concepto === 3 ? "Productos y Servicios" :
+                         `Concepto ${sale.afipData?.concepto}`}
                       </p>
                     </div>
                   )}
