@@ -94,17 +94,17 @@ export const useProductColumns = (
     {
       accessorKey: "purchaseCost",
       header: "Costo",
-      cell: ({ row }) => <span>${row.original.purchaseCost.toFixed(2)}</span>,
+      cell: ({ row }) => <span>${(row.original.purchaseCost ?? 0).toFixed(2)}</span>,
     },
     {
       accessorKey: "wholesalePrice",
       header: "Mayorista",
-      cell: ({ row }) => <span>${row.original.wholesalePrice.toFixed(2)}</span>,
+      cell: ({ row }) => <span>${(row.original.wholesalePrice ?? 0).toFixed(2)}</span>,
     },
     {
       accessorKey: "retailPrice",
       header: "Minorista",
-      cell: ({ row }) => <span>${row.original.retailPrice.toFixed(2)}</span>,
+      cell: ({ row }) => <span>${(row.original.retailPrice ?? 0).toFixed(2)}</span>,
     },
     {
       accessorKey: "currentStock",

@@ -92,7 +92,7 @@ export function ResponsiveNavigation() {
             {/* Logo */}
             <div className="flex items-center">
               <img
-                src="/logo_stampi_left_transparent.png"
+                src="/LogoMcleon.png"
                 alt="Logo"
                 className="h-8 w-auto"
               />
@@ -109,7 +109,7 @@ export function ResponsiveNavigation() {
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-3">
                     <img
-                      src="/logo_stampi_left_transparent.png"
+                      src="/LogoMcleon.png"
                       alt="Logo"
                       className="h-15 w-auto"
                     />

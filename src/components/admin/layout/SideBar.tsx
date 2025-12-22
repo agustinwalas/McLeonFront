@@ -89,15 +89,16 @@ export function AppSidebar() {
 
   return (
     <Sidebar 
-      className="border-none shadow-none outline-none"
-      style={{ backgroundColor: '#f7f2eb' }}
+      className="border-none shadow-none outline-none text-white"
+      style={{ backgroundColor: '#05294f' }}
     >
       <SidebarContent>
         <SidebarGroup className="basis-full">
           <SidebarGroupContent className="mt-4 mb-9 flex gap-4 items-center w-50">
             <img
-              src="/logo_stampi_left_transparent.png"
+              src="/LogoMcleon.png"
               alt="Logo"
+              style={{ height: '100px' }}
             />
           </SidebarGroupContent>
           <SidebarGroupContent>
@@ -106,7 +107,7 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link to={item.url}>
+                      <Link to={item.url} className="text-white hover:text-white">
                         <div className="flex items-center gap-3 text-sm">
                           <item.icon size={18} />
                           <span>{item.title}</span>
@@ -120,16 +121,16 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white">
             <div
               onClick={handleLogout}
-              className="cursor-pointer flex items-center gap-1 font-size-sm"
+              className="cursor-pointer flex items-center gap-1 font-size-sm text-white"
             >
               <span className="font-bold">Cerrar Sesion</span>
               <LogOutIcon height={15} />
             </div>
           </SidebarGroupLabel>
-          <SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white">
             <span>Stampi {year()} - All rights reserved.</span>
           </SidebarGroupLabel>
         </SidebarGroup>

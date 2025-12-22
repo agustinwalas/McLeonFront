@@ -56,6 +56,11 @@ export const ProductsTable = () => {
   }, [isInitialized, fetchProducts]);
 
   useEffect(() => {
+    console.log('PRODUCTS DATA:', products);
+    console.log('PRODUCTS LENGTH:', products.length);
+  }, [products]);
+
+  useEffect(() => {
     if (!categoriesInitialized) {
       fetchCategories();
     }
