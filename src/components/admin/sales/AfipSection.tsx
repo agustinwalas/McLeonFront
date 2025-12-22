@@ -200,7 +200,7 @@ export function AfipSection({ sale, onNoteCreated }: AfipSectionProps) {
                       <p className="font-semibold text-lg">${sale.afipData.importeTotal.toFixed(2)}</p>
                     </div>
                   )}
-                  {sale.afipData.concepto && (
+                  {sale.afipData?.concepto && (
                     <div>
                       <p className="text-gray-600">Concepto:</p>
                       <p className="font-semibold">
