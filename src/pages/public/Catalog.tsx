@@ -166,9 +166,9 @@ export default function Catalog() {
           <div className="bg-white/95 backdrop-blur rounded-lg shadow-xl overflow-hidden print:bg-white print:shadow-none">
             {/* Header de la tabla */}
             <div className="grid grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200 font-semibold text-gray-700 print:p-2 print:text-sm">
-              <div className="col-span-2">Código</div>
-              <div className="col-span-7">Producto</div>
-              <div className="col-span-3 text-right">Precio</div>
+              <div className="col-span-2 hidden md:block">Código</div>
+              <div className="col-span-8 md:col-span-7">Producto</div>
+              <div className="col-span-4 md:col-span-3 text-right">Precio</div>
             </div>
 
             {/* Filas de productos */}
@@ -180,10 +180,10 @@ export default function Catalog() {
                     index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
                   }`}
                 >
-                  <div className="col-span-2 font-mono text-sm text-gray-600">
+                  <div className="col-span-2 font-mono text-sm text-gray-600 hidden md:block">
                     {product.productCode}
                   </div>
-                  <div className="col-span-7">
+                  <div className="col-span-8 md:col-span-7">
                     <div className="font-medium text-gray-900">{product.name}</div>
                     {product.category && (
                       <div className="text-sm text-gray-500 mt-1">
@@ -191,12 +191,15 @@ export default function Catalog() {
                       </div>
                     )}
                   </div>
-                  <div className="col-span-3 text-right">
+                  <div className="col-span-4 md:col-span-3 text-right">
                     <span className="text-xl font-bold text-gray-900">
                       ${product.wholesalePrice.toLocaleString("es-AR", {
                         minimumFractionDigits: 2,
                       })}
                     </span>
+                    <div className="text-xs text-gray-500 mt-1 md:hidden">
+                      Cod: {product.productCode}
+                    </div>
                   </div>
                 </div>
               ))}
