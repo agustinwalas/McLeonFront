@@ -199,14 +199,38 @@ export function SaleProductsCard({ sale }: SaleProductsCardProps) {
             )}
 
             <div className="flex justify-between text-sm">
-              <span>Descuento total:</span>
+              <span>Subtotal productos:</span>
               <span>
                 $
-                {sale.totalDiscount?.toLocaleString("es-AR", {
+                {sale.subtotal.toLocaleString("es-AR", {
                   maximumFractionDigits: 2,
                 })}
               </span>
             </div>
+
+            {sale.totalDiscount > 0 && (
+              <div className="flex justify-between text-sm text-green-600">
+                <span>Descuento de Venta ({sale.totalDiscount}%):</span>
+                <span className="font-medium">
+                  -$
+                  {(sale.subtotal * (sale.totalDiscount / 100)).toLocaleString("es-AR", {
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+            )}
+
+            {sale.deliveryFee && sale.deliveryFee > 0 && (
+              <div className="flex justify-between text-sm">
+                <span>Envío:</span>
+                <span>
+                  +$
+                  {sale.deliveryFee.toLocaleString("es-AR", {
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+            )}
 
             <div className="flex justify-between text-lg font-bold border-t pt-2">
               <span>Total:</span>

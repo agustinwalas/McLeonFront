@@ -183,7 +183,7 @@ export const Products = () => {
     const newProduct = {
       product: "",
       quantity: 1,
-      priceType: "MINORISTA" ,
+      priceType: "MAYORISTA" as "MAYORISTA" | "MINORISTA",
       unitPrice: 0,
       discountPercentage: 100,
       subtotal: 0,

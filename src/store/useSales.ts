@@ -40,6 +40,7 @@ interface SalesState {
   fetchSalesByDate: (date: string) => Promise<void>;
   getSaleById: (id: string) => Promise<ISalePopulated | null>;
   deleteSale: (id: string) => Promise<boolean>;
+  payDebt: (saleId: string) => Promise<boolean>;
 
   // Actions para formularios (nueva venta y edición)
   initializeForm: () => void;
@@ -62,7 +63,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
   formData: {
     client: "",
     paymentMethod: "EFECTIVO",
-    deliveryType: "RETIRO_LOCAL",
+    deliveryType: "DELIVERY",
     deliveryFee: 0,
     amountPaid: 0,
     notes: "",
@@ -149,6 +150,42 @@ export const useSalesStore = create<SalesState>((set, get) => ({
     }
   },
 
+  payDebt: async (saleId: string) => {
+    try {
+      const sale = get().sales.find(s => s._id === saleId);
+      if (!sale) {
+        toast.error("Venta no encontrada");
+        return false;
+      }
+
+      const remaining = sale.totalAmount - (sale.amountPaid || 0);
+      if (remaining <= 0) {
+        toast.info("Esta venta ya está completamente pagada");
+        return false;
+      }
+
+      // Actualizar el amountPaid para que sea igual al totalAmount
+      await api.patch(`/sales/${saleId}`, {
+        amountPaid: sale.totalAmount
+      });
+
+      // Actualizar en la lista local
+      set((state) => ({
+        sales: state.sales.map((s) =>
+          s._id === saleId ? { ...s, amountPaid: s.totalAmount } : s
+        ),
+      }));
+
+      toast.success(`Deuda pagada: $${remaining.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`);
+      return true;
+    } catch (error: any) {
+      console.error("❌ Error pagando deuda:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Error al pagar la deuda";
+      toast.error(errorMessage);
+      return false;
+    }
+  },
+
   // ========================================
   // ACCIONES PARA FORMULARIOS
   // ========================================
@@ -160,7 +197,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       formData: {
         client: "",
         paymentMethod: "EFECTIVO",
-        deliveryType: "RETIRO_LOCAL",
+        deliveryType: "DELIVERY",
         deliveryFee: 0,
         amountPaid: 0,
         notes: "",
@@ -180,7 +217,7 @@ export const useSalesStore = create<SalesState>((set, get) => ({
       formData: {
         client: "",
         paymentMethod: "EFECTIVO",
-        deliveryType: "RETIRO_LOCAL",
+        deliveryType: "DELIVERY",
         deliveryFee: 0,
         amountPaid: 0,
         notes: "",
@@ -267,8 +304,8 @@ export const useSalesStore = create<SalesState>((set, get) => ({
 
       // Calcular totales
       const subtotal = selectedProducts.reduce((sum, p) => sum + p.subtotal, 0);
-      const totalAmount =
-        subtotal + formData.deliveryFee - formData.totalDiscount;
+      const discountAmount = subtotal * (formData.totalDiscount / 100);
+      const totalAmount = subtotal + formData.deliveryFee - discountAmount;
 
       // ✅ Formatear datos para el backend
       const saleData = {
@@ -468,8 +505,8 @@ export const useSalesStore = create<SalesState>((set, get) => ({
 
       // Calcular totales
       const subtotal = selectedProducts.reduce((sum, p) => sum + p.subtotal, 0);
-      const totalAmount =
-        subtotal + formData.deliveryFee - formData.totalDiscount;
+      const discountAmount = subtotal * (formData.totalDiscount / 100);
+      const totalAmount = subtotal + formData.deliveryFee - discountAmount;
 
       // ✅ Formatear datos para el backend
       const saleData = {

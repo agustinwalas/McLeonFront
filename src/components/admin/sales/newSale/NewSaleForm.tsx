@@ -20,7 +20,6 @@ export const NewSaleForm = () => {
     createSale,
     initializeForm,
     resetForm,
-    formData,
   } = useSalesStore();
 
   // Initialize form on mount
@@ -35,13 +34,7 @@ export const NewSaleForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log("📦 Datos enviados al backend:", {
-      formData,
-      selectedProducts,
-      timestamp: new Date().toISOString()
-    });
-
+   
     const success = await createSale();
     
     if (success) {

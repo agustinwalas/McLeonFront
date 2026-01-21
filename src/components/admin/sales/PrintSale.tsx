@@ -204,16 +204,19 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
                   <th>Producto</th>
                   <th>Cantidad</th>
                   <th>Precio Unit.</th>
-                  <th>Costo</th>
+                  <th>Descuento</th>
                   <th>Subtotal</th>
                 </tr>
               </thead>
               <tbody>
                 ${sale.products.map(item => {
                   const product = typeof item.product === 'object' ? item.product : null;
-                  const subtotal = item.unitPrice * item.quantity;
+                  const subtotalSinDescuento = item.unitPrice * item.quantity;
+                  const subtotal = item.discountPercentage > 0 
+                    ? subtotalSinDescuento * (item.discountPercentage / 100)
+                    : subtotalSinDescuento;
                   const discount = item.discountPercentage > 0 
-                    ? `${item.discountPercentage}%` 
+                    ? `${(100 - item.discountPercentage).toFixed(0)}%` 
                     : '-';
                   
                   return `
@@ -232,19 +235,19 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
 
           <div class="totals">
             <div class="totals-row">
-              <span class="totals-label">Subtotal:</span>
+              <span class="totals-label">Subtotal Productos:</span>
               <span>$${sale.subtotal.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
             </div>
+            ${sale.totalDiscount && sale.totalDiscount > 0 ? `
+            <div class="totals-row" style="color: #e65100;">
+              <span class="totals-label">Descuento Total de Venta (${sale.totalDiscount}%):</span>
+              <span>-$${(sale.subtotal * (sale.totalDiscount / 100)).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+            </div>
+            ` : ''}
             ${sale.deliveryFee && sale.deliveryFee > 0 ? `
             <div class="totals-row">
               <span class="totals-label">Envío:</span>
               <span>$${sale.deliveryFee.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
-            </div>
-            ` : ''}
-            ${sale.totalDiscount && sale.totalDiscount > 0 ? `
-            <div class="totals-row">
-              <span class="totals-label">Descuento Total:</span>
-              <span>-$${sale.totalDiscount.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
             </div>
             ` : ''}
             <div class="totals-row total-final">

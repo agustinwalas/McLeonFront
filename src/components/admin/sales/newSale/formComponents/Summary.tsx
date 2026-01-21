@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useProductStore } from "@/store/useProduct";
 import { useSalesStore } from "@/store/useSales"; // ✅ Import correcto
 
 export const Summary = () => {
   // ✅ Store hooks corregidos
-  const { formData, selectedProducts } = useSalesStore();
+  const { formData, selectedProducts, updateFormData } = useSalesStore();
   const { products } = useProductStore();
 
   // ✅ Funciones helper actualizadas para el nuevo formato
@@ -23,8 +25,9 @@ export const Summary = () => {
     const subtotal = calculateSubtotal();
     const deliveryFee =
       formData.deliveryType === "DELIVERY" ? formData.deliveryFee : 0;
-    const discount = formData.totalDiscount || 0;
-    return subtotal + deliveryFee - discount;
+    const discountPercentage = formData.totalDiscount || 0;
+    const discountAmount = subtotal * (discountPercentage / 100);
+    return subtotal + deliveryFee - discountAmount;
   };
 
   // Don't render if no products selected
@@ -123,13 +126,34 @@ export const Summary = () => {
               </span>
             </div>
 
-            {/* Descuento total */}
+            {/* Descuento total de venta */}
+            <div className="space-y-2">
+              <Label htmlFor="totalDiscount" className="text-sm font-medium text-gray-700">
+                Descuento Total de Venta
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="totalDiscount"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  value={formData.totalDiscount || 0}
+                  onChange={(e) => updateFormData("totalDiscount", parseFloat(e.target.value) || 0)}
+                  className="flex-1"
+                  placeholder="0"
+                />
+                <span className="text-gray-600 font-medium min-w-[30px]">%</span>
+              </div>
+            </div>
+
+            {/* Mostrar descuento si es mayor a 0 */}
             {formData.totalDiscount > 0 && (
-              <div className="flex justify-between text-sm text-red-600">
-                <span>Descuento:</span>
-                <span>
+              <div className="flex justify-between text-sm text-green-600">
+                <span>Descuento ({formData.totalDiscount}%):</span>
+                <span className="font-medium">
                   -$
-                  {formData.totalDiscount.toLocaleString("es-AR", {
+                  {(calculateSubtotal() * (formData.totalDiscount / 100)).toLocaleString("es-AR", {
                     minimumFractionDigits: 2,
                   })}
                 </span>

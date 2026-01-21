@@ -9,7 +9,8 @@ import { useCategoryStore } from "@/store/useCategory";
 
 export const useProductColumns = (
   categoryFilter: string | null,
-  setCategoryFilter: (id: string | null) => void
+  setCategoryFilter: (id: string | null) => void,
+  onStockClick: (product: IProductPopulated) => void
 ): ColumnDef<IProductPopulated>[] => {
   const { categories } = useCategoryStore();
   return [
@@ -116,7 +117,11 @@ export const useProductColumns = (
         const isLowStock = stock <= minStock;
 
         return (
-          <div>
+          <div 
+            onClick={() => onStockClick(row.original)}
+            className="cursor-pointer hover:bg-gray-100 p-2 rounded transition-colors"
+            title="Click para editar stock"
+          >
             <span>
               {stock} {getUnitOfMeasureShort(unit)}{" "}
             </span>

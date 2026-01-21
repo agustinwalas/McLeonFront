@@ -5,6 +5,8 @@ import { useProductColumns } from "./ProductColumns";
 import { useState, useMemo } from "react";
 import { useProductStore } from "@/store/useProduct";
 import { useCategoryStore } from "@/store/useCategory";
+import { EditStockModal } from "../EditStockModal";
+import { IProductPopulated } from "@/types";
 
 
 export const ProductsTable = () => {
@@ -21,7 +23,20 @@ export const ProductsTable = () => {
     isInitialized: categoriesInitialized 
   } = useCategoryStore();
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const columns = useProductColumns(categoryFilter, setCategoryFilter);
+  const [selectedProduct, setSelectedProduct] = useState<IProductPopulated | null>(null);
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+  
+  const handleStockClick = (product: IProductPopulated) => {
+    setSelectedProduct(product);
+    setIsStockModalOpen(true);
+  };
+
+  const handleCloseStockModal = () => {
+    setIsStockModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const columns = useProductColumns(categoryFilter, setCategoryFilter, handleStockClick);
   const filteredProducts = useMemo(() => {
     if (!categoryFilter) return products;
     return products.filter((p) => {
@@ -94,6 +109,11 @@ export const ProductsTable = () => {
   return (
     <>
       <DefaultTable data={filteredProducts} columns={columns} />
+      <EditStockModal 
+        product={selectedProduct} 
+        isOpen={isStockModalOpen} 
+        onClose={handleCloseStockModal} 
+      />
     </>
   );
 };
