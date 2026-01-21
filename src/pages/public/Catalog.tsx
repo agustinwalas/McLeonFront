@@ -192,7 +192,15 @@ export default function Catalog() {
                     )}
                   </div>
                   <div className="col-span-4 md:col-span-3 text-right">
-                    <span className="text-xl font-bold text-gray-900">
+                    {/* Mobile: sin decimales */}
+                    <span className="text-xl font-bold text-gray-900 md:hidden">
+                      ${product.wholesalePrice.toLocaleString("es-AR", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                    {/* Desktop: con decimales */}
+                    <span className="text-xl font-bold text-gray-900 hidden md:inline">
                       ${product.wholesalePrice.toLocaleString("es-AR", {
                         minimumFractionDigits: 2,
                       })}
