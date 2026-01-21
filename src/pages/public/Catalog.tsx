@@ -30,7 +30,7 @@ export default function Catalog() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+        const baseURL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:5000/api";
         const [productsRes, categoriesRes] = await Promise.all([
           axios.get(`${baseURL}/products`),
           axios.get(`${baseURL}/categories`),
