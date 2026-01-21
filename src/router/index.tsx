@@ -9,6 +9,7 @@ import RequireAuth from "../middleware/RequireAuth";
 // Páginas de autenticación (no lazy para login rápido)
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
+import Catalog from "@/pages/public/Catalog";
 
 // Lazy loading para páginas del admin
 const Dashboard = lazy(() => import("@/pages/admin/Dashboard/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/catalogo",
+    element: <Catalog />,
   },
   {
     path: "/admin",
