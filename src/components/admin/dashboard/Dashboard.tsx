@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import { RefreshCw, AlertCircle, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 // Store
 import useDashboard from "@/store/useDashboard";
@@ -38,6 +39,8 @@ export function DashboardComponent() {
     refreshData,
     clearError
   } = useDashboard();
+
+  const navigate = useNavigate();
 
   // Inicializar datos al montar el componente
   useEffect(() => {
@@ -105,6 +108,14 @@ export function DashboardComponent() {
           </p>
         </div>
         <div className="flex space-x-2">
+          <Button
+            variant="default"
+            onClick={() => navigate("/admin/dashboard/ganancias-mensuales")}
+            className="flex items-center space-x-2"
+          >
+            <TrendingUp className="h-4 w-4" />
+            <span>Ganancias Mensuales</span>
+          </Button>
           <Button
             variant="outline"
             onClick={handleRefresh}

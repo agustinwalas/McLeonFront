@@ -27,6 +27,7 @@ const SupplierDetail = lazy(() => import("@/components/admin/suppliers/supplier/
 const VoucherCreator = lazy(() => import("@/pages/admin/Afip/VoucherCreator").then(m => ({ default: m.VoucherCreator })));
 const EditSale = lazy(() => import("@/pages/admin/Sales/EditSale"));
 const SuppliersInvoices = lazy(() => import("@/pages/admin/Suppliers invoices/SuppliersInvoices").then(m => ({ default: m.SuppliersInvoices })));
+const MonthlyProfits = lazy(() => import("@/pages/admin/MonthlyProfits/MonthlyProfits").then(m => ({ default: m.MonthlyProfits })));
 
 // Componente de loading
 const LoadingFallback = () => (
@@ -76,6 +77,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <Dashboard />
+          </Suspense>
+        ) 
+      },
+      { 
+        path: "dashboard/ganancias-mensuales", 
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <MonthlyProfits />
           </Suspense>
         ) 
       },

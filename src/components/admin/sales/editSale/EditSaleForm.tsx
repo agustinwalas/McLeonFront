@@ -126,7 +126,7 @@ export const EditSaleForm = () => {
           <PaymentAndShipping />
         </div>
 
-        <Products />
+        <Products showUpdatePrices />
 
         <Summary />
 

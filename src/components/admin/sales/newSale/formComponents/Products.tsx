@@ -3,14 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, Trash2, Check, ChevronsUpDown } from "lucide-react";
+import { Plus, Trash2, Check, ChevronsUpDown, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSalesStore } from "@/store/useSales"; // ✅ Store unificado
 import { useProductStore } from "@/store/useProduct";
 import { getUnitOfMeasureShort } from "@/utils/unitOfMeasure";
+import { EditPriceModal } from "./EditPriceModal";
+import { toast } from "sonner";
 
-export const Products = () => {
+interface ProductsProps {
+  showUpdatePrices?: boolean;
+}
+
+export const Products = ({ showUpdatePrices = false }: ProductsProps) => {
   // ✅ Store hooks corregidos
   const {
     selectedProducts,
@@ -26,6 +32,10 @@ export const Products = () => {
   
   // Estado para mantener los valores de cantidad como strings mientras se escriben
   const [quantityInputs, setQuantityInputs] = useState<string[]>([]);
+
+  // Estado para el modal de edición de precios
+  const [priceModalOpen, setPriceModalOpen] = useState(false);
+  const [priceModalIndex, setPriceModalIndex] = useState<number | null>(null);
 
   // ✅ Fetch de productos al montar el componente
   useEffect(() => {
@@ -212,14 +222,59 @@ export const Products = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProducts.length]);
 
+  // ✅ Handler para actualizar todos los precios a valores actuales
+  const handleUpdateAllPrices = async () => {
+    // Refrescar productos desde la BD
+    await fetchProducts();
+
+    // Obtener productos actualizados del store
+    const { products: updatedProducts } = useProductStore.getState();
+
+    let updatedCount = 0;
+    selectedProducts.forEach((item, index) => {
+      if (!item.product) return;
+      const product = updatedProducts.find(p => p._id === item.product);
+      if (!product) return;
+
+      const newPrice = item.priceType === "MAYORISTA"
+        ? product.wholesalePrice
+        : product.retailPrice;
+
+      if (newPrice !== item.unitPrice) {
+        updateProduct(index, "unitPrice", newPrice);
+        recalculateSubtotalFull(index, item.quantity, newPrice, item.discountPercentage);
+        updatedCount++;
+      }
+    });
+
+    if (updatedCount > 0) {
+      toast.success(`${updatedCount} precio(s) actualizado(s)`);
+    } else {
+      toast.info("Todos los precios ya están actualizados");
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>🛍️ Productos</CardTitle>
-        <Button type="button" onClick={handleAddProduct} size="sm">
-          <Plus />
-          Agregar Producto
-        </Button>
+        <div className="flex items-center gap-2">
+          {showUpdatePrices && selectedProducts.length > 0 && (
+            <Button
+              type="button"
+              onClick={handleUpdateAllPrices}
+              size="sm"
+              variant="outline"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Actualizar Precios
+            </Button>
+          )}
+          <Button type="button" onClick={handleAddProduct} size="sm">
+            <Plus />
+            Agregar Producto
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {selectedProducts.length === 0 ? (
@@ -324,14 +379,21 @@ export const Products = () => {
                     />
                   </div>
 
-                  {/* Precio Unitario  */}
+                  {/* Precio Unitario - clickeable para editar */}
                   <div style={{ gridArea: "precio", width: "110px" }}>
                     <label className="text-sm font-medium mb-2 block">Precio Unit.</label>
                     <Input
                       type="text"
                       value={unitPrice > 0 ? `$${unitPrice.toLocaleString('es-AR', { minimumFractionDigits: 2 })}` : '-'}
                       readOnly
-                      className="bg-muted text-center cursor-not-allowed h-10"
+                      onClick={() => {
+                        if (item.product) {
+                          setPriceModalIndex(index);
+                          setPriceModalOpen(true);
+                        }
+                      }}
+                      className={`text-center h-10 ${item.product ? 'cursor-pointer hover:border-blue-400 hover:ring-1 hover:ring-blue-200 bg-white' : 'bg-muted cursor-not-allowed'}`}
+                      title={item.product ? "Click para editar precios" : "Seleccione un producto primero"}
                     />
                   </div>
 
@@ -378,6 +440,40 @@ export const Products = () => {
           </div>
         )}
       </CardContent>
+
+      {/* Modal de edición de precios */}
+      {priceModalIndex !== null && selectedProducts[priceModalIndex] && (() => {
+        const modalItem = selectedProducts[priceModalIndex];
+        const modalProduct = products.find(p => p._id === modalItem.product);
+        return (
+          <EditPriceModal
+            productId={modalItem.product}
+            productName={modalProduct ? `${modalProduct.productCode} - ${modalProduct.name}` : ''}
+            priceType={modalItem.priceType}
+            isOpen={priceModalOpen}
+            onClose={() => {
+              setPriceModalOpen(false);
+              setPriceModalIndex(null);
+            }}
+            onPriceUpdated={(newUnitPrice, wholesalePrice, retailPrice) => {
+              if (priceModalIndex !== null) {
+                updateProduct(priceModalIndex, "unitPrice", newUnitPrice);
+                recalculateSubtotalFull(
+                  priceModalIndex,
+                  modalItem.quantity,
+                  newUnitPrice,
+                  modalItem.discountPercentage
+                );
+                // Actualizar el producto en el store local
+                if (modalProduct) {
+                  modalProduct.wholesalePrice = wholesalePrice;
+                  modalProduct.retailPrice = retailPrice;
+                }
+              }
+            }}
+          />
+        );
+      })()}
     </Card>
   );
 };
