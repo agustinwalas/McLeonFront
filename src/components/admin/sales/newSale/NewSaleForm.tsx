@@ -8,9 +8,11 @@ import { Products } from "./formComponents/Products";
 import { Summary } from "./formComponents/Summary";
 import { Notes } from "./formComponents/Notes";
 import { Loader2 } from "lucide-react";
+import { useSaleUnsavedChanges } from "@/hooks/useSaleUnsavedChanges";
 
 export const NewSaleForm = () => {
   const navigate = useNavigate();
+  const { confirmNavigation, allowNavigation } = useSaleUnsavedChanges({ mode: "new" });
 
   // ✅ Usar store unificado
   const {
@@ -38,13 +40,12 @@ export const NewSaleForm = () => {
     const success = await createSale();
     
     if (success) {
- 
-      navigate("/admin/ventas");
+      allowNavigation(() => navigate("/admin/ventas"));
     }
   };
 
   const handleCancel = () => {
-    navigate("/admin/ventas");
+    confirmNavigation(() => navigate("/admin/ventas"));
   };
 
   return (

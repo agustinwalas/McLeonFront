@@ -98,6 +98,12 @@ export const Products = ({ showUpdatePrices = false }: ProductsProps) => {
     setQuantityInputs(newQuantityInputs);
   };
 
+  const handleQuantityFocus = (index: number) => {
+    const newQuantityInputs = [...quantityInputs];
+    newQuantityInputs[index] = "";
+    setQuantityInputs(newQuantityInputs);
+  };
+
   // ✅ Helper function para manejar cambios de descuento
   const handleDiscountChange = (index: number, value: string) => {
     const cleanValue = removeLeadingZeros(value);
@@ -176,16 +182,6 @@ export const Products = ({ showUpdatePrices = false }: ProductsProps) => {
     const newOpenPopovers = [...openPopovers];
     newOpenPopovers[index] = isOpen;
     setOpenPopovers(newOpenPopovers);
-  };
-
-  // ✅ Helper function para obtener el precio unitario según el tipo
-  const getUnitPrice = (item: any) => {
-    const product = products.find(p => p._id === item.product);
-    if (!product) return 0;
-    
-    return item.priceType === "MAYORISTA" 
-      ? product.wholesalePrice 
-      : product.retailPrice;
   };
 
   // ✅ Helper function para agregar producto
@@ -286,7 +282,7 @@ export const Products = ({ showUpdatePrices = false }: ProductsProps) => {
           <div className="space-y-4">
             {selectedProducts.map((item, index) => {
               const selectedProduct = products.find(p => p._id === item.product);
-              const unitPrice = getUnitPrice(item);
+              const unitPrice = item.unitPrice;
               
               return (
                 <div
@@ -371,11 +367,12 @@ export const Products = ({ showUpdatePrices = false }: ProductsProps) => {
                     <label className="text-sm font-medium mb-2 block">Cant.  {selectedProduct ? getUnitOfMeasureShort(selectedProduct.unitOfMeasure) : ''} </label>
                     <Input
                       type="text"
-                      value={quantityInputs[index] || item.quantity.toString()}
+                      value={quantityInputs[index] ?? item.quantity.toString()}
                       onChange={(e) => handleQuantityChange(index, e.target.value)}
+                      onFocus={() => handleQuantityFocus(index)}
                       onBlur={() => handleQuantityBlur(index)}
                       className="text-center h-10"
-                      placeholder="0.0"
+                      placeholder="0"
                     />
                   </div>
 

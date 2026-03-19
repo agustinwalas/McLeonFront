@@ -85,8 +85,7 @@ export function EditPriceModal({
     setRetailManual(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!productId) return;
 
     setIsSubmitting(true);
@@ -123,7 +122,7 @@ export function EditPriceModal({
             Actualiza los precios de <strong>{productName}</strong>
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <div>
           <div className="grid gap-4 py-4">
             {/* Precio Costo */}
             <div className="grid gap-2">
@@ -221,7 +220,7 @@ export function EditPriceModal({
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="button" onClick={handleSubmit} disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -232,7 +231,7 @@ export function EditPriceModal({
               )}
             </Button>
           </DialogFooter>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -8,10 +8,12 @@ import { Products } from "../newSale/formComponents/Products";
 import { Summary } from "../newSale/formComponents/Summary";
 import { Notes } from "../newSale/formComponents/Notes";
 import { Loader2 } from "lucide-react";
+import { useSaleUnsavedChanges } from "@/hooks/useSaleUnsavedChanges";
 
 export const EditSaleForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { confirmNavigation, allowNavigation } = useSaleUnsavedChanges({ mode: "edit" });
 
   // ✅ Usar store unificado
   const {
@@ -55,13 +57,12 @@ export const EditSaleForm = () => {
     const success = await updateSale(id);
 
     if (success) {
- 
-      navigate("/admin/ventas");
+      allowNavigation(() => navigate("/admin/ventas"));
     }
   };
 
   const handleCancel = () => {
-    navigate("/admin/ventas");
+    confirmNavigation(() => navigate("/admin/ventas"));
   };
 
   // Estados de carga y error

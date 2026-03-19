@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import axios from "@/lib/axios";
 import { Save } from "lucide-react";
 
@@ -41,7 +41,7 @@ export function MarginInputs({ wholesaleMargin, retailMargin, onChange }: Margin
   return (
     <div className="mt-2 p-3 border rounded bg-gray-50 flex flex-col gap-2">
       <div>
-        <FormLabel>Margen Mayorista</FormLabel>
+        <Label>Margen Mayorista</Label>
         <div className="flex items-center gap-2 mt-1">
           <Input
             type="number"
@@ -57,10 +57,9 @@ export function MarginInputs({ wholesaleMargin, retailMargin, onChange }: Margin
           />
           <span className="text-sm">%</span>
         </div>
-        <FormMessage />
       </div>
       <div>
-        <FormLabel>Margen Minorista</FormLabel>
+        <Label>Margen Minorista</Label>
         <div className="flex items-center gap-2 mt-1">
           <Input
             type="number"
@@ -76,10 +75,9 @@ export function MarginInputs({ wholesaleMargin, retailMargin, onChange }: Margin
           />
           <span className="text-sm">%</span>
         </div>
-        <FormMessage />
       </div>
       <div className="flex items-center justify-end mt-2">
-        <Button size="icon" onClick={handleSave} disabled={loading} title="Guardar cambios" className="h-7 w-7 p-1">
+        <Button type="button" size="icon" onClick={handleSave} disabled={loading} title="Guardar cambios" className="h-7 w-7 p-1">
           {success ? <Save className="text-green-600" size={16} /> : <Save size={16} />}
         </Button>
       </div>

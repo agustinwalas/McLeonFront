@@ -13,6 +13,12 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
   ({ sale }, ref) => {
     const printRef = useRef<HTMLDivElement>(null);
 
+    const formatPrice = (value: number) =>
+      value.toLocaleString('es-AR', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+
     const handlePrint = () => {
       const clientName = sale.client?.name || 'Sin Cliente';
       const fileName = `Venta_${sale.saleNumber}_${clientName.replace(/\s/g, '_')}`;
@@ -201,6 +207,7 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
             <table class="products-table">
               <thead>
                 <tr>
+                  <th>Código</th>
                   <th>Producto</th>
                   <th>Cantidad</th>
                   <th>Precio Unit.</th>
@@ -211,6 +218,8 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
               <tbody>
                 ${sale.products.map(item => {
                   const product = typeof item.product === 'object' ? item.product : null;
+                  const productCode = product?.productCode || '-';
+                  const productLabel = product?.name || 'Producto eliminado';
                   const subtotalSinDescuento = item.unitPrice * item.quantity;
                   const subtotal = item.discountPercentage > 0 
                     ? subtotalSinDescuento * (item.discountPercentage / 100)
@@ -221,11 +230,12 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
                   
                   return `
                     <tr>
-                      <td>${product?.name || 'Producto eliminado'}</td>
+                      <td>${productCode}</td>
+                      <td>${productLabel}</td>
                       <td>${item.quantity}</td>
-                      <td>$${item.unitPrice.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                      <td>$${formatPrice(item.unitPrice)}</td>
                       <td>${discount}</td>
-                      <td>$${subtotal.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                      <td>$${formatPrice(subtotal)}</td>
                     </tr>
                   `;
                 }).join('')}
@@ -236,33 +246,33 @@ export const PrintSale = forwardRef<PrintSaleRef, PrintSaleProps>(
           <div class="totals">
             <div class="totals-row">
               <span class="totals-label">Subtotal Productos:</span>
-              <span>$${sale.subtotal.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+              <span>$${formatPrice(sale.subtotal)}</span>
             </div>
             ${sale.totalDiscount && sale.totalDiscount > 0 ? `
             <div class="totals-row" style="color: #e65100;">
               <span class="totals-label">Descuento Total de Venta (${sale.totalDiscount}%):</span>
-              <span>-$${(sale.subtotal * (sale.totalDiscount / 100)).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+              <span>-$${formatPrice(sale.subtotal * (sale.totalDiscount / 100))}</span>
             </div>
             ` : ''}
             ${sale.deliveryFee && sale.deliveryFee > 0 ? `
             <div class="totals-row">
               <span class="totals-label">Envío:</span>
-              <span>$${sale.deliveryFee.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+              <span>$${formatPrice(sale.deliveryFee)}</span>
             </div>
             ` : ''}
             <div class="totals-row total-final">
               <span class="totals-label">TOTAL:</span>
-              <span>$${sale.totalAmount.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+              <span>$${formatPrice(sale.totalAmount)}</span>
             </div>
             ${sale.amountPaid && sale.amountPaid > 0 ? `
             <div class="totals-row" style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; color: #000;">
               <span class="totals-label">Pago Actual:</span>
-              <span>$${sale.amountPaid.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+              <span>$${formatPrice(sale.amountPaid)}</span>
             </div>
             ${sale.amountPaid < sale.totalAmount ? `
             <div class="totals-row" style="color: #000;">
               <span class="totals-label">Faltante:</span>
-              <span>$${(sale.totalAmount - sale.amountPaid).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+              <span>$${formatPrice(sale.totalAmount - sale.amountPaid)}</span>
             </div>
             ` : `
             <div style="text-align: center; padding: 10px; color: #000; font-weight: bold;">
