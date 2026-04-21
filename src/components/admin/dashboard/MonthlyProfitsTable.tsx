@@ -51,6 +51,15 @@ const columns: ColumnDef<MonthlyProfit, unknown>[] = [
     ),
   },
   {
+    accessorKey: "supplierInvoicesTotal",
+    header: "Facturas Proveedores",
+    cell: ({ row }) => (
+      <span className="text-orange-600 font-medium">
+        {formatCurrency(row.original.supplierInvoicesTotal)}
+      </span>
+    ),
+  },
+  {
     accessorKey: "totalProfit",
     header: "Total Ganancias",
     cell: ({ row }) => {
@@ -120,7 +129,7 @@ export function MonthlyProfitsTable() {
 
       {/* Totales generales */}
       {monthlyProfits.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg border p-4">
             <p className="text-sm text-gray-500">Total Costo Base</p>
             <p className="text-2xl font-bold text-gray-700">
@@ -134,6 +143,14 @@ export function MonthlyProfitsTable() {
             <p className="text-2xl font-bold text-blue-700">
               {formatCurrency(
                 monthlyProfits.reduce((sum, m) => sum + m.totalSaleAmount, 0)
+              )}
+            </p>
+          </div>
+          <div className="bg-white rounded-lg border p-4">
+            <p className="text-sm text-gray-500">Total Facturas Proveedores</p>
+            <p className="text-2xl font-bold text-orange-600">
+              {formatCurrency(
+                monthlyProfits.reduce((sum, m) => sum + m.supplierInvoicesTotal, 0)
               )}
             </p>
           </div>

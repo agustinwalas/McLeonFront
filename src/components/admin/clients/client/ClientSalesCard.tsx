@@ -70,7 +70,7 @@ export function ClientSalesCard({ sales }: ClientSalesCardProps) {
                       <h4 className="font-medium">Venta #{sale.saleNumber}</h4>
                     </div>
                     <div className="mt-1 text-sm text-gray-600">
-                      <p>{new Date(sale.saleDate).toLocaleDateString("es-AR")}</p>
+                      <p>{sale.createdAt ? new Date(sale.createdAt).toLocaleDateString("es-AR") : "—"}</p>
                       <p>{getPaymentMethodLabel(sale.paymentMethod)}</p>
                     </div>
                   </div>

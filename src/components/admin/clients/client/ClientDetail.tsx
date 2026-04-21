@@ -6,6 +6,7 @@ import { ClientError, ClientLoadingSkeleton, ClientNotFound } from "./ClientStat
 import { ClientHeader } from "./ClientHeader";
 import { ClientInfoCard } from "./ClientInfoCard";
 import { ClientSalesCard } from "./ClientSalesCard";
+import { ClientProductsTable } from "./ClientProductsTable";
 
 export default function ClientDetail() {
   const { id } = useParams<{ id: string }>();
@@ -103,6 +104,9 @@ export default function ClientDetail() {
         <ClientInfoCard client={currentClient} />
         <ClientSalesCard sales={clientSales} />
       </div>
+
+      {/* Productos históricos */}
+      <ClientProductsTable sales={clientSales} />
     </div>
   );
 }

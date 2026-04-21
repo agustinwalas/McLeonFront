@@ -58,8 +58,13 @@ export const SupplierInvoicesColumns = (
       />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.date);
-      return <span>{date.toLocaleDateString("es-AR")}</span>;
+      const raw = row.original.date?.toString() ?? "";
+      // Extraer partes UTC para evitar desfase por timezone
+      const utcDate = new Date(raw);
+      const day = utcDate.getUTCDate().toString().padStart(2, "0");
+      const month = (utcDate.getUTCMonth() + 1).toString().padStart(2, "0");
+      const year = utcDate.getUTCFullYear();
+      return <span>{`${day}/${month}/${year}`}</span>;
     },
   },
   {
