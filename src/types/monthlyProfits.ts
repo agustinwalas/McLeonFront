@@ -9,6 +9,8 @@ export interface MonthlyProfit {
   salesCount: number;
   daysWithSales: number;
   supplierInvoicesTotal: number;
+  expensesTotal: number;
+  netProfit: number;
 }
 
 export interface MonthlyProfitsApiResponse {

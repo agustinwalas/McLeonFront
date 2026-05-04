@@ -61,16 +61,33 @@ const columns: ColumnDef<MonthlyProfit, unknown>[] = [
   },
   {
     accessorKey: "totalProfit",
-    header: "Total Ganancias",
+    header: "Ganancia Bruta",
     cell: ({ row }) => {
       const profit = row.original.totalProfit;
       return (
-        <span
-          className={`font-bold ${
-            profit >= 0 ? "text-green-600" : "text-red-600"
-          }`}
-        >
+        <span className={`font-medium ${profit >= 0 ? "text-green-600" : "text-red-600"}`}>
           {formatCurrency(profit)}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "expensesTotal",
+    header: "Gastos",
+    cell: ({ row }) => (
+      <span className="text-red-500 font-medium">
+        {formatCurrency(row.original.expensesTotal ?? 0)}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "netProfit",
+    header: "Ganancia Neta",
+    cell: ({ row }) => {
+      const net = row.original.netProfit ?? row.original.totalProfit;
+      return (
+        <span className={`font-bold ${net >= 0 ? "text-green-700" : "text-red-600"}`}>
+          {formatCurrency(net)}
         </span>
       );
     },
@@ -129,37 +146,41 @@ export function MonthlyProfitsTable() {
 
       {/* Totales generales */}
       {monthlyProfits.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div className="bg-white rounded-lg border p-4">
             <p className="text-sm text-gray-500">Total Costo Base</p>
-            <p className="text-2xl font-bold text-gray-700">
-              {formatCurrency(
-                monthlyProfits.reduce((sum, m) => sum + m.totalBaseCost, 0)
-              )}
+            <p className="text-xl font-bold text-gray-700">
+              {formatCurrency(monthlyProfits.reduce((sum, m) => sum + m.totalBaseCost, 0))}
             </p>
           </div>
           <div className="bg-white rounded-lg border p-4">
             <p className="text-sm text-gray-500">Total Ventas</p>
-            <p className="text-2xl font-bold text-blue-700">
-              {formatCurrency(
-                monthlyProfits.reduce((sum, m) => sum + m.totalSaleAmount, 0)
-              )}
+            <p className="text-xl font-bold text-blue-700">
+              {formatCurrency(monthlyProfits.reduce((sum, m) => sum + m.totalSaleAmount, 0))}
             </p>
           </div>
           <div className="bg-white rounded-lg border p-4">
-            <p className="text-sm text-gray-500">Total Facturas Proveedores</p>
-            <p className="text-2xl font-bold text-orange-600">
-              {formatCurrency(
-                monthlyProfits.reduce((sum, m) => sum + m.supplierInvoicesTotal, 0)
-              )}
+            <p className="text-sm text-gray-500">Facturas Proveedores</p>
+            <p className="text-xl font-bold text-orange-600">
+              {formatCurrency(monthlyProfits.reduce((sum, m) => sum + m.supplierInvoicesTotal, 0))}
             </p>
           </div>
           <div className="bg-white rounded-lg border p-4">
-            <p className="text-sm text-gray-500">Total Ganancias</p>
-            <p className="text-2xl font-bold text-green-600">
-              {formatCurrency(
-                monthlyProfits.reduce((sum, m) => sum + m.totalProfit, 0)
-              )}
+            <p className="text-sm text-gray-500">Ganancia Bruta</p>
+            <p className="text-xl font-bold text-green-600">
+              {formatCurrency(monthlyProfits.reduce((sum, m) => sum + m.totalProfit, 0))}
+            </p>
+          </div>
+          <div className="bg-white rounded-lg border p-4">
+            <p className="text-sm text-gray-500">Total Gastos</p>
+            <p className="text-xl font-bold text-red-500">
+              {formatCurrency(monthlyProfits.reduce((sum, m) => sum + (m.expensesTotal ?? 0), 0))}
+            </p>
+          </div>
+          <div className="bg-white rounded-lg border p-4">
+            <p className="text-sm text-gray-500">Ganancia Neta</p>
+            <p className="text-xl font-bold text-green-700">
+              {formatCurrency(monthlyProfits.reduce((sum, m) => sum + (m.netProfit ?? m.totalProfit), 0))}
             </p>
           </div>
         </div>

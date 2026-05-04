@@ -7,6 +7,7 @@ import {
   FolderOpen,
   FileTerminal,
   LayoutDashboard,
+  Wallet,
 } from "lucide-react";
 
 import {
@@ -65,6 +66,11 @@ const items = [
     title: "Facturas Proveedores",
     url: "/admin/facturas-proveedores",
     icon: FileTerminal,
+  },
+  {
+    title: "Gastos",
+    url: "/admin/gastos",
+    icon: Wallet,
   },
 ];
 
